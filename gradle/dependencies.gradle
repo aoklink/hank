@@ -1,0 +1,9 @@
+//统一依赖策略管理
+
+allprojects {
+    repositories {
+        jcenter()
+        google()
+        mavenCentral()
+    }
+}

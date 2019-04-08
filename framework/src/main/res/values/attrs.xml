@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="AppToolbar">
+        <attr name="atb_show_back" format="boolean" />
+        <attr name="atb_showTitle" format="boolean" />
+        <attr name="atb_title" format="string" />
+        <attr name="atb_title_left_drawable" format="reference" />
+        <attr name="atb_showMenu" format="boolean" />
+        <attr name="atb_menuTitle" format="string" />
+        <attr name="atb_menuSrc" format="reference" />
+        <attr name="atb_backSrc" format="reference" />
+        <attr name="atb_titleColor" format="reference|color"/>
+    </declare-styleable>
+
+
+</resources>

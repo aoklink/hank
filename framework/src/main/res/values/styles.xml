@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Dialog 动画样式-->
+    <style name="FrameworkDialogAnimStyle">
+        <item name="android:windowEnterAnimation">@anim/dialog_slide_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_slide_out</item>
+    </style>
+
+    <!--通用的按钮样式-->
+    <style name="FrameworkButtonStyle">
+        <item name="android:background">@drawable/item_background_borderless_material</item>
+    </style>
+
+    <!--RefreshLayout 通用样式-->
+    <style name="FrameworkRefreshLayout">
+        <!--<item name="srlEnableLoadMore">false</item>-->
+        <!--<item name="srlEnableLoadMoreWhenContentNotFull">true</item>-->
+        <!--<item name="srlPrimaryColor">@color/transparent</item>-->
+        <!--<item name="srlEnableOverScrollBounce">false</item>-->
+    </style>
+    <!--通用的 Toolbar 样式-->
+    <style name="FrameworkToolbarStyle">
+        <item name="android:minHeight">?android:attr/actionBarSize</item>
+    </style>
+
+</resources>

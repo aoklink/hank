@@ -1,0 +1,8 @@
+<resources>
+    <string name="framework_name">framework</string>
+    <string name="loading">加载中...</string>
+    <string name="framework_error_get">获取数据失败，请稍后再试</string>
+    <string name="framework_error_submit">提交失败，请稍后再试</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

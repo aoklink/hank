@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="mvp_contentView" type="id" />
+    <item name="mvp_errorView" type="id" />
+    <item name="mvp_loadingView" type="id" />
+</resources>

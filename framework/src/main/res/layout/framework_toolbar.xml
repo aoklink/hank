@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="android.widget.RelativeLayout">
+
+    <TextView
+        android:id="@+id/btn_back"
+        style="@style/FrameworkButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:drawableEnd="@drawable/framework_back"
+        android:drawableRight="@drawable/framework_back"
+        android:padding="@dimen/framework_normal_padding"
+        android:textSize="16sp"
+        tools:ignore="RtlHardcoded" />
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        tools:text="标题" />
+
+    <TextView
+        android:id="@+id/btn_menu"
+        style="@style/FrameworkButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:textColor="#000000"
+        android:padding="@dimen/framework_normal_padding"
+        android:textSize="14sp"
+        tools:ignore="RtlHardcoded" />
+
+</merge>
