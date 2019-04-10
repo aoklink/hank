@@ -2,6 +2,7 @@ package cn.linkfeeling.link_socketserve;
 
 
 import cn.linkfeeling.link_socketserve.handler.ChildChannelHandler;
+import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -24,7 +25,7 @@ public class NettyServer {
     }
 
 
-    public void bind() {
+    public void bind(SocketCallBack socketCallBack) {
         //1、配置服务端的NIO线程组
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workGroup = new NioEventLoopGroup();
@@ -34,7 +35,7 @@ public class NettyServer {
         sb.group(bossGroup, workGroup).
                 channel(NioServerSocketChannel.class).
                 option(ChannelOption.SO_BACKLOG, 1024).
-                childHandler(new ChildChannelHandler());
+                childHandler(new ChildChannelHandler(socketCallBack));
 
         try {
             //4、绑定端口，同步等待成功

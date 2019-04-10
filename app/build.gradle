@@ -37,4 +37,12 @@ dependencies {
     implementation project(':link_socketserve')
 
     implementation 'com.android.support:multidex:1.0.0'
+
+    debugImplementation('com.simple:spiderman:1.1.0') {
+        exclude group: "com.android.support"
+    }
+
+    releaseImplementation('com.simple:spiderman-no-op:1.1.0') {
+        exclude group: "com.android.support"
+    }
 }

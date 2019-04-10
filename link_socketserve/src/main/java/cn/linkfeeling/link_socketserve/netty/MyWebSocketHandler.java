@@ -4,9 +4,12 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.Date;
 
 import cn.linkfeeling.link_socketserve.bean.ScanData;
+import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -35,13 +38,27 @@ import io.netty.util.CharsetUtil;
 public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
     private WebSocketServerHandshaker handshaker;
+    private SocketCallBack socketCallBack;
+
+
+    public MyWebSocketHandler(SocketCallBack socketCallBack) {
+        this.socketCallBack = socketCallBack;
+    }
 
     //客户端与服务端创建连接的时候调用
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Global.group.add(ctx.channel());
+
+
         System.out.println("客户端与服务端连接开启...");
-        Log.i("3333333333333","客户端与服务端连接开启...");
+        Log.i("3333333333333", "客户端与服务端连接开启...");
+
+        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+        String hostAddress = socketAddress.getAddress().getHostAddress();
+        Log.i("客户端ip_address", hostAddress);
+
+        socketCallBack.connectSuccess(hostAddress);
     }
 
     //客户端与服务端断开连接的时候调用
@@ -49,7 +66,12 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Global.group.remove(ctx.channel());
         System.out.println("客户端与服务端连接关闭...");
-        Log.i("3333333333333","客户端与服务端连接关闭...");
+        Log.i("3333333333333", "客户端与服务端连接关闭...");
+        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+        String hostAddress = socketAddress.getAddress().getHostAddress();
+        Log.i("客户端ip_address", hostAddress);
+
+        socketCallBack.disconnectSuccess(hostAddress);
     }
 
     //服务端接收客户端发送过来的数据结束之后调用
@@ -79,6 +101,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
         }
         //判断是否是ping消息
         if (frame instanceof PingWebSocketFrame) {
+            Log.i("ppppppppppppp","ping包");
             ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
             return;
         }
@@ -94,9 +117,8 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
         ScanData scanData = new Gson().fromJson(request, ScanData.class);
 
-
-
-        System.out.println("服务端收到客户端的消息====>>>" +new Gson().toJson(scanData));
+        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+        System.out.println("服务端收到客户端"+socketAddress.getAddress().getHostAddress()+"的消息" + new Gson().toJson(scanData));
         TextWebSocketFrame tws = new TextWebSocketFrame(new Date().toString()
                 + ctx.channel().id()
                 + " ===>>> "

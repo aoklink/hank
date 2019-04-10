@@ -1,6 +1,7 @@
 package cn.linkfeeling.link_socketserve.handler;
 
 
+import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
 import cn.linkfeeling.link_socketserve.netty.MyWebSocketHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -10,6 +11,13 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
 public class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
+
+    private SocketCallBack socketCallBack;
+
+    public ChildChannelHandler(SocketCallBack socketCallBack) {
+        this.socketCallBack = socketCallBack;
+    }
+
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
 
@@ -27,7 +35,7 @@ public class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
         pipeline.addLast("http-codec", new HttpServerCodec());
         pipeline.addLast("aggregator", new HttpObjectAggregator(65536));
         pipeline.addLast("http-chunked", new ChunkedWriteHandler());
-        pipeline.addLast("handler", new MyWebSocketHandler());
+        pipeline.addLast("handler", new MyWebSocketHandler(socketCallBack));
      //   pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
 
 

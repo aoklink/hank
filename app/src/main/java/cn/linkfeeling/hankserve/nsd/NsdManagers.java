@@ -37,10 +37,8 @@ public class NsdManagers {
                     serviceInfo, NsdManager.PROTOCOL_DNS_SD, new NsdManager.RegistrationListener() {
                         @Override
                         public void onRegistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
-
-                            String serviceName = serviceInfo.getServiceName();
                             Log.i("qqqqqqqqqqqqqq", "onRegistrationFailed");
-
+                            createNsdInfo(context);
                         }
 
                         @Override
@@ -58,8 +56,6 @@ public class NsdManagers {
                             Log.i("qqqqqqqqqqqqqq", "onServiceUnregistered");
                         }
                     });
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
