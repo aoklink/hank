@@ -74,11 +74,8 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
         super.channelRead(ctx, msg);
     }
 
-    /**
-     * 接收客户端发送的消息 channel 通道 Read 读 简而言之就是从通道中读取数据，也就是服务端接收客户端发来的数据。但是这个数据在不进行解码时它是ByteBuf类型的
-     */
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         //    UnpooledDirectByteBuf unpooledDirectByteBuf= ( UnpooledDirectByteBuf)msg;
         ctx.channel().writeAndFlush(new Object());
 
@@ -96,6 +93,14 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
             }
         }
     }
+
+//    /**
+//     * 接收客户端发送的消息 channel 通道 Read 读 简而言之就是从通道中读取数据，也就是服务端接收客户端发来的数据。但是这个数据在不进行解码时它是ByteBuf类型的
+//     */
+//    @Override
+//    protected void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
+//
+//    }
 
     /**
      * channel 通道 Read 读取 Complete 完成 在通道读取完成后会在这个方法里通知，对应可以做刷新操作 ctx.flush()

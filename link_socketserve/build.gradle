@@ -31,5 +31,6 @@ dependencies {
     testImplementation rootProject.ext.dependencies.junit
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'io.netty:netty-all:5.0.0.Alpha1'
+    implementation 'io.netty:netty-all:4.1.32.Final'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }

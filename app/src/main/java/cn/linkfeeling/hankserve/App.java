@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
+import android.support.multidex.MultiDex;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -16,11 +17,13 @@ import cn.linkfeeling.hankserve.nsd.NsdManagers;
  */
 public class App extends Application {
 
+
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
+        MultiDex.install(this);
     }
-
     @Override
     public void onCreate() {
         super.onCreate();

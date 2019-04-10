@@ -1,13 +1,6 @@
 package cn.linkfeeling.link_socketserve;
 
 
-import android.content.Context;
-import android.net.nsd.NsdManager;
-import android.net.nsd.NsdServiceInfo;
-
-import java.io.IOException;
-import java.net.ServerSocket;
-
 import cn.linkfeeling.link_socketserve.handler.ChildChannelHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -19,13 +12,19 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 public class NettyServer {
     private static final int PORT = 8888;
 
-    public static void main(String[] args) {
-
-
-        new NettyServer().bind();
+    private NettyServer() {
     }
 
-    private void bind() {
+    public static NettyServer getInstance() {
+        return NettyServerHolder.sNettyServerHolder;
+    }
+
+    private static class NettyServerHolder {
+        private static final NettyServer sNettyServerHolder = new NettyServer();
+    }
+
+
+    public void bind() {
         //1、配置服务端的NIO线程组
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workGroup = new NioEventLoopGroup();

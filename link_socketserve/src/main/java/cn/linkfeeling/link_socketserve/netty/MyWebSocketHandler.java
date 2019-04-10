@@ -1,6 +1,12 @@
 package cn.linkfeeling.link_socketserve.netty;
 
+import android.util.Log;
+
+import com.google.gson.Gson;
+
 import java.util.Date;
+
+import cn.linkfeeling.link_socketserve.bean.ScanData;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -35,6 +41,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Global.group.add(ctx.channel());
         System.out.println("客户端与服务端连接开启...");
+        Log.i("3333333333333","客户端与服务端连接开启...");
     }
 
     //客户端与服务端断开连接的时候调用
@@ -42,6 +49,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Global.group.remove(ctx.channel());
         System.out.println("客户端与服务端连接关闭...");
+        Log.i("3333333333333","客户端与服务端连接关闭...");
     }
 
     //服务端接收客户端发送过来的数据结束之后调用
@@ -57,18 +65,6 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
         ctx.close();
     }
 
-    //服务端处理客户端websocket请求的核心方法
-    @Override
-    protected void messageReceived(ChannelHandlerContext context, Object msg) throws Exception {
-        System.out.println("wolaixiaoxile");
-        //处理客户端向服务端发起http握手请求的业务
-        if (msg instanceof FullHttpRequest) {
-            handHttpRequest(context, (FullHttpRequest) msg);
-        } else if (msg instanceof WebSocketFrame) { //处理websocket连接业务
-
-            handWebsocketFrame(context, (WebSocketFrame) msg);
-        }
-    }
 
     /**
      * 处理客户端与服务端之前的websocket业务
@@ -95,7 +91,12 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
         //返回应答消息
         //获取客户端向服务端发送的消息
         String request = ((TextWebSocketFrame) frame).text();
-        System.out.println("服务端收到客户端的消息====>>>" + request);
+
+        ScanData scanData = new Gson().fromJson(request, ScanData.class);
+
+
+
+        System.out.println("服务端收到客户端的消息====>>>" +new Gson().toJson(scanData));
         TextWebSocketFrame tws = new TextWebSocketFrame(new Date().toString()
                 + ctx.channel().id()
                 + " ===>>> "
@@ -145,6 +146,17 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
         ChannelFuture f = ctx.channel().writeAndFlush(res);
         if (res.getStatus().code() != 200) {
             f.addListener(ChannelFutureListener.CLOSE);
+        }
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext context, Object msg) throws Exception {
+        //处理客户端向服务端发起http握手请求的业务
+        if (msg instanceof FullHttpRequest) {
+            handHttpRequest(context, (FullHttpRequest) msg);
+        } else if (msg instanceof WebSocketFrame) { //处理websocket连接业务
+
+            handWebsocketFrame(context, (WebSocketFrame) msg);
         }
     }
 }
