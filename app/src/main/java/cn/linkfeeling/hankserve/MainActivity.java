@@ -1,15 +1,11 @@
 package cn.linkfeeling.hankserve;
 
-import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.WindowManager;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -18,9 +14,8 @@ import com.link.feeling.framework.base.FrameworkBaseActivity;
 import com.link.feeling.framework.executor.ThreadPoolManager;
 import com.link.feeling.framework.utils.data.L;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -56,7 +51,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private ConcurrentHashMap<Integer, UWBCoordData> fenceId_uwbData = new ConcurrentHashMap<>();//围栏id uwb设备对应关系  key为围栏id  value为uwb对象
 
     private List<UWBCoordData> list = new ArrayList<>();
-    private TextView tv_ipTip, tv_logCat;
+    private TextView tv_ipTip, tv_logCat, tv_ipTipRemove;
     private ScrollView scrollView;
     private Gson gson = new Gson();
 
@@ -68,7 +63,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     @Override
     protected void init(@Nullable Bundle savedInstanceState) {
         tv_ipTip = findViewById(R.id.tv_ipTip);
+        tv_ipTipRemove = findViewById(R.id.tv_ipTipRemove);
         tv_ipTip.setMovementMethod(ScrollingMovementMethod.getInstance());
+        tv_ipTipRemove.setMovementMethod(ScrollingMovementMethod.getInstance());
         tv_logCat = findViewById(R.id.tv_logCat);
         scrollView = findViewById(R.id.scrollView);
 
@@ -81,7 +78,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     }
 
 
-
     private void startServer() {
         ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
@@ -90,14 +86,14 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 NettyServer.getInstance().bind(new SocketCallBack() {
                     @Override
                     public void connectSuccess(String ip) {
-                        tv_ipTip.append(ip + "连接成功！！");
+                        tv_ipTip.append(ip + "连接成功！！\n"+ new SimpleDateFormat("MM-dd HH:mm:ss").format(System.currentTimeMillis()));
                         tv_ipTip.append("\n\n");
                     }
 
                     @Override
                     public void disconnectSuccess(String ip) {
-                        tv_ipTip.append(ip + "断开连接！！");
-                        tv_ipTip.append("\n\n");
+                        tv_ipTipRemove.append(ip + "断开连接！！\n" + new SimpleDateFormat("MM-dd HH:mm:ss").format(System.currentTimeMillis()));
+                        tv_ipTipRemove.append("\n\n");
                     }
 
                     @Override
@@ -392,35 +388,13 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
     //添加日志
     private void addText(TextView textView, String content) {
-//        textView.append(content);
-//        textView.append("\n\n");
         scrollView.fullScroll(ScrollView.FOCUS_DOWN);
-
-
-        int fstart = content.indexOf("distance");
-        int fend = fstart + "distance".length();
-
-        int bstart = content.indexOf("speed");
-        int bend = bstart + "speed".length();
-
-        int bstart1 = content.indexOf("device_name");
-        int bend1 = bstart1 + "device_name".length();
-
-//        style = new SpannableStringBuilder(content);
-//        style.setSpan(new ForegroundColorSpan(Color.RED), fstart, fend, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-//        style.setSpan(new ForegroundColorSpan(Color.BLUE), bstart, bend, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-//        style.setSpan(new ForegroundColorSpan(Color.parseColor("#FF7F00")), bstart1, bend1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         if (line == 500) {
             textView.setText(null);
             line = 0;
         }
         textView.append(content);
-
         line++;
-
-
         textView.append("\n\n");
-
-
     }
 }
