@@ -33,4 +33,6 @@ public class ScanData {
     public void setScanRecord(byte[] scanRecord) {
         this.scanRecord = scanRecord;
     }
+
+
 }

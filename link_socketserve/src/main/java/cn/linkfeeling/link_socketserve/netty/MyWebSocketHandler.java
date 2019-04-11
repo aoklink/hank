@@ -101,7 +101,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
         }
         //判断是否是ping消息
         if (frame instanceof PingWebSocketFrame) {
-            Log.i("ppppppppppppp","ping包");
+            Log.i("ppppppppppppp", "ping包");
             ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
             return;
         }
@@ -117,14 +117,19 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
         ScanData scanData = new Gson().fromJson(request, ScanData.class);
 
+        socketCallBack.getSubjectData(scanData);
+
+
         InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-        System.out.println("服务端收到客户端"+socketAddress.getAddress().getHostAddress()+"的消息" + new Gson().toJson(scanData));
+        System.out.println("服务端收到客户端" + socketAddress.getAddress().getHostAddress() + "的消息" + new Gson().toJson(scanData));
+
+
         TextWebSocketFrame tws = new TextWebSocketFrame(new Date().toString()
                 + ctx.channel().id()
                 + " ===>>> "
                 + request);
         //群发，服务端向每个连接上来的客户端群发消息
-        Global.group.writeAndFlush(tws);
+        //   Global.group.writeAndFlush(tws);
     }
 
     /**
