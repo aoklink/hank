@@ -1,6 +1,5 @@
 package cn.linkfeeling.hankserve;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.PowerManager;
 import android.support.multidex.MultiDex;
@@ -23,14 +22,14 @@ import okhttp3.OkHttpClient;
 public class App extends BaseApplication {
 
     private static App app;
-    private volatile boolean isSatrt;
+    private volatile boolean isStart;
 
-    public boolean isSatrt() {
-        return isSatrt;
+    public boolean isStart() {
+        return isStart;
     }
 
-    public void setSatrt(boolean satrt) {
-        isSatrt = satrt;
+    public void setStart(boolean start) {
+        isStart = start;
     }
 
     @Override
@@ -46,7 +45,7 @@ public class App extends BaseApplication {
         app = this;
         SpiderMan.init(this).setTheme(R.style.SpiderManTheme_Light);
         initWakeLock();
-        UDPBroadcast.udpBroadcast(this);
+
         initConfig();
         LinkDataManager.getInstance().createLinkData();
 

@@ -69,7 +69,6 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
         Log.i("3333333333333", "客户端与服务端连接关闭...");
         InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
         String hostAddress = socketAddress.getAddress().getHostAddress();
-        Log.i("客户端ip_address", hostAddress);
 
         socketCallBack.disconnectSuccess(hostAddress);
     }
@@ -128,8 +127,9 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
                 + ctx.channel().id()
                 + " ===>>> "
                 + request);
+
         //群发，服务端向每个连接上来的客户端群发消息
-        //   Global.group.writeAndFlush(tws);
+          Global.group.writeAndFlush(tws);
     }
 
     /**
@@ -139,6 +139,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
      * @param req
      */
     private void handHttpRequest(ChannelHandlerContext ctx, FullHttpRequest req) {
+        Log.i("ssssssssssss","tcp 握手");
         if (!req.getDecoderResult().isSuccess()
                 || !("websocket".equals(req.headers().get("Upgrade")))) {
             sendHttpResponse(ctx, req,
@@ -178,8 +179,9 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext context, Object msg) throws Exception {
+
         //处理客户端向服务端发起http握手请求的业务
-        if (msg instanceof FullHttpRequest) {
+       if (msg instanceof FullHttpRequest) {
             handHttpRequest(context, (FullHttpRequest) msg);
         } else if (msg instanceof WebSocketFrame) { //处理websocket连接业务
 

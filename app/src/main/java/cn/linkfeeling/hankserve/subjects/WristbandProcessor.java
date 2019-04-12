@@ -48,8 +48,6 @@ public class WristbandProcessor implements IDataAnalysis {
             if (bytes1 == null || bytes1.length == 0) {
                 return null;
             }
-
-
             byte[] heart = new byte[1];
             heart[0] = bytes1[0];
            int heartInt = Integer.parseInt(HexUtil.encodeHexStr(heart), 16);

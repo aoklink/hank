@@ -30,6 +30,7 @@ import cn.linkfeeling.hankserve.bean.Wristband;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
+import cn.linkfeeling.hankserve.udp.UDPBroadcast;
 import cn.linkfeeling.hankserve.ui.IUploadContract;
 import cn.linkfeeling.hankserve.ui.UploadPresenter;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
@@ -70,10 +71,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         scrollView = findViewById(R.id.scrollView);
 
 
-        if (!App.getApplication().isSatrt()) {
+        if (!App.getApplication().isStart()) {
             startServer();
         }
-
+        UDPBroadcast.udpBroadcast(this);
         connectWebSocket();
     }
 
@@ -82,7 +83,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
-                App.getApplication().setSatrt(true);
+                App.getApplication().setStart(true);
                 NettyServer.getInstance().bind(new SocketCallBack() {
                     @Override
                     public void connectSuccess(String ip) {

@@ -36,7 +36,7 @@ public class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
         pipeline.addLast("aggregator", new HttpObjectAggregator(65536));
         pipeline.addLast("http-chunked", new ChunkedWriteHandler());
         pipeline.addLast("handler", new MyWebSocketHandler(socketCallBack));
-     //   pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
+        //   pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
 
 
     }
