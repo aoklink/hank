@@ -1,6 +1,7 @@
 package cn.linkfeeling.link_socketserve.interfaces;
 
 import cn.linkfeeling.link_socketserve.bean.ScanData;
+import io.netty.channel.group.ChannelGroup;
 
 /**
  * @author create by zhangyong
@@ -8,8 +9,8 @@ import cn.linkfeeling.link_socketserve.bean.ScanData;
  */
 public interface SocketCallBack {
 
-    void connectSuccess(String ip);
-    void disconnectSuccess(String ip);
+    void connectSuccess(String ip,int channelsNum);
+    void disconnectSuccess(String ip,int channelsNum );
 
     void  getSubjectData(ScanData data);
 

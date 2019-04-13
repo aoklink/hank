@@ -23,6 +23,7 @@ public class App extends BaseApplication {
 
     private static App app;
     private volatile boolean isStart;
+    private volatile int channelsNum;
 
     public boolean isStart() {
         return isStart;
@@ -30,6 +31,14 @@ public class App extends BaseApplication {
 
     public void setStart(boolean start) {
         isStart = start;
+    }
+
+    public int getChannelsNum() {
+        return channelsNum;
+    }
+
+    public void setChannelsNum(int channelsNum) {
+        this.channelsNum = channelsNum;
     }
 
     @Override

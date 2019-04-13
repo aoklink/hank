@@ -57,6 +57,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private Gson gson = new Gson();
     private SimpleDateFormat simpleDateFormat;
 
+
     @Override
     protected int getLayoutRes() {
         return R.layout.activity_main;
@@ -70,8 +71,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         tv_ipTipRemove.setMovementMethod(ScrollingMovementMethod.getInstance());
         tv_logCat = findViewById(R.id.tv_logCat);
         scrollView = findViewById(R.id.scrollView);
+        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
 
-        simpleDateFormat=new SimpleDateFormat("MM-dd HH:mm:ss");
+        simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
 
 
         if (!App.getApplication().isStart()) {
@@ -89,7 +91,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 App.getApplication().setStart(true);
                 NettyServer.getInstance().bind(new SocketCallBack() {
                     @Override
-                    public void connectSuccess(String ip) {
+                    public void connectSuccess(String ip, int channelsNum) {
+                        App.getApplication().setChannelsNum(channelsNum);
+
                         tv_ipTip.append(ip + "连接成功");
                         tv_ipTip.append("\n");
                         tv_ipTip.append(simpleDateFormat.format(System.currentTimeMillis()));
@@ -97,7 +101,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     }
 
                     @Override
-                    public void disconnectSuccess(String ip) {
+                    public void disconnectSuccess(String ip, int channelsNum) {
+                        App.getApplication().setChannelsNum(channelsNum);
                         tv_ipTipRemove.append(ip + "断开连接");
                         tv_ipTipRemove.append("\n");
                         tv_ipTipRemove.append(simpleDateFormat.format(System.currentTimeMillis()));
@@ -123,7 +128,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(aLong -> {
-                    if (wristbands != null && !wristbands.isEmpty()) {
+                    Log.i("nnnnnnnnnn",App.getApplication().getChannelsNum()+"");
+                    if (wristbands != null && !wristbands.isEmpty() && App.getApplication().getChannelsNum() > 0) {
                         for (Map.Entry<String, BleDeviceInfo> entry : wristbands.entrySet()) {
                             BleDeviceInfo value = entry.getValue();
                             if (value != null && !TextUtils.isEmpty(value.getSpeed())) {
@@ -393,10 +399,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     }
 
     int line;
-
     //添加日志
     private void addText(TextView textView, String content) {
-        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+
         if (line == 500) {
             textView.setText(null);
             line = 0;

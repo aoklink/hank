@@ -58,7 +58,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
         String hostAddress = socketAddress.getAddress().getHostAddress();
         Log.i("客户端ip_address", hostAddress);
 
-        socketCallBack.connectSuccess(hostAddress);
+        socketCallBack.connectSuccess(hostAddress,Global.group.size());
     }
 
     //客户端与服务端断开连接的时候调用
@@ -70,7 +70,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
         InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
         String hostAddress = socketAddress.getAddress().getHostAddress();
 
-        socketCallBack.disconnectSuccess(hostAddress);
+        socketCallBack.disconnectSuccess(hostAddress,Global.group.size());
     }
 
     //服务端接收客户端发送过来的数据结束之后调用
