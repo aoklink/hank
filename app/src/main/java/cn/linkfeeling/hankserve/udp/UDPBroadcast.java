@@ -23,7 +23,7 @@ public class UDPBroadcast {
             public void run() {
                 // TODO Auto-generated method stub
                 // 广播的实现 :由客户端发出广播，服务器端接收
-                String host = "192.168.50.255";// 广播地址
+                String host = "255.255.255.255";// 广播地址
                 int port = 4399;// 广播的目的端口
                 String message = CommonUtil.getIPAddress(context.getApplicationContext());// 用于发送的字符串
                 Log.i("eeeeeeeeee111", message);

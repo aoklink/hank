@@ -55,6 +55,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private TextView tv_ipTip, tv_logCat, tv_ipTipRemove;
     private ScrollView scrollView;
     private Gson gson = new Gson();
+    private SimpleDateFormat simpleDateFormat;
 
     @Override
     protected int getLayoutRes() {
@@ -69,6 +70,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         tv_ipTipRemove.setMovementMethod(ScrollingMovementMethod.getInstance());
         tv_logCat = findViewById(R.id.tv_logCat);
         scrollView = findViewById(R.id.scrollView);
+
+        simpleDateFormat=new SimpleDateFormat("MM-dd HH:mm:ss");
 
 
         if (!App.getApplication().isStart()) {
@@ -87,13 +90,17 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 NettyServer.getInstance().bind(new SocketCallBack() {
                     @Override
                     public void connectSuccess(String ip) {
-                        tv_ipTip.append(ip + "连接成功！！\n"+ new SimpleDateFormat("MM-dd HH:mm:ss").format(System.currentTimeMillis()));
+                        tv_ipTip.append(ip + "连接成功");
+                        tv_ipTip.append("\n");
+                        tv_ipTip.append(simpleDateFormat.format(System.currentTimeMillis()));
                         tv_ipTip.append("\n\n");
                     }
 
                     @Override
                     public void disconnectSuccess(String ip) {
-                        tv_ipTipRemove.append(ip + "断开连接！！\n" + new SimpleDateFormat("MM-dd HH:mm:ss").format(System.currentTimeMillis()));
+                        tv_ipTipRemove.append(ip + "断开连接");
+                        tv_ipTipRemove.append("\n");
+                        tv_ipTipRemove.append(simpleDateFormat.format(System.currentTimeMillis()));
                         tv_ipTipRemove.append("\n\n");
                     }
 
