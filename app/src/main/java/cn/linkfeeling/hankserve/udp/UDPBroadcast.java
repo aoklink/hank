@@ -29,6 +29,7 @@ public class UDPBroadcast {
                 String host = "255.255.255.255";// 广播地址
                 int port = 4399;// 广播的目的端口
 
+
                 Observable.interval(1, TimeUnit.SECONDS).subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {
@@ -47,7 +48,6 @@ public class UDPBroadcast {
                         }
                     }
                 });
-
 
 
 //
