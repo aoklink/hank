@@ -28,9 +28,12 @@ public class UDPBroadcast {
             public void run() {
                 // TODO Auto-generated method stub
                 // 广播的实现 :由客户端发出广播，服务器端接收
-                String host = "255.255.255.255";// 广播地址
-                int port = 4399;// 广播的目的端口
+                final String host = "255.255.255.255";// 广播地址
+                final int port = 4399;// 广播的目的端口
 
+                final InetAddress[] adds = new InetAddress[1];
+                final DatagramSocket[] ds = new DatagramSocket[1];
+                final DatagramPacket[] dp = new DatagramPacket[1];
 
                 Observable.interval(1, TimeUnit.SECONDS).subscribe(new Consumer<Long>() {
                     @Override
@@ -40,10 +43,10 @@ public class UDPBroadcast {
                             return;
                         }
                         try {
-                            InetAddress adds = InetAddress.getByName(host);
-                            DatagramSocket ds = new DatagramSocket();
-                            DatagramPacket dp = new DatagramPacket(message.trim().getBytes(), message.trim().length(), adds, port);
-                            ds.send(dp);
+                            adds[0] = InetAddress.getByName(host);
+                            ds[0] = new DatagramSocket();
+                            dp[0] = new DatagramPacket(message.trim().getBytes(), message.trim().length(), adds[0], port);
+                            ds[0].send(dp[0]);
                             Log.i("eeeeeeeeee", message);
                         } catch (Exception e) {
                             e.printStackTrace();
