@@ -92,21 +92,34 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 NettyServer.getInstance().bind(new SocketCallBack() {
                     @Override
                     public void connectSuccess(String ip, int channelsNum) {
-                        App.getApplication().setChannelsNum(channelsNum);
 
-                        tv_ipTip.append(ip + "连接成功");
-                        tv_ipTip.append("\n");
-                        tv_ipTip.append(simpleDateFormat.format(System.currentTimeMillis()));
-                        tv_ipTip.append("\n\n");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                App.getApplication().setChannelsNum(channelsNum);
+
+                                tv_ipTip.append(ip + "连接成功");
+                                tv_ipTip.append("\n");
+                                tv_ipTip.append(simpleDateFormat.format(System.currentTimeMillis()));
+                                tv_ipTip.append("\n\n");
+                            }
+                        });
+
                     }
 
                     @Override
                     public void disconnectSuccess(String ip, int channelsNum) {
-                        App.getApplication().setChannelsNum(channelsNum);
-                        tv_ipTipRemove.append(ip + "断开连接");
-                        tv_ipTipRemove.append("\n");
-                        tv_ipTipRemove.append(simpleDateFormat.format(System.currentTimeMillis()));
-                        tv_ipTipRemove.append("\n\n");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                App.getApplication().setChannelsNum(channelsNum);
+                                tv_ipTipRemove.append(ip + "断开连接");
+                                tv_ipTipRemove.append("\n");
+                                tv_ipTipRemove.append(simpleDateFormat.format(System.currentTimeMillis()));
+                                tv_ipTipRemove.append("\n\n");
+                            }
+                        });
+
                     }
 
                     @Override
