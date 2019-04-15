@@ -64,7 +64,6 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
     //客户端与服务端断开连接的时候调用
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        if (!ctx.channel().isActive()) {
             Global.group.remove(ctx.channel());
             System.out.println("客户端与服务端连接关闭...");
             Log.i("3333333333333", "客户端与服务端连接关闭...");
@@ -72,7 +71,6 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
             String hostAddress = socketAddress.getAddress().getHostAddress();
 
             socketCallBack.disconnectSuccess(hostAddress, Global.group.size());
-        }
     }
 
     //服务端接收客户端发送过来的数据结束之后调用
