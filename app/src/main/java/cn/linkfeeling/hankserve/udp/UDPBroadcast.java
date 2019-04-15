@@ -1,5 +1,6 @@
 package cn.linkfeeling.hankserve.udp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
@@ -22,6 +23,7 @@ public class UDPBroadcast {
 
     public static void udpBroadcast(Context context) {
         ThreadPoolManager.getInstance().execute(new Runnable() {
+            @SuppressLint("CheckResult")
             @Override
             public void run() {
                 // TODO Auto-generated method stub
