@@ -5,7 +5,10 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Date;
 
 import cn.linkfeeling.link_socketserve.bean.ScanData;
@@ -15,6 +18,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -30,15 +34,17 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
 
+
 /**
  * 接收/处理/响应客户端websocket请求的核心业务处理类
  *
  * @author liuyazhuang
  */
-public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
+public class MyWebSocketHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
     private WebSocketServerHandshaker handshaker;
     private SocketCallBack socketCallBack;
+    private   byte[] dataByte;
 
 
     public MyWebSocketHandler(SocketCallBack socketCallBack) {
@@ -50,7 +56,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Global.group.add(ctx.channel());
 
-
+    //    ctx.channel().read();
         System.out.println("客户端与服务端连接开启...");
         Log.i("3333333333333", "客户端与服务端连接开启...");
 
@@ -140,6 +146,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
      */
     private void handHttpRequest(ChannelHandlerContext ctx, FullHttpRequest req) {
         Log.i("ssssssssssss", "tcp 握手");
+
         if (!req.getDecoderResult().isSuccess()
                 || !("websocket".equals(req.headers().get("Upgrade")))) {
             sendHttpResponse(ctx, req,
@@ -177,15 +184,51 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
         }
     }
 
+//
+//    @Override
+//    public void channelRead(ChannelHandlerContext context, Object msg) throws Exception {
+//        super.channelRead(context, msg);
+//        //处理客户端向服务端发起http握手请求的业务
+//        if (msg instanceof FullHttpRequest) {
+//            handHttpRequest(context, (FullHttpRequest) msg);
+//        } else if (msg instanceof WebSocketFrame) { //处理websocket连接业务
+//
+//            handWebsocketFrame(context, (WebSocketFrame) msg);
+//        }
+//    }
+
     @Override
-    protected void channelRead0(ChannelHandlerContext context, Object msg) throws Exception {
-
+    protected void channelRead0(ChannelHandlerContext context, ByteBuf bf) throws Exception {
         //处理客户端向服务端发起http握手请求的业务
-        if (msg instanceof FullHttpRequest) {
-            handHttpRequest(context, (FullHttpRequest) msg);
-        } else if (msg instanceof WebSocketFrame) { //处理websocket连接业务
 
-            handWebsocketFrame(context, (WebSocketFrame) msg);
-        }
+
+
+
+        dataByte = new byte[bf.readableBytes()];
+        bf.readBytes(dataByte);
+
+     //   String body = new String(req, "UTF-8");
+        System.out.println("cccccccccccccc---"+Arrays.toString(dataByte));
+
+//        ByteBuf resp = Unpooled.copiedBuffer("6666".getBytes());
+//        ctx.write(resp);
+//
+//
+//        System.out.println("bbbbbbbbbbbbbbb-----"+Arrays.toString(bf.array()).trim());
+//        System.out.println("bbbbbbbbbbbbbbb-----"+bf.array().length);
     }
+
+
+    public String convertByteBufToString(ByteBuf buf) {
+        String str;
+        if(buf.hasArray()) { // 处理堆缓冲区
+            str = new String(buf.array(), buf.arrayOffset() + buf.readerIndex(), buf.readableBytes());
+        } else { // 处理直接缓冲区以及复合缓冲区
+            byte[] bytes = new byte[buf.readableBytes()];
+            buf.getBytes(buf.readerIndex(), bytes);
+            str = new String(bytes, 0, buf.readableBytes());
+        }
+        return str;
+    }
+
 }

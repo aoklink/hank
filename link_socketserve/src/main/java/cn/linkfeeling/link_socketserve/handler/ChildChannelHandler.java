@@ -3,16 +3,24 @@ package cn.linkfeeling.link_socketserve.handler;
 
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
 import cn.linkfeeling.link_socketserve.netty.MyWebSocketHandler;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.FixedLengthFrameDecoder;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 
 public class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
 
     private SocketCallBack socketCallBack;
+
+    static final EventExecutorGroup group = new DefaultEventExecutorGroup(16);
 
     public ChildChannelHandler(SocketCallBack socketCallBack) {
         this.socketCallBack = socketCallBack;
@@ -32,9 +40,16 @@ public class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
 //        socketChannel.pipeline().addLast("http-chunked", new ChunkedWriteHandler());
         //在管道中添加我们自己的接收数据实现方法
         ChannelPipeline pipeline = socketChannel.pipeline();
-        pipeline.addLast("http-codec", new HttpServerCodec());
+
+
+      // pipeline.addLast("http-codec", new HttpServerCodec());
         pipeline.addLast("aggregator", new HttpObjectAggregator(65536));
         pipeline.addLast("http-chunked", new ChunkedWriteHandler());
+//        ByteBuf delimiter = Unpooled.copiedBuffer("||".getBytes());
+//        pipeline.addLast("framer", new DelimiterBasedFrameDecoder(2048, delimiter));
+
+        pipeline.addLast(new FixedLengthFrameDecoder(31));
+      //  pipeline.addLast(new LineBasedFrameDecoder(2048));
         pipeline.addLast("handler", new MyWebSocketHandler(socketCallBack));
         //   pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
 

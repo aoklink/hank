@@ -76,23 +76,29 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        //    UnpooledDirectByteBuf unpooledDirectByteBuf= ( UnpooledDirectByteBuf)msg;
-        ctx.channel().writeAndFlush(new Object());
 
-
-        // 传统的HTTP接入
-        if (msg instanceof FullHttpRequest) {
-            handleHttpRequest(ctx, ((FullHttpRequest) msg));
-// WebSocket接入
-        } else if (msg instanceof WebSocketFrame) {
-            System.out.println(handshaker.uri());
-            if ("anzhuo".equals(ctx.attr(AttributeKey.valueOf("type")).get())) {
-                handlerWebSocketFrame(ctx, (WebSocketFrame) msg);
-            } else {
-                handlerWebSocketFrame2(ctx, (WebSocketFrame) msg);
-            }
-        }
     }
+
+//
+//    @Override
+//    protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+//        //    UnpooledDirectByteBuf unpooledDirectByteBuf= ( UnpooledDirectByteBuf)msg;
+//        ctx.channel().writeAndFlush(new Object());
+//
+//
+//        // 传统的HTTP接入
+//        if (msg instanceof FullHttpRequest) {
+//            handleHttpRequest(ctx, ((FullHttpRequest) msg));
+//// WebSocket接入
+//        } else if (msg instanceof WebSocketFrame) {
+//            System.out.println(handshaker.uri());
+//            if ("anzhuo".equals(ctx.attr(AttributeKey.valueOf("type")).get())) {
+//                handlerWebSocketFrame(ctx, (WebSocketFrame) msg);
+//            } else {
+//                handlerWebSocketFrame2(ctx, (WebSocketFrame) msg);
+//            }
+//        }
+//    }
 
 //    /**
 //     * 接收客户端发送的消息 channel 通道 Read 读 简而言之就是从通道中读取数据，也就是服务端接收客户端发来的数据。但是这个数据在不进行解码时它是ByteBuf类型的

@@ -37,7 +37,8 @@ public class NettyServer {
         sb.group(bossGroup, workGroup).
                 channel(NioServerSocketChannel.class).
                 option(ChannelOption.SO_BACKLOG, 1024).
-                childHandler(new ChildChannelHandler(socketCallBack));
+                childHandler(new ChildChannelHandler(socketCallBack)).
+                childOption(ChannelOption.SO_KEEPALIVE, true);
 
         try {
             Log.i("vvvvvvvvvvvvv","服务已启动等待连接");
