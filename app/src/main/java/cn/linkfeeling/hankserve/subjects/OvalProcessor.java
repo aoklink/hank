@@ -6,8 +6,12 @@ import java.util.Arrays;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
+import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
+import cn.linkfeeling.hankserve.utils.CalculateUtil;
+
 
 /**
  * @author create by zhangyong
@@ -20,23 +24,25 @@ public class OvalProcessor implements IDataAnalysis {
         return OvalProcessorHolder.sOvalProcessor;
     }
 
+
     private static class OvalProcessorHolder {
         private static final OvalProcessor sOvalProcessor = new OvalProcessor();
     }
 
     @Override
-    public BleDeviceInfo analysisBLEData(BleDeviceInfo bleDeviceInfo, byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
+        BleDeviceInfo bleDeviceInfoNow = null;
         if (scanRecord != null) {
 
-            Log.i("tttttttttttttt",Arrays.toString(scanRecord));
-            byte[] speed = new byte[2];
+            Log.i("tttttttttttttt", Arrays.toString(scanRecord));
+            byte[] speed = new byte[1];
             byte[] gradient = new byte[2];
             speed[0] = scanRecord[11];
-            speed[1] = scanRecord[12];
+            //  speed[1] = scanRecord[12];
             gradient[0] = scanRecord[13];
             gradient[1] = scanRecord[14];
 
-            int speedInt = Integer.parseInt(String.valueOf(speed[0]));
+            int speedInt = Integer.parseInt(String.valueOf(CalculateUtil.byteArrayToInt(speed)));
             int gradientInt = Integer.parseInt(String.valueOf(gradient[0]));
 
 
@@ -45,17 +51,33 @@ public class OvalProcessor implements IDataAnalysis {
                 return null;
             }
 
-            //椭圆机
-            if (speedInt == 0) {
-                bleDeviceInfo.setSpeed("0.0");
-            } else {
-                bleDeviceInfo.setSpeed(String.valueOf(calculateEllipticalSpeed(speedInt)));
+            deviceByBleName.setAbility(speedInt);
+
+
+            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+            boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
+            if (!containsKey) {
+                return null;
+            }
+            UWBCoordData uwbCoordData = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId);
+
+            String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
+            bleDeviceInfoNow = FinalDataManager.getInstance().getWristbands().get(bracelet_id);
+            if (bleDeviceInfoNow == null) {
+                return null;
             }
 
-            bleDeviceInfo.setGradient(String.valueOf(gradientInt));
-            deviceByBleName.setAbility(speedInt);
+            //椭圆机
+            if (speedInt == 0) {
+                bleDeviceInfoNow.setSpeed("0.0");
+            } else {
+                bleDeviceInfoNow.setSpeed(String.valueOf(calculateEllipticalSpeed(speedInt)));
+            }
+
+            bleDeviceInfoNow.setGradient(String.valueOf(gradientInt));
+
         }
-        return bleDeviceInfo;
+        return bleDeviceInfoNow;
 
     }
 

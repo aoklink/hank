@@ -26,7 +26,7 @@ public class UploadPresenter extends BasePresenter<IUploadContract.IBleUploadVie
                         super.onComplete();
 
                         onceViewAttached(view -> {
-                            view.uploadBleStatus(bleDeviceInfo,true);
+                            view.uploadBleStatus(bleDeviceInfo, true,null);
                         });
 
                     }
@@ -35,7 +35,8 @@ public class UploadPresenter extends BasePresenter<IUploadContract.IBleUploadVie
                     public void onError(Throwable e) {
                         super.onError(e);
                         onceViewAttached(view -> {
-                            view.uploadBleStatus(bleDeviceInfo,false);
+                            view.uploadBleStatus(bleDeviceInfo, false,e);
+                          //  showToast(e.getMessage());
                         });
                     }
                 });

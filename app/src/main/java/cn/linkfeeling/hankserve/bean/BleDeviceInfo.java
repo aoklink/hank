@@ -28,7 +28,15 @@ public class BleDeviceInfo {
     private String gravity;
     private String time;
     private String exercise_time;
+    private boolean report;
 
+    public boolean isReport() {
+        return report;
+    }
+
+    public void setReport(boolean report) {
+        this.report = report;
+    }
 
     public String getExercise_time() {
         return exercise_time;

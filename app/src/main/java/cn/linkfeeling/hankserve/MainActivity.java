@@ -1,8 +1,11 @@
 package cn.linkfeeling.hankserve;
 
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -23,12 +26,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import cn.linkfeeling.hankserve.adapter.BLEAdapter;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.bean.Wristband;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
+import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
+import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.udp.UDPBroadcast;
 import cn.linkfeeling.hankserve.ui.IUploadContract;
@@ -48,14 +54,15 @@ import okio.ByteString;
 import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
 
 public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUploadView, IUploadContract.IBleUploadPresenter> implements IUploadContract.IBleUploadView {
-    private ConcurrentHashMap<String, BleDeviceInfo> wristbands = new ConcurrentHashMap<>();  //手环对应的集合   key为手环名称   value为整合后的数据（最终上传数据）
-    private ConcurrentHashMap<Integer, UWBCoordData> fenceId_uwbData = new ConcurrentHashMap<>();//围栏id uwb设备对应关系  key为围栏id  value为uwb对象
-
     private List<UWBCoordData> list = new ArrayList<>();
-    private TextView tv_ipTip, tv_logCat, tv_ipTipRemove;
-    private ScrollView scrollView;
+    private TextView tv_ipTip, tv_ipTipRemove;
     private Gson gson = new Gson();
     private SimpleDateFormat simpleDateFormat;
+
+    private RecyclerView recycleView;
+    private BLEAdapter bleAdapter;
+
+    private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
 
 
     @Override
@@ -69,18 +76,23 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         tv_ipTipRemove = findViewById(R.id.tv_ipTipRemove);
         tv_ipTip.setMovementMethod(ScrollingMovementMethod.getInstance());
         tv_ipTipRemove.setMovementMethod(ScrollingMovementMethod.getInstance());
-        tv_logCat = findViewById(R.id.tv_logCat);
-        scrollView = findViewById(R.id.scrollView);
-        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
 
         simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
+
+
+        recycleView = findViewById(R.id.recycleView);
 
 
         if (!App.getApplication().isStart()) {
             startServer();
         }
-        UDPBroadcast.udpBroadcast(this);
+        //   UDPBroadcast.udpBroadcast(this);
         connectWebSocket();
+
+        recycleView.setLayoutManager(new LinearLayoutManager(this));
+        bleAdapter = new BLEAdapter(this, bleDeviceInfos);
+        recycleView.setAdapter(bleAdapter);
+
     }
 
 
@@ -125,8 +137,15 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     @Override
                     public void getSubjectData(ScanData data) {
                         Log.i("server_receive_data", gson.toJson(data));
+                        //   onLeScanSelf(data.getName(), data.getRssi(), data.getScanRecord());
+                        ThreadPoolManager.getInstance().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                onLeScanSelf(data.getName(), data.getRssi(), data.getScanRecord());
+                            }
+                        });
 
-                        onLeScanSelf(data.getName(), data.getRssi(), data.getScanRecord());
+
                     }
                 });
             }
@@ -141,9 +160,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(aLong -> {
-                    Log.i("nnnnnnnnnn",App.getApplication().getChannelsNum()+"");
-                    if (wristbands != null && !wristbands.isEmpty() && App.getApplication().getChannelsNum() > 0) {
-                        for (Map.Entry<String, BleDeviceInfo> entry : wristbands.entrySet()) {
+                    if (FinalDataManager.getInstance().getWristbands() != null && !FinalDataManager.getInstance().getWristbands().isEmpty()) {
+                        Log.i("Disposable", "Disposable");
+                        for (Map.Entry<String, BleDeviceInfo> entry : FinalDataManager.getInstance().getWristbands().entrySet()) {
                             BleDeviceInfo value = entry.getValue();
                             if (value != null && !TextUtils.isEmpty(value.getSpeed())) {
                                 if (Float.parseFloat(value.getSpeed()) == 0) {
@@ -151,13 +170,25 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 } else {
                                     BigDecimal bigDecimal = CalculateUtil.floatDivision(INTERVAL_TIME * Float.parseFloat(value.getSpeed()), 3600);
                                     value.setDistance(bigDecimal.toString());
+
+//
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            totalDistance = totalDistance + Double.parseDouble(value.getDistance());
+//                                            tv_total_distance.setText(totalDistance + "");
+//                                        }
+//                                    });
+
+
                                 }
                             }
                             String s = gson.toJson(value);
                             L.i("rrrrrrrrrrrrrrrr", s);
 
-                            //   getPresenter().uploadBleData(value);
-                            runOnUiThread(() -> addText(tv_logCat, s));
+
+                            getPresenter().uploadBleData(value);
+
                         }
                     }
                 });
@@ -171,23 +202,27 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
      */
     private void onLeScanSelf(String name, int rssi, byte[] scanRecord) {
 
+        if (name == null) {
+            return;
+        }
+
         Log.i("11111111111111", name + name);
 
-        if (name.contains(LinkDataManager.TYPE_LEAP)) {
+        if (LinkDataManager.getInstance().getUwbCode_wristbandName().containsValue(name)) {
             try {
                 BleDeviceInfo bleDeviceInfo;
-                if (wristbands.get(name) != null) {
-                    bleDeviceInfo = wristbands.get(name);
+                if (FinalDataManager.getInstance().getWristbands().get(name) != null) {
+                    bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(name);
                 } else {
                     bleDeviceInfo = new BleDeviceInfo();
                     LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
                 }
-                IDataAnalysis leap = DataProcessorFactory.creteProcess(LinkDataManager.TYPE_LEAP);
-                BleDeviceInfo bleDeviceFinal = leap.analysisBLEData(bleDeviceInfo, scanRecord, name);
+                IWristbandDataAnalysis leap = (IWristbandDataAnalysis) DataProcessorFactory.creteProcess(LinkDataManager.TYPE_LEAP, name);
+                BleDeviceInfo bleDeviceFinal = leap.analysisWristbandData(bleDeviceInfo, scanRecord, name);
                 if (bleDeviceFinal == null) {
                     return;
                 }
-                wristbands.put(name, bleDeviceFinal);
+                FinalDataManager.getInstance().getWristbands().put(name, bleDeviceFinal);
                 return;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -199,24 +234,24 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (bleType != null) {
 
             try {
-                int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(name);
-                boolean containsKey = fenceId_uwbData.containsKey(fenceId);
-                if (!containsKey) {
-                    return;
-                }
-                UWBCoordData uwbCoordData = fenceId_uwbData.get(fenceId);
-
-                String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
-                BleDeviceInfo bleDeviceInfoNow = wristbands.get(bracelet_id);
-                if (bleDeviceInfoNow == null) {
-                    return;
-                }
-                IDataAnalysis iDataAnalysis = DataProcessorFactory.creteProcess(bleType);
-                BleDeviceInfo bleDeviceInfoFinal = iDataAnalysis.analysisBLEData(bleDeviceInfoNow, scanRecord, name);
+//                int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(name);
+//                boolean containsKey = fenceId_uwbData.containsKey(fenceId);
+//                if (!containsKey) {
+//                    return;
+//                }
+//                UWBCoordData uwbCoordData = fenceId_uwbData.get(fenceId);
+//
+//                String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
+//                BleDeviceInfo bleDeviceInfoNow = wristbands.get(bracelet_id);
+//                if (bleDeviceInfoNow == null) {
+//                    return;
+//                }
+                IDataAnalysis iDataAnalysis = DataProcessorFactory.creteProcess(bleType, name);
+                BleDeviceInfo bleDeviceInfoFinal = iDataAnalysis.analysisBLEData(scanRecord, name);
                 if (bleDeviceInfoFinal == null) {
                     return;
                 }
-                wristbands.put(bracelet_id, bleDeviceInfoFinal);
+                FinalDataManager.getInstance().getWristbands().put(bleDeviceInfoFinal.getBracelet_id(), bleDeviceInfoFinal);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -225,11 +260,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
     private void connectWebSocket() {
         ThreadPoolManager.getInstance().execute(() -> {
-            String url = "ws://192.168.50.119:8083/websocket/";
+            String url = "ws://47.111.183.148:8083/websocket/";
             String api_token = "projAdmin_fb84d0dbf481f46f8f760ab3092d9a64fe78f217";
-
+            String project_name = BuildConfig.PROJECT_NAME;
             StringBuilder builder = new StringBuilder(url);
-            builder.append("linkfeeling01");
+            builder.append(project_name);
             builder.append("_0");
             builder.append("_2D");
             builder.append(api_token);
@@ -299,22 +334,28 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         boolean within = withinTheScope(newUwb);
         if (within) {
             int fenceId = newUwb.getDevice().getFencePoint().getFenceId();
-            if (fenceId_uwbData.get(fenceId) != null) {
+            if (FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId) != null) {
                 return;
             }
-            if (fenceId_uwbData.containsValue(newUwb)) {
-                LinkSpecificDevice newDevice = newUwb.getDevice();
-                Iterator iterator = fenceId_uwbData.entrySet().iterator();
+            //&& System.currentTimeMillis() - newUwb.getDevice().getReceiveDeviceBleTime() > 4000
+
+            if (newUwb.getDevice().getAbility() != 0 && System.currentTimeMillis() - newUwb.getDevice().getReceiveDeviceBleTime() > 10000) {
+
+                L.i("mmmmmmmmmmm", System.currentTimeMillis() - newUwb.getDevice().getReceiveDeviceBleTime() + "");
+                return;
+            }
+
+            if (FinalDataManager.getInstance().getFenceId_uwbData().containsValue(newUwb)) {
+                Iterator iterator = FinalDataManager.getInstance().getFenceId_uwbData().entrySet().iterator();
                 while (iterator.hasNext()) {
                     Map.Entry entry = (Map.Entry) iterator.next();
                     UWBCoordData oldUwbValue = (UWBCoordData) entry.getValue();
-                    Integer oldUwbKey = (Integer) entry.getKey();
-                    if (oldUwbKey != newDevice.getFencePoint().getFenceId() && oldUwbValue.getCode().equals(newUwb.getCode())) {
+                    if (oldUwbValue.getCode().equals(newUwb.getCode())) {
                         //运动过程中 uwb偏移了
                         if (oldUwbValue.getDevice().getAbility() != 0) {
                             return;
                         }
-                        BleDeviceInfo bleDeviceInfo = wristbands.get(oldUwbValue.getWristband().getBracelet_id());
+                        BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(oldUwbValue.getWristband().getBracelet_id());
                         if (bleDeviceInfo != null) {
                             LinkDataManager.getInstance().cleanBleDeviceInfo(bleDeviceInfo);
                         }
@@ -326,15 +367,15 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             if (newUwb.getWristband().getBracelet_id() == null) {
                 return;
             }
-            BleDeviceInfo bleDeviceInfo = wristbands.get(newUwb.getWristband().getBracelet_id());
+            BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(newUwb.getWristband().getBracelet_id());
             if (bleDeviceInfo != null) {
-                //如果是hiit区域
-                if (newUwb.getDevice().getDeviceName().equals("hiit")) {
+                //如果是HIIT区域
+                if (newUwb.getDevice().getDeviceName().equals("HIIT")) {
                     if (!list.contains(newUwb)) {
                         list.add(newUwb);
                     }
                 } else {
-                    fenceId_uwbData.put(newUwb.getDevice().getFencePoint().getFenceId(), newUwb);
+                    FinalDataManager.getInstance().getFenceId_uwbData().put(newUwb.getDevice().getFencePoint().getFenceId(), newUwb);
                 }
                 bleDeviceInfo.setDevice_name(newUwb.getDevice().getDeviceName());
             }
@@ -342,16 +383,17 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
 
         if (!within) {
-            if (fenceId_uwbData.containsValue(newUwb)) {
-                Iterator iterator = fenceId_uwbData.entrySet().iterator();
+            if (FinalDataManager.getInstance().getFenceId_uwbData().containsValue(newUwb)) {
+                Iterator iterator = FinalDataManager.getInstance().getFenceId_uwbData().entrySet().iterator();
                 while (iterator.hasNext()) {
                     Map.Entry entry = (Map.Entry) iterator.next();
                     UWBCoordData oldUwbValue = (UWBCoordData) entry.getValue();
-                    if (oldUwbValue.getDevice().getAbility() != 0) {
-                        return;
-                    }
+
                     if (oldUwbValue.getCode().equals(newUwb.getCode())) {
-                        BleDeviceInfo bleDeviceInfo = wristbands.get(oldUwbValue.getWristband().getBracelet_id());
+                        if (oldUwbValue.getDevice().getAbility() != 0) {
+                            return;
+                        }
+                        BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(oldUwbValue.getWristband().getBracelet_id());
                         if (bleDeviceInfo != null) {
                             LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
                         }
@@ -365,7 +407,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             while (iterator.hasNext()) {
                 UWBCoordData coordData = iterator.next();
                 if (newUwb.getCode().equals(coordData.getCode())) {
-                    BleDeviceInfo bleDeviceInfo = wristbands.get(coordData.getWristband().getBracelet_id());
+                    BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(coordData.getWristband().getBracelet_id());
                     if (bleDeviceInfo != null) {
                         LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
                         iterator.remove();
@@ -399,11 +441,40 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     }
 
     @Override
-    public void uploadBleStatus(BleDeviceInfo bleDeviceInfo, boolean status) {
-        LinkDataManager.getInstance().cleanFlyBird(bleDeviceInfo);
-        if (!status) {
-            //todo 上传失败做后续操作
+    public void uploadBleStatus(BleDeviceInfo bleDeviceInfo, boolean status, Throwable throwable) {
+        try {
+            if (!status) {
+
+                String s = gson.toJson(bleDeviceInfo);
+                L.i("wwwwwwwwwwww", s);
+                L.i("wwwwwwwwwwww", throwable.getMessage());
+                bleDeviceInfo.setReport(false);
+                updateData(bleDeviceInfo);
+
+            } else {
+                String s = gson.toJson(bleDeviceInfo);
+                L.i("ffffffffffff", s);
+                bleDeviceInfo.setReport(true);
+                updateData(bleDeviceInfo);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        if (!"".equals(bleDeviceInfo.getTime())) {
+
+            LinkDataManager.getInstance().cleanFlyBird(bleDeviceInfo);
+        }
+    }
+
+    private void updateData(BleDeviceInfo bleDeviceInfo) {
+        int index = bleDeviceInfos.indexOf(bleDeviceInfo);
+        if (index == -1) {
+            bleDeviceInfos.add(bleDeviceInfo);
+        } else {
+            bleDeviceInfos.set(index, bleDeviceInfo);
+        }
+        bleAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -412,6 +483,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     }
 
     int line;
+
     //添加日志
     private void addText(TextView textView, String content) {
 

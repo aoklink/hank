@@ -7,8 +7,11 @@ import android.support.multidex.MultiDex;
 import com.link.feeling.framework.base.BaseApplication;
 import com.simple.spiderman.SpiderMan;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
+import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.udp.UDPBroadcast;
 import cn.linkfeeling.link_websocket.Config;
@@ -45,6 +48,7 @@ public class App extends BaseApplication {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+        fix();
 
     }
 
@@ -56,7 +60,8 @@ public class App extends BaseApplication {
         initWakeLock();
 
         initConfig();
-        LinkDataManager.getInstance().createLinkData();
+        LinkDataManager.getInstance().createLinkData(this);
+        FinalDataManager.getInstance().initObject();
 
     }
 
@@ -90,5 +95,18 @@ public class App extends BaseApplication {
         // 获得唤醒锁
         wakeLock.acquire();
 
+    }
+
+    public void fix() {
+        try {
+            Class clazz = Class.forName("java.lang.Daemons$FinalizerWatchdogDaemon");
+            Method method = clazz.getSuperclass().getDeclaredMethod("stop");
+            method.setAccessible(true);
+            Field field = clazz.getDeclaredField("INSTANCE");
+            field.setAccessible(true);
+            method.invoke(field.get(null));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 }

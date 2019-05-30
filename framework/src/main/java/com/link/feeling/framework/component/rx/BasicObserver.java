@@ -6,13 +6,11 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 
-import com.link.feeling.framework.R;
 import com.link.feeling.framework.base.BasePresenter;
 import com.link.feeling.framework.component.net.config.HttpErrorHandler;
 import com.link.feeling.framework.component.net.exception.NetException;
 import com.link.feeling.framework.event.LoginEvent;
 import com.link.feeling.framework.event.UserRegisterEvent;
-import com.link.feeling.framework.utils.data.DisplayUtils;
 import com.link.feeling.framework.utils.rx.Rx2Bus;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -89,11 +87,11 @@ abstract class BasicObserver {
                 });
             } catch (Exception e1) {
                 e1.printStackTrace();
-                mPresenter.showToast(DisplayUtils.getString(R.string.framework_error_get));
+              //  mPresenter.showToast(DisplayUtils.getString(R.string.framework_error_get));
 
             }
         } else {
-            mPresenter.showToast(DisplayUtils.getString(R.string.framework_error_get));
+          //  mPresenter.showToast(DisplayUtils.getString(R.string.framework_error_get));
         }
     }
 
@@ -136,7 +134,7 @@ abstract class BasicObserver {
             super.handleMessage(msg);
             if (msg.what == WHAT_LOADING && msg.obj instanceof BasePresenter && sLoadingStatus.get()) {
                 BasePresenter presenter = (BasePresenter) msg.obj;
-                presenter.showLoadingStatus(true);
+              //  presenter.showLoadingStatus(true);
             }
         }
     }

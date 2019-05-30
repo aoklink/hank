@@ -129,7 +129,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
                 + request);
 
         //群发，服务端向每个连接上来的客户端群发消息
-        Global.group.writeAndFlush(tws);
+       // Global.group.writeAndFlush(tws);
     }
 
     /**

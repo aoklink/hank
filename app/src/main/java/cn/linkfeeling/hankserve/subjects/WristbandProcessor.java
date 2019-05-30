@@ -6,9 +6,9 @@ import android.util.SparseArray;
 import java.util.Arrays;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
-import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
-import cn.linkfeeling.hankserve.utils.HexUtil;
-import cn.linkfeeling.hankserve.utils.ScanRecordUtil;
+import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
+import cn.linkfeeling.hankserve.utils.CalculateUtil;
+import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
 
 /**
@@ -16,7 +16,7 @@ import cn.linkfeeling.hankserve.utils.ScanRecordUtil;
  * @time 2019/3/15
  * 手环数据解析
  */
-public class WristbandProcessor implements IDataAnalysis {
+public class WristbandProcessor extends IWristbandDataAnalysis {
 
     public static WristbandProcessor getInstance() {
         return WristbandProcessor.WristbandProcessorHolder.sWristbandProcessor;
@@ -28,32 +28,34 @@ public class WristbandProcessor implements IDataAnalysis {
 
 
     @Override
-    public BleDeviceInfo analysisBLEData(BleDeviceInfo bleDeviceInfo, byte[] bytes, String bleName) {
-
-
-
+    public BleDeviceInfo analysisWristbandData(BleDeviceInfo bleDeviceInfo, byte[] bytes, String bleName) {
         if (bytes == null) {
             return null;
         }
-        ScanRecordUtil scanRecordUtil = ScanRecordUtil.parseFromBytes(bytes);
-        if (scanRecordUtil == null) {
+
+        LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(bytes);
+        Log.i("jjjjjjjjjjjjjj", Arrays.toString(linkScanRecord.getManufacturerSpecificData().valueAt(0)));
+
+        if (linkScanRecord == null) {
             return null;
         }
 
-        Log.i("hhhhhhhhhhhhhhhh"+bleName,Arrays.toString(bytes));
+        Log.i("hhhhhhhhhhhhhhhh" + bleName, Arrays.toString(bytes));
 
-        SparseArray<byte[]> manufacturerSpecificData = scanRecordUtil.getManufacturerSpecificData();
+        SparseArray<byte[]> manufacturerSpecificData = linkScanRecord.getManufacturerSpecificData();
         if (manufacturerSpecificData != null && manufacturerSpecificData.size() != 0) {
             byte[] bytes1 = manufacturerSpecificData.valueAt(0);
             if (bytes1 == null || bytes1.length == 0) {
                 return null;
             }
+
+
             byte[] heart = new byte[1];
             heart[0] = bytes1[0];
-           int heartInt = Integer.parseInt(HexUtil.encodeHexStr(heart), 16);
+            int heartInt = CalculateUtil.byteArrayToInt(heart);
             String heatRate = String.valueOf(heartInt);
 
-            Log.i("cccccccccccccccc"+bleName,heatRate);
+            Log.i("cccccccccccccccc" + bleName, heatRate);
             bleDeviceInfo.setBracelet_id(bleName);
             bleDeviceInfo.setHeart_rate(heatRate);
         }

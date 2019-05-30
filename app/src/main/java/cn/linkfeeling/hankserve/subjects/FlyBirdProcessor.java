@@ -1,16 +1,20 @@
 package cn.linkfeeling.hankserve.subjects;
 
+
+import android.os.ParcelUuid;
 import android.util.Log;
-import android.util.SparseArray;
 
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
+import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
-import cn.linkfeeling.hankserve.utils.ScanRecordUtil;
+import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
 
 /**
@@ -20,91 +24,87 @@ import cn.linkfeeling.hankserve.utils.ScanRecordUtil;
  */
 public class FlyBirdProcessor implements IDataAnalysis {
     private int serialNum = -1;
+    public static ConcurrentHashMap<String, FlyBirdProcessor> map;
 
-
-    public static FlyBirdProcessor getInstance() {
-        return FlyBirdProcessorHolder.sFlyBirdProcessor;
-    }
-
-    private static class FlyBirdProcessorHolder {
-        private static final FlyBirdProcessor sFlyBirdProcessor = new FlyBirdProcessor();
+    static {
+        map = new ConcurrentHashMap<>();
     }
 
     @Override
-    public BleDeviceInfo analysisBLEData(final BleDeviceInfo bleDeviceInfo, byte[] scanRecord, String bleName) {
-
+    public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
+        BleDeviceInfo bleDeviceInfoNow = null;
         if (scanRecord == null) {
             return null;
         }
 
+        Log.i("ppppppppp", Arrays.toString(scanRecord));
+        LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
+        if (linkScanRecord == null) {
+            return null;
+        }
+        byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
+        Log.i("999999999", Arrays.toString(serviceData));
 
-        ScanRecordUtil scanRecordUtil = ScanRecordUtil.parseFromBytes(scanRecord);
-        if (scanRecordUtil == null) {
+        if (serviceData == null || serialNum == serviceData[12]) {
+            return null;
+        }
+        if (serviceData[0] == 0 || serviceData[13] == 0) {
             return null;
         }
 
 
-        SparseArray<byte[]> manufacturerSpecificData = scanRecordUtil.getManufacturerSpecificData();
-        if (manufacturerSpecificData != null && manufacturerSpecificData.size() != 0) {
-            final byte[] bytes1 = manufacturerSpecificData.valueAt(0);
-            Log.i("fly bird", bleName + "-----" + Arrays.toString(bytes1));
-
-            LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
-            if (deviceByBleName == null) {
-                return null;
-            }
-            deviceByBleName.setAbility(bytes1[0]);
-
-            if (bytes1[0] == 0 && bytes1[12] == 0 && bytes1[14] == 0) {
-                return null;
-            }
-
-
-            if (serialNum == bytes1[10]) {
-                return null;
-            }
-            serialNum = bytes1[10];
-
-
-            //在拉伸的过程中  原始数据不为0  但是质量和次数为0
-            if (bytes1[12] == 0 || bytes1[14] == 0) {
-                return null;
-            }
-
-
-            byte[] gravityBtye=new byte[1];
-            gravityBtye[0]=bytes1[12];
-            int gravity = byteArrayToInt(gravityBtye);
-
-
-            float v = CalculateUtil.txFloat(gravity, 10);
-            bleDeviceInfo.setGravity(String.valueOf(v));
-            Log.i("lllllllll",String.valueOf(v));
-            bleDeviceInfo.setTime(String.valueOf(bytes1[14]));
+        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
+        if (deviceByBleName == null) {
+            return null;
         }
-        return bleDeviceInfo;
+//        if(serviceData[0]!=0 && serviceData[0]!=-1){
+//            deviceByBleName.setAbility(serviceData[0]);
+//        }
+
+
+        deviceByBleName.setAbility(serviceData[0]);
+
+        byte serviceTemp = serviceData[12];
+        if (serviceTemp < serialNum && (serialNum - serviceTemp) <= 15) {
+            return null;
+
+        }
+
+
+        serialNum = serviceData[12];
+
+        if (serviceData[0] == -1 && serviceData[1] == -1) {
+            deviceByBleName.setAbility(0);
+
+            byte act_time = serviceData[13];
+            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+            boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
+            if (!containsKey) {
+                return null;
+            }
+            UWBCoordData uwbCoordData = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId);
+
+            String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
+            bleDeviceInfoNow = FinalDataManager.getInstance().getWristbands().get(bracelet_id);
+            if (bleDeviceInfoNow == null) {
+                return null;
+            }
+
+
+            byte[] gravity = new byte[2];
+            gravity[0] = serviceData[11];
+            gravity[1] = serviceData[10];
+
+            int act_gravity = CalculateUtil.byteArrayToInt(gravity);
+
+
+            float v = CalculateUtil.txFloat(act_gravity, 100);
+            bleDeviceInfoNow.setGravity(String.valueOf(v));
+            bleDeviceInfoNow.setTime(String.valueOf(act_time));
+        }
+        return bleDeviceInfoNow;
 
     }
 
 
-    /**
-     * 将4字节的byte数组转成一个int值
-     * @param b
-     * @return
-     */
-    public static int byteArrayToInt(byte[] b){
-        byte[] a = new byte[4];
-        int i = a.length - 1,j = b.length - 1;
-        for (; i >= 0 ; i--,j--) {//从b的尾部(即int值的低位)开始copy数据
-            if(j >= 0)
-                a[i] = b[j];
-            else
-                a[i] = 0;//如果b.length不足4,则将高位补0
-        }
-        int v0 = (a[0] & 0xff) << 24;//&0xff将byte值无差异转成int,避免Java自动类型提升后,会保留高位的符号位
-        int v1 = (a[1] & 0xff) << 16;
-        int v2 = (a[2] & 0xff) << 8;
-        int v3 = (a[3] & 0xff) ;
-        return v0 + v1 + v2 + v3;
-    }
 }

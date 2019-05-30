@@ -14,6 +14,8 @@ public class LinkSpecificDevice {
     private float ability;  //设备的当前速度，判断是否在运转
     private UWBCoordData.FencePoint fencePoint;
 
+    private long receiveDeviceBleTime;  //接收设备ble发出非零数据的时间
+
     private List<LinkBLE> linkBLES;
 
     public float getAbility() {
@@ -21,7 +23,14 @@ public class LinkSpecificDevice {
     }
 
     public void setAbility(float ability) {
+        if (ability == 0) {
+            receiveDeviceBleTime = 0;
+        } else if (this.ability == 0) {
+            receiveDeviceBleTime = System.currentTimeMillis();
+        }
         this.ability = ability;
+
+
     }
 
     public int getId() {
@@ -63,4 +72,9 @@ public class LinkSpecificDevice {
     public void setLinkBLES(List<LinkBLE> linkBLES) {
         this.linkBLES = linkBLES;
     }
+
+    public long getReceiveDeviceBleTime() {
+        return receiveDeviceBleTime;
+    }
+
 }
