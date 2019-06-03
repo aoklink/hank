@@ -218,6 +218,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
 
 
+
 //        ByteBuf resp = Unpooled.copiedBuffer("6666".getBytes());
 //        ctx.write(resp);
 //

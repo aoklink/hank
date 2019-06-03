@@ -56,6 +56,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private ScrollView scrollView;
     private Gson gson = new Gson();
     private SimpleDateFormat simpleDateFormat;
+    private   Disposable disposable;
 
 
     @Override
@@ -80,6 +81,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         }
         UDPBroadcast.udpBroadcast(this);
         connectWebSocket();
+
+        startIntervalListener();
     }
 
 
@@ -131,35 +134,38 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             }
         });
 
-        startIntervalListener();
+
     }
 
 
     private void startIntervalListener() {
-        Disposable disposable = Observable.interval(INTERVAL_TIME, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(aLong -> {
-                    Log.i("nnnnnnnnnn",App.getApplication().getChannelsNum()+"");
-                    if (wristbands != null && !wristbands.isEmpty() && App.getApplication().getChannelsNum() > 0) {
-                        for (Map.Entry<String, BleDeviceInfo> entry : wristbands.entrySet()) {
-                            BleDeviceInfo value = entry.getValue();
-                            if (value != null && !TextUtils.isEmpty(value.getSpeed())) {
-                                if (Float.parseFloat(value.getSpeed()) == 0) {
-                                    value.setDistance(String.valueOf((float) 0));
-                                } else {
-                                    BigDecimal bigDecimal = CalculateUtil.floatDivision(INTERVAL_TIME * Float.parseFloat(value.getSpeed()), 3600);
-                                    value.setDistance(bigDecimal.toString());
+        if(disposable==null){
+            disposable = Observable.interval(INTERVAL_TIME, TimeUnit.SECONDS)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribe(aLong -> {
+                        Log.i("nnnnnnnnnn",App.getApplication().getChannelsNum()+"");
+                        if (wristbands != null && !wristbands.isEmpty() && App.getApplication().getChannelsNum() > 0) {
+                            for (Map.Entry<String, BleDeviceInfo> entry : wristbands.entrySet()) {
+                                BleDeviceInfo value = entry.getValue();
+                                if (value != null && !TextUtils.isEmpty(value.getSpeed())) {
+                                    if (Float.parseFloat(value.getSpeed()) == 0) {
+                                        value.setDistance(String.valueOf((float) 0));
+                                    } else {
+                                        BigDecimal bigDecimal = CalculateUtil.floatDivision(INTERVAL_TIME * Float.parseFloat(value.getSpeed()), 3600);
+                                        value.setDistance(bigDecimal.toString());
+                                    }
                                 }
-                            }
-                            String s = gson.toJson(value);
-                            L.i("rrrrrrrrrrrrrrrr", s);
+                                String s = gson.toJson(value);
+                                L.i("rrrrrrrrrrrrrrrr", s);
 
-                            //   getPresenter().uploadBleData(value);
-                            runOnUiThread(() -> addText(tv_logCat, s));
+                                //   getPresenter().uploadBleData(value);
+                                runOnUiThread(() -> addText(tv_logCat, s));
+                            }
                         }
-                    }
-                });
+                    });
+        }
+
     }
 
     /**
@@ -421,5 +427,15 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         textView.append(content);
         line++;
         textView.append("\n\n");
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (disposable != null && !disposable.isDisposed()) {
+            disposable.dispose();
+            disposable = null;
+        }
     }
 }
