@@ -48,7 +48,7 @@ public class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
 //        ByteBuf delimiter = Unpooled.copiedBuffer("||".getBytes());
 //        pipeline.addLast("framer", new DelimiterBasedFrameDecoder(2048, delimiter));
 
-        pipeline.addLast(new FixedLengthFrameDecoder(31));
+        pipeline.addLast(new FixedLengthFrameDecoder(5));
       //  pipeline.addLast(new LineBasedFrameDecoder(2048));
         pipeline.addLast("handler", new MyWebSocketHandler(socketCallBack));
         //   pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));

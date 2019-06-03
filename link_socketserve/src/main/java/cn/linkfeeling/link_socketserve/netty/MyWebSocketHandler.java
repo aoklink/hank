@@ -44,7 +44,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
     private WebSocketServerHandshaker handshaker;
     private SocketCallBack socketCallBack;
-    private   byte[] dataByte;
+    private byte[] dataByte;
 
 
     public MyWebSocketHandler(SocketCallBack socketCallBack) {
@@ -56,7 +56,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<ByteBuf> {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Global.group.add(ctx.channel());
 
-    //    ctx.channel().read();
+        //    ctx.channel().read();
         System.out.println("客户端与服务端连接开启...");
         Log.i("3333333333333", "客户端与服务端连接开启...");
 
@@ -70,13 +70,13 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<ByteBuf> {
     //客户端与服务端断开连接的时候调用
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-            Global.group.remove(ctx.channel());
-            System.out.println("客户端与服务端连接关闭...");
-            Log.i("3333333333333", "客户端与服务端连接关闭...");
-            InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-            String hostAddress = socketAddress.getAddress().getHostAddress();
+        Global.group.remove(ctx.channel());
+        System.out.println("客户端与服务端连接关闭...");
+        Log.i("3333333333333", "客户端与服务端连接关闭...");
+        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+        String hostAddress = socketAddress.getAddress().getHostAddress();
 
-            socketCallBack.disconnectSuccess(hostAddress, Global.group.size());
+        socketCallBack.disconnectSuccess(hostAddress, Global.group.size());
     }
 
     //服务端接收客户端发送过来的数据结束之后调用
@@ -201,14 +201,15 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<ByteBuf> {
     protected void channelRead0(ChannelHandlerContext context, ByteBuf bf) throws Exception {
         //处理客户端向服务端发起http握手请求的业务
 
-
+        Log.i("dddddddddddddd---", Arrays.toString(bf.array()));
+        Log.i("dddddddddddddd---", bf.readableBytes() + "");
 
 
         dataByte = new byte[bf.readableBytes()];
         bf.readBytes(dataByte);
 
-     //   String body = new String(req, "UTF-8");
-        System.out.println("cccccccccccccc---"+Arrays.toString(dataByte));
+        //   String body = new String(req, "UTF-8");
+        System.out.println("cccccccccccccc---" + Arrays.toString(dataByte));
 
 //        ByteBuf resp = Unpooled.copiedBuffer("6666".getBytes());
 //        ctx.write(resp);
@@ -221,7 +222,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
     public String convertByteBufToString(ByteBuf buf) {
         String str;
-        if(buf.hasArray()) { // 处理堆缓冲区
+        if (buf.hasArray()) { // 处理堆缓冲区
             str = new String(buf.array(), buf.arrayOffset() + buf.readerIndex(), buf.readableBytes());
         } else { // 处理直接缓冲区以及复合缓冲区
             byte[] bytes = new byte[buf.readableBytes()];
