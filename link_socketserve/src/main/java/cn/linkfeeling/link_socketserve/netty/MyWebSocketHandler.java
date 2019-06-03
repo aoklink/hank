@@ -64,13 +64,13 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
     //客户端与服务端断开连接的时候调用
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-            Global.group.remove(ctx.channel());
-            System.out.println("客户端与服务端连接关闭...");
-            Log.i("3333333333333", "客户端与服务端连接关闭...");
-            InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-            String hostAddress = socketAddress.getAddress().getHostAddress();
+        Global.group.remove(ctx.channel());
+        System.out.println("客户端与服务端连接关闭...");
+        Log.i("3333333333333", "客户端与服务端连接关闭...");
+        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+        String hostAddress = socketAddress.getAddress().getHostAddress();
 
-            socketCallBack.disconnectSuccess(hostAddress, Global.group.size());
+        socketCallBack.disconnectSuccess(hostAddress, Global.group.size());
     }
 
     //服务端接收客户端发送过来的数据结束之后调用
@@ -113,23 +113,21 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
         //返回应答消息
         //获取客户端向服务端发送的消息
         String request = ((TextWebSocketFrame) frame).text();
-
         ScanData scanData = new Gson().fromJson(request, ScanData.class);
-
-        socketCallBack.getSubjectData(scanData);
-
-
-        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-        System.out.println("服务端收到客户端" + socketAddress.getAddress().getHostAddress() + "的消息" + new Gson().toJson(scanData));
+        socketCallBack.getSubjectData(scanData, ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress());
 
 
-        TextWebSocketFrame tws = new TextWebSocketFrame(new Date().toString()
-                + ctx.channel().id()
-                + " ===>>> "
-                + request);
+//        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+        Log.i("fffffffffff", "服务端收到客户端" + ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress() + "的消息" + new Gson().toJson(scanData));
+
+//
+//        TextWebSocketFrame tws = new TextWebSocketFrame(new Date().toString()
+//                + ctx.channel().id()
+//                + " ===>>> "
+//                + request);
 
         //群发，服务端向每个连接上来的客户端群发消息
-       // Global.group.writeAndFlush(tws);
+        // Global.group.writeAndFlush(tws);
     }
 
     /**

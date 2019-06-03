@@ -21,7 +21,7 @@ public class Test {
             }
 
             @Override
-            public void getSubjectData(ScanData data) {
+            public void getSubjectData(ScanData data,String ip) {
 
             }
         });

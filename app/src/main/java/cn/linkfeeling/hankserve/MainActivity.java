@@ -55,7 +55,7 @@ import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
 
 public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUploadView, IUploadContract.IBleUploadPresenter> implements IUploadContract.IBleUploadView {
     private List<UWBCoordData> list = new ArrayList<>();
-    private TextView tv_ipTip, tv_ipTipRemove;
+    private TextView tv_ipTip, tv_ipTipRemove, receiver_ip;
     private Gson gson = new Gson();
     private SimpleDateFormat simpleDateFormat;
 
@@ -74,6 +74,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     protected void init(@Nullable Bundle savedInstanceState) {
         tv_ipTip = findViewById(R.id.tv_ipTip);
         tv_ipTipRemove = findViewById(R.id.tv_ipTipRemove);
+        receiver_ip = findViewById(R.id.receiver_ip);
         tv_ipTip.setMovementMethod(ScrollingMovementMethod.getInstance());
         tv_ipTipRemove.setMovementMethod(ScrollingMovementMethod.getInstance());
 
@@ -109,7 +110,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                             @Override
                             public void run() {
                                 App.getApplication().setChannelsNum(channelsNum);
-
                                 tv_ipTip.append(ip + "连接成功");
                                 tv_ipTip.append("\n");
                                 tv_ipTip.append(simpleDateFormat.format(System.currentTimeMillis()));
@@ -135,17 +135,19 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     }
 
                     @Override
-                    public void getSubjectData(ScanData data) {
+                    public void getSubjectData(ScanData data, String ip) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                receiver_ip.setText(ip);
+                            }
+                        });
                         Log.i("server_receive_data", gson.toJson(data));
                         Log.i("thread_rece", Thread.currentThread().getName());
-//                        onLeScanSelf(data.getName(), data.getRssi(), data.getScanRecord());
                         ThreadPoolManager.getInstance().execute(new Runnable() {
                             @Override
                             public void run() {
-
                                 Log.i("thread_rece", Thread.currentThread().getName());
-
-
                                 onLeScanSelf(data.getName(), data.getRssi(), data.getScanRecord());
                             }
                         });

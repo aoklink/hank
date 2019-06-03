@@ -12,7 +12,7 @@ public interface SocketCallBack {
     void connectSuccess(String ip,int channelsNum);
     void disconnectSuccess(String ip,int channelsNum );
 
-    void  getSubjectData(ScanData data);
+    void  getSubjectData(ScanData data,String ip);
 
 
 }
