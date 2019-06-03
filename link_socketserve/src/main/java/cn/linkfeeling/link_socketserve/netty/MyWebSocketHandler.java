@@ -201,8 +201,13 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<ByteBuf> {
     protected void channelRead0(ChannelHandlerContext context, ByteBuf bf) throws Exception {
         //处理客户端向服务端发起http握手请求的业务
 
+
+
+
         Log.i("dddddddddddddd---", Arrays.toString(bf.array()));
         Log.i("dddddddddddddd---", bf.readableBytes() + "");
+        Log.i("dddddddddddddd---",Thread.currentThread().getName());
+
 
 
         dataByte = new byte[bf.readableBytes()];
@@ -210,6 +215,8 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
         //   String body = new String(req, "UTF-8");
         System.out.println("cccccccccccccc---" + Arrays.toString(dataByte));
+
+
 
 //        ByteBuf resp = Unpooled.copiedBuffer("6666".getBytes());
 //        ctx.write(resp);

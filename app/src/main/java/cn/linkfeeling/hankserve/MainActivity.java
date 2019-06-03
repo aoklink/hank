@@ -69,7 +69,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         tv_ipTipRemove = findViewById(R.id.tv_ipTipRemove);
         tv_ipTip.setMovementMethod(ScrollingMovementMethod.getInstance());
         tv_ipTipRemove.setMovementMethod(ScrollingMovementMethod.getInstance());
-        tv_logCat = findViewById(R.id.tv_logCat);
         scrollView = findViewById(R.id.scrollView);
         scrollView.fullScroll(ScrollView.FOCUS_DOWN);
 
