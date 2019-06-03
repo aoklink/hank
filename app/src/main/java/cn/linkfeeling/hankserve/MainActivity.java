@@ -137,7 +137,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     @Override
                     public void getSubjectData(ScanData data) {
                         Log.i("server_receive_data", gson.toJson(data));
-                        Log.i("thread_rece",Thread.currentThread().getName());
+                        Log.i("thread_rece", Thread.currentThread().getName());
 //                        onLeScanSelf(data.getName(), data.getRssi(), data.getScanRecord());
                         ThreadPoolManager.getInstance().execute(new Runnable() {
                             @Override
@@ -181,7 +181,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                             L.i("rrrrrrrrrrrrrrrr", s);
 
 
-                            //   getPresenter().uploadBleData(value);
+                            getPresenter().uploadBleData(value);
 
                         }
                     }
