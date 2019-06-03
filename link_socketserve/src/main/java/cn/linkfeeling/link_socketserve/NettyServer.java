@@ -37,7 +37,6 @@ public class NettyServer {
         sb.group(bossGroup, workGroup).
                 channel(NioServerSocketChannel.class).
                 option(ChannelOption.SO_BACKLOG, 1024)
-                .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childHandler(new ChildChannelHandler(socketCallBack));
 
         try {
