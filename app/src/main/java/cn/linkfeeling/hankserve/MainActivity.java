@@ -137,10 +137,15 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     @Override
                     public void getSubjectData(ScanData data) {
                         Log.i("server_receive_data", gson.toJson(data));
-                        //   onLeScanSelf(data.getName(), data.getRssi(), data.getScanRecord());
+                        Log.i("thread_rece",Thread.currentThread().getName());
+//                        onLeScanSelf(data.getName(), data.getRssi(), data.getScanRecord());
                         ThreadPoolManager.getInstance().execute(new Runnable() {
                             @Override
                             public void run() {
+
+                                Log.i("thread_rece", Thread.currentThread().getName());
+
+
                                 onLeScanSelf(data.getName(), data.getRssi(), data.getScanRecord());
                             }
                         });
@@ -170,24 +175,13 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 } else {
                                     BigDecimal bigDecimal = CalculateUtil.floatDivision(INTERVAL_TIME * Float.parseFloat(value.getSpeed()), 3600);
                                     value.setDistance(bigDecimal.toString());
-
-//
-//                                    runOnUiThread(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            totalDistance = totalDistance + Double.parseDouble(value.getDistance());
-//                                            tv_total_distance.setText(totalDistance + "");
-//                                        }
-//                                    });
-
-
                                 }
                             }
                             String s = gson.toJson(value);
                             L.i("rrrrrrrrrrrrrrrr", s);
 
 
-                            getPresenter().uploadBleData(value);
+                            //   getPresenter().uploadBleData(value);
 
                         }
                     }
@@ -232,20 +226,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
         String bleType = LinkDataManager.getInstance().getDeviceBleTypeMaps().get(name);
         if (bleType != null) {
-
             try {
-//                int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(name);
-//                boolean containsKey = fenceId_uwbData.containsKey(fenceId);
-//                if (!containsKey) {
-//                    return;
-//                }
-//                UWBCoordData uwbCoordData = fenceId_uwbData.get(fenceId);
-//
-//                String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
-//                BleDeviceInfo bleDeviceInfoNow = wristbands.get(bracelet_id);
-//                if (bleDeviceInfoNow == null) {
-//                    return;
-//                }
                 IDataAnalysis iDataAnalysis = DataProcessorFactory.creteProcess(bleType, name);
                 BleDeviceInfo bleDeviceInfoFinal = iDataAnalysis.analysisBLEData(scanRecord, name);
                 if (bleDeviceInfoFinal == null) {
@@ -337,14 +318,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             if (FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId) != null) {
                 return;
             }
-            //&& System.currentTimeMillis() - newUwb.getDevice().getReceiveDeviceBleTime() > 4000
-
             if (newUwb.getDevice().getAbility() != 0 && System.currentTimeMillis() - newUwb.getDevice().getReceiveDeviceBleTime() > 10000) {
 
                 L.i("mmmmmmmmmmm", System.currentTimeMillis() - newUwb.getDevice().getReceiveDeviceBleTime() + "");
                 return;
             }
-
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsValue(newUwb)) {
                 Iterator iterator = FinalDataManager.getInstance().getFenceId_uwbData().entrySet().iterator();
                 while (iterator.hasNext()) {
@@ -480,19 +458,5 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     @Override
     public IUploadContract.IBleUploadPresenter createPresenter() {
         return new UploadPresenter();
-    }
-
-    int line;
-
-    //添加日志
-    private void addText(TextView textView, String content) {
-
-        if (line == 500) {
-            textView.setText(null);
-            line = 0;
-        }
-        textView.append(content);
-        line++;
-        textView.append("\n\n");
     }
 }
