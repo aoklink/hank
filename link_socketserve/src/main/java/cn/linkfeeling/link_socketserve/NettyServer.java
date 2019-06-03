@@ -36,14 +36,15 @@ public class NettyServer {
         //3、
         sb.group(bossGroup, workGroup).
                 channel(NioServerSocketChannel.class).
-                option(ChannelOption.SO_BACKLOG, 1024).
-                childHandler(new ChildChannelHandler(socketCallBack));
+                option(ChannelOption.SO_BACKLOG, 1024)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childHandler(new ChildChannelHandler(socketCallBack));
 
         try {
-            Log.i("vvvvvvvvvvvvv","服务已启动等待连接");
+            Log.i("vvvvvvvvvvvvv", "服务已启动等待连接");
             //4、绑定端口，同步等待成功
             ChannelFuture cf = sb.bind(PORT).sync();
-            Log.i("vvvvvvvvvvvvv","服务已启动等待连接");
+            Log.i("vvvvvvvvvvvvv", "服务已启动等待连接");
             //5、等待服务端监听端口关闭
             cf.channel().closeFuture().sync();
         } catch (InterruptedException e) {

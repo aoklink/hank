@@ -118,7 +118,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
 
 //        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-        Log.i("fffffffffff", "服务端收到客户端" + ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress() + "的消息" + new Gson().toJson(scanData));
+        Log.i("zzzzzzzzz", "服务端收到客户端" + ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress() + "的消息" + new Gson().toJson(scanData));
 
 //
 //        TextWebSocketFrame tws = new TextWebSocketFrame(new Date().toString()

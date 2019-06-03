@@ -1,6 +1,5 @@
 package cn.linkfeeling.hankserve;
 
-import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -23,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import cn.linkfeeling.hankserve.adapter.BLEAdapter;
@@ -36,7 +33,6 @@ import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
-import cn.linkfeeling.hankserve.udp.UDPBroadcast;
 import cn.linkfeeling.hankserve.ui.IUploadContract;
 import cn.linkfeeling.hankserve.ui.UploadPresenter;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
