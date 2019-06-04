@@ -1,6 +1,8 @@
 package cn.linkfeeling.hankserve;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.ScanRecord;
+import android.bluetooth.le.ScanResult;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,6 +39,7 @@ import cn.linkfeeling.hankserve.udp.UDPBroadcast;
 import cn.linkfeeling.hankserve.ui.IUploadContract;
 import cn.linkfeeling.hankserve.ui.UploadPresenter;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
+import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 import cn.linkfeeling.link_socketserve.NettyServer;
 import cn.linkfeeling.link_socketserve.bean.ScanData;
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
@@ -52,8 +55,7 @@ import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
 
 public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUploadView, IUploadContract.IBleUploadPresenter> implements IUploadContract.IBleUploadView {
     private List<UWBCoordData> list = new ArrayList<>();
-    private TextView tv_ipTip, tv_logCat, tv_ipTipRemove;
-    private ScrollView scrollView;
+    private TextView tv_ipTip, tv_ipTipRemove;
     private Gson gson = new Gson();
     private SimpleDateFormat simpleDateFormat;
     private   Disposable disposable;
@@ -70,8 +72,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         tv_ipTipRemove = findViewById(R.id.tv_ipTipRemove);
         tv_ipTip.setMovementMethod(ScrollingMovementMethod.getInstance());
         tv_ipTipRemove.setMovementMethod(ScrollingMovementMethod.getInstance());
-        scrollView = findViewById(R.id.scrollView);
-        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
 
         simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
 
@@ -79,9 +79,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (!App.getApplication().isStart()) {
             startServer();
         }
-        UDPBroadcast.udpBroadcast(this);
+       // UDPBroadcast.udpBroadcast(this);
         connectWebSocket();
-
         startIntervalListener();
     }
 
@@ -94,21 +93,17 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 NettyServer.getInstance().bind(new SocketCallBack() {
                     @Override
                     public void connectSuccess(String ip, int channelsNum) {
-
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 App.getApplication().setChannelsNum(channelsNum);
-
                                 tv_ipTip.append(ip + "连接成功");
                                 tv_ipTip.append("\n");
                                 tv_ipTip.append(simpleDateFormat.format(System.currentTimeMillis()));
                                 tv_ipTip.append("\n\n");
                             }
                         });
-
                     }
-
                     @Override
                     public void disconnectSuccess(String ip, int channelsNum) {
                         runOnUiThread(new Runnable() {
@@ -121,11 +116,18 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 tv_ipTipRemove.append("\n\n");
                             }
                         });
-
                     }
                     @Override
                     public void getBLEStream(byte[] stream) {
+                        ThreadPoolManager.getInstance().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.i("thread_rece", Thread.currentThread().getName());
+                               // onLeScanSelf(data.getName(), data.getRssi(), data.getScanRecord());
+                                onLeScanSelf(stream);
 
+                            }
+                        });
 
 
                     }
@@ -166,22 +168,20 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         }
     }
 
+
+
     /**
      * 处理蓝牙广播数据
      *
      * @author zhangyong
      * @time 2019/3/20 14:55
      */
-    private void onLeScanSelf(BluetoothDevice device, int rssi, byte[] scanRecord) {
-
-        String name = device.getName();
-
-        if (name == null) {
+    private void onLeScanSelf(byte[] scanRecord) {
+        LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
+        String name = linkScanRecord.getDeviceName();
+        if(name==null){
             return;
         }
-
-        Log.i("11111111111111", name + name);
-
         if (LinkDataManager.getInstance().getUwbCode_wristbandName().containsValue(name)) {
             try {
                 BleDeviceInfo bleDeviceInfo;
@@ -414,20 +414,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     public IUploadContract.IBleUploadPresenter createPresenter() {
         return new UploadPresenter();
     }
-
-    int line;
-    //添加日志
-    private void addText(TextView textView, String content) {
-
-        if (line == 500) {
-            textView.setText(null);
-            line = 0;
-        }
-        textView.append(content);
-        line++;
-        textView.append("\n\n");
-    }
-
 
     @Override
     protected void onDestroy() {
