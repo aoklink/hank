@@ -59,6 +59,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private BLEAdapter bleAdapter;
 
     private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
+    private Disposable disposable;
 
 
     @Override
@@ -90,6 +91,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         bleAdapter = new BLEAdapter(this, bleDeviceInfos);
         recycleView.setAdapter(bleAdapter);
 
+
+        startIntervalListener();
     }
 
 
@@ -154,36 +157,39 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             }
         });
 
-        startIntervalListener();
+
     }
 
 
     private void startIntervalListener() {
-        Disposable disposable = Observable.interval(INTERVAL_TIME, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(aLong -> {
-                    if (FinalDataManager.getInstance().getWristbands() != null && !FinalDataManager.getInstance().getWristbands().isEmpty()) {
-                        Log.i("Disposable", "Disposable");
-                        for (Map.Entry<String, BleDeviceInfo> entry : FinalDataManager.getInstance().getWristbands().entrySet()) {
-                            BleDeviceInfo value = entry.getValue();
-                            if (value != null && !TextUtils.isEmpty(value.getSpeed())) {
-                                if (Float.parseFloat(value.getSpeed()) == 0) {
-                                    value.setDistance(String.valueOf((float) 0));
-                                } else {
-                                    BigDecimal bigDecimal = CalculateUtil.floatDivision(INTERVAL_TIME * Float.parseFloat(value.getSpeed()), 3600);
-                                    value.setDistance(bigDecimal.toString());
+        if(disposable==null){
+            disposable = Observable.interval(INTERVAL_TIME, TimeUnit.SECONDS)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribe(aLong -> {
+                        if (FinalDataManager.getInstance().getWristbands() != null && !FinalDataManager.getInstance().getWristbands().isEmpty()) {
+                            Log.i("Disposable", "Disposable");
+                            for (Map.Entry<String, BleDeviceInfo> entry : FinalDataManager.getInstance().getWristbands().entrySet()) {
+                                BleDeviceInfo value = entry.getValue();
+                                if (value != null && !TextUtils.isEmpty(value.getSpeed())) {
+                                    if (Float.parseFloat(value.getSpeed()) == 0) {
+                                        value.setDistance(String.valueOf((float) 0));
+                                    } else {
+                                        BigDecimal bigDecimal = CalculateUtil.floatDivision(INTERVAL_TIME * Float.parseFloat(value.getSpeed()), 3600);
+                                        value.setDistance(bigDecimal.toString());
+                                    }
                                 }
+                                String s = gson.toJson(value);
+                                L.i("rrrrrrrrrrrrrrrr", s);
+
+
+                                getPresenter().uploadBleData(value);
+
                             }
-                            String s = gson.toJson(value);
-                            L.i("rrrrrrrrrrrrrrrr", s);
-
-
-                            getPresenter().uploadBleData(value);
-
                         }
-                    }
-                });
+                    });
+        }
+
     }
 
     /**
@@ -457,4 +463,14 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     public IUploadContract.IBleUploadPresenter createPresenter() {
         return new UploadPresenter();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (disposable != null && !disposable.isDisposed()) {
+            disposable.dispose();
+            disposable = null;
+        }
+    }
+
 }
