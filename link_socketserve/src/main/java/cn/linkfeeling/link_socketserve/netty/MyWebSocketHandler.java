@@ -122,7 +122,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
         ScanData scanData = new Gson().fromJson(request, ScanData.class);
 
-        socketCallBack.getSubjectData(scanData);
+     //   socketCallBack.getSubjectData(scanData);
 
 
         InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
@@ -215,6 +215,8 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
         //   String body = new String(req, "UTF-8");
         System.out.println("cccccccccccccc---" + Arrays.toString(dataByte));
+
+        socketCallBack.getBLEStream(dataByte);
 
 
 

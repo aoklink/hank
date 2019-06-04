@@ -16,6 +16,15 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "GYM_NAME", "\"${GYM_NAME}\""
+            buildConfigField "String", "PROJECT_NAME", "\"${PROJECT_NAME}\""
+        }
+
+        debug{
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "GYM_NAME", "\"${GYM_NAME}\""
+            buildConfigField "String", "PROJECT_NAME", "\"${PROJECT_NAME}\""
         }
     }
 
@@ -45,4 +54,6 @@ dependencies {
     releaseImplementation('com.simple:spiderman-no-op:1.1.0') {
         exclude group: "com.android.support"
     }
+
+    implementation 'com.google.code.gson:gson:2.8.5'
 }

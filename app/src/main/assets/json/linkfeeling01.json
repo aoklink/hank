@@ -1,0 +1,188 @@
+{
+  "uwb_wristband": {
+    "0000183c": "LEAP 2FC2",
+    "00001e27": "LEAP 0DDA",
+    "0000183f": "LEAP 0ADB",
+    "00002096": "LEAP BFF4"
+  },
+  "deviceInfo": [
+    {
+      "id": 0,
+      "deviceName": "HIIT",
+      "type": "HIIT",
+      "fencePoint": {
+        "fenceId": 0,
+        "left_top": {
+          "x": 870.0,
+          "y": 0.0
+        },
+        "right_top": {
+          "x": 1476.0,
+          "y": 0.0
+        },
+        "left_bottom": {
+          "x": 870.0,
+          "y": 512.0
+        },
+        "right_bottom": {
+          "x": 1476.0,
+          "y": 512.0
+        }
+      }
+    },
+    {
+      "id": 1,
+      "deviceName": "跑步机01",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 1,
+        "left_top": {
+          "x": 0.0,
+          "y": 281.0
+        },
+        "right_top": {
+          "x": 312.0,
+          "y": 281.0
+        },
+        "left_bottom": {
+          "x": 0.0,
+          "y": 417.0
+        },
+        "right_bottom": {
+          "x": 312.0,
+          "y": 417.0
+        }
+      },
+      "linkBLES": [
+        {
+          "bleId": 1,
+          "bleName": "LKFL02",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "deviceName": "单车",
+      "type": "单车",
+      "fencePoint": {
+        "fenceId": 2,
+        "left_top": {
+          "x": 1.0,
+          "y": 6.0
+        },
+        "right_top": {
+          "x": 316.0,
+          "y": 6.0
+        },
+        "left_bottom": {
+          "x": 1.0,
+          "y": 147.0
+        },
+        "right_bottom": {
+          "x": 316.0,
+          "y": 147.0
+        }
+      },
+      "linkBLES": [
+        {
+          "bleId": 2,
+          "bleName": "LKFL03",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "deviceName": "椭圆机",
+      "type": "椭圆机",
+      "fencePoint": {
+        "fenceId": 3,
+        "left_top": {
+          "x": 0.0,
+          "y": 158.0
+        },
+        "right_top": {
+          "x": 357.0,
+          "y": 158.0
+        },
+        "left_bottom": {
+          "x": 0.0,
+          "y": 275.0
+        },
+        "right_bottom": {
+          "x": 357.0,
+          "y": 275.0
+        }
+      },
+      "linkBLES": [
+        {
+          "bleId": 3,
+          "bleName": "LKFL05",
+          "type": "椭圆机t3"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "deviceName": "飞鸟架01",
+      "type": "飞鸟架01",
+      "fencePoint": {
+        "fenceId": 4,
+        "left_top": {
+          "x": 578.0,
+          "y": 9.0
+        },
+        "right_top": {
+          "x": 860.0,
+          "y": 9.0
+        },
+        "left_bottom": {
+          "x": 578.0,
+          "y": 417.0
+        },
+        "right_bottom": {
+          "x": 860.0,
+          "y": 417.0
+        }
+      },
+      "linkBLES": [
+        {
+          "bleId": 4,
+          "bleName": "LKFL06",
+          "type": "飞鸟左"
+        },{
+          "bleId": 5,
+          "bleName": "LKFL07",
+          "type": "飞鸟左"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "deviceName": "飞鸟架02",
+      "type": "飞鸟架02",
+      "fencePoint": {
+        "fenceId": 5,
+        "left_top": {
+          "x": 0.0,
+          "y": 1041.0
+        },
+        "right_top": {
+          "x": 550.0,
+          "y": 1041.0
+        },
+        "left_bottom": {
+          "x": 0.0,
+          "y": 1781.0
+        },
+        "right_bottom": {
+          "x": 550.0,
+          "y": 1781.0
+        }
+      }
+    }
+  ]
+}
+
+

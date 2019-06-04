@@ -1,6 +1,8 @@
 package cn.linkfeeling.hankserve.factory;
 
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.subjects.BicycleProcessor;
@@ -16,7 +18,7 @@ import cn.linkfeeling.hankserve.subjects.WristbandProcessor;
 public class DataProcessorFactory {
 
 
-    public static IDataAnalysis creteProcess(String type) {
+    public static IDataAnalysis creteProcess(String type, String name) {
         switch (type) {
 
             case LinkDataManager.TYPE_LEAP:
@@ -32,7 +34,19 @@ public class DataProcessorFactory {
                 return OvalProcessor.getInstance();
 
             case LinkDataManager.BIRD_1:
-                return FlyBirdProcessor.getInstance();
+
+                ConcurrentHashMap<String, FlyBirdProcessor> map = FlyBirdProcessor.map;
+                if (map != null) {
+                    FlyBirdProcessor flyBirdProcessor = map.get(name);
+                    if (flyBirdProcessor != null) {
+                        return flyBirdProcessor;
+                    } else {
+                        FlyBirdProcessor flyBirdProcessorNew = new FlyBirdProcessor();
+                        FlyBirdProcessor.map.put(name, flyBirdProcessorNew);
+                        return flyBirdProcessorNew;
+                    }
+                }
+                return null;
 
 
             default:
