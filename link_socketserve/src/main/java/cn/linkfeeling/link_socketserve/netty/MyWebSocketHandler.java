@@ -13,6 +13,7 @@ import java.util.Date;
 
 import cn.linkfeeling.link_socketserve.bean.ScanData;
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
+import cn.linkfeeling.link_socketserve.unpack.SmartCarProtocol;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -40,7 +41,7 @@ import io.netty.util.CharsetUtil;
  *
  * @author liuyazhuang
  */
-public class MyWebSocketHandler extends SimpleChannelInboundHandler<ByteBuf> {
+public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
 
     private WebSocketServerHandshaker handshaker;
     private SocketCallBack socketCallBack;
@@ -197,38 +198,45 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<ByteBuf> {
 //        }
 //    }
 
+//    @Override
+//    protected void channelRead0(ChannelHandlerContext context, ByteBuf bf) throws Exception {
+//        //处理客户端向服务端发起http握手请求的业务
+//
+//
+//
+//
+//        Log.i("dddddddddddddd---", Arrays.toString(bf.array()));
+//        Log.i("dddddddddddddd---", bf.readableBytes() + "");
+//        Log.i("dddddddddddddd---",Thread.currentThread().getName());
+//
+//
+//
+//        dataByte = new byte[bf.readableBytes()];
+//        bf.readBytes(dataByte);
+//
+//        //   String body = new String(req, "UTF-8");
+//        System.out.println("cccccccccccccc---" + Arrays.toString(dataByte));
+//
+//        socketCallBack.getBLEStream(dataByte);
+//
+//
+//
+//
+////        ByteBuf resp = Unpooled.copiedBuffer("6666".getBytes());
+////        ctx.write(resp);
+////
+////
+////        System.out.println("bbbbbbbbbbbbbbb-----"+Arrays.toString(bf.array()).trim());
+////        System.out.println("bbbbbbbbbbbbbbb-----"+bf.array().length);
+//    }
+
+
     @Override
-    protected void channelRead0(ChannelHandlerContext context, ByteBuf bf) throws Exception {
-        //处理客户端向服务端发起http握手请求的业务
-
-
-
-
-        Log.i("dddddddddddddd---", Arrays.toString(bf.array()));
-        Log.i("dddddddddddddd---", bf.readableBytes() + "");
-        Log.i("dddddddddddddd---",Thread.currentThread().getName());
-
-
-
-        dataByte = new byte[bf.readableBytes()];
-        bf.readBytes(dataByte);
-
-        //   String body = new String(req, "UTF-8");
-        System.out.println("cccccccccccccc---" + Arrays.toString(dataByte));
-
-        socketCallBack.getBLEStream(dataByte);
-
-
-
-
-//        ByteBuf resp = Unpooled.copiedBuffer("6666".getBytes());
-//        ctx.write(resp);
-//
-//
-//        System.out.println("bbbbbbbbbbbbbbb-----"+Arrays.toString(bf.array()).trim());
-//        System.out.println("bbbbbbbbbbbbbbb-----"+bf.array().length);
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        super.channelRead(ctx, msg);
+        SmartCarProtocol body = (SmartCarProtocol) msg;
+        System.out.println("Server接受的客户端的信息 :" + body.toString());
     }
-
 
     public String convertByteBufToString(ByteBuf buf) {
         String str;

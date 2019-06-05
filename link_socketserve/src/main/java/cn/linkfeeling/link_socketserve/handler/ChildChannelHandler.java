@@ -3,6 +3,8 @@ package cn.linkfeeling.link_socketserve.handler;
 
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
 import cn.linkfeeling.link_socketserve.netty.MyWebSocketHandler;
+import cn.linkfeeling.link_socketserve.unpack.SmartCarDecoder;
+import cn.linkfeeling.link_socketserve.unpack.SmartCarEncoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelInitializer;
@@ -48,8 +50,12 @@ public class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
 //        ByteBuf delimiter = Unpooled.copiedBuffer("||".getBytes());
 //        pipeline.addLast("framer", new DelimiterBasedFrameDecoder(2048, delimiter));
 
-        pipeline.addLast(new FixedLengthFrameDecoder(62));
+        //pipeline.addLast(new FixedLengthFrameDecoder(62));
         //  pipeline.addLast(new LineBasedFrameDecoder(2048));
+
+        // 添加自定义协议的编解码工具
+        pipeline.addLast(new SmartCarEncoder());
+        pipeline.addLast(new SmartCarDecoder());
         pipeline.addLast(group, "handler", new MyWebSocketHandler(socketCallBack));
         //   pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
 
