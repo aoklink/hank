@@ -25,9 +25,9 @@ public final class LinkOkHttpClient {
     public static OkHttpClient okHttpClient() {
         if (sClient == null) {
             OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                    .connectTimeout(2, TimeUnit.SECONDS)
-                    .readTimeout(2, TimeUnit.SECONDS)
-                    .writeTimeout(6, TimeUnit.SECONDS)
+                    .connectTimeout(20, TimeUnit.SECONDS)
+                    .readTimeout(20, TimeUnit.SECONDS)
+                    .writeTimeout(20, TimeUnit.SECONDS)
                     .retryOnConnectionFailure(true);
             builder.addNetworkInterceptor(new LoggingInterceptor());
             builder.addInterceptor(new CommonParamsInterceptor());
