@@ -38,4 +38,14 @@
                 android:textColor="@android:color/holo_green_dark" />
         </LinearLayout>
     </ScrollView>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycleView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/white"
+        />
+
 </LinearLayout>

@@ -12,6 +12,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
+import static io.netty.channel.ChannelOption.SO_RCVBUF;
+
 public class NettyServer {
     private static final int PORT = 9999;
 

@@ -1,6 +1,7 @@
 package cn.linkfeeling.link_socketserve.interfaces;
 
 import cn.linkfeeling.link_socketserve.bean.ScanData;
+import cn.linkfeeling.link_socketserve.unpack.SmartCarProtocol;
 import io.netty.channel.group.ChannelGroup;
 
 /**
@@ -12,7 +13,7 @@ public interface SocketCallBack {
     void connectSuccess(String ip,int channelsNum);
     void disconnectSuccess(String ip,int channelsNum );
 
-    void getBLEStream(byte[] stream);
+    void getBLEStream(SmartCarProtocol tbody);
 
 
 }

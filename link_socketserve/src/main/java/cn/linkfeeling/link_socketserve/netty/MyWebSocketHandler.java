@@ -234,8 +234,9 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         super.channelRead(ctx, msg);
+        Log.i("xxxxxxxxxxx",Thread.currentThread().getName());
         SmartCarProtocol body = (SmartCarProtocol) msg;
-        System.out.println("Server接受的客户端的信息 :" + body.toString());
+        socketCallBack.getBLEStream(body);
     }
 
     public String convertByteBufToString(ByteBuf buf) {

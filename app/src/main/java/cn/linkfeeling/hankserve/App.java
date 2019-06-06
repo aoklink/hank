@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
+import cn.linkfeeling.hankserve.alarm.LinkAlarmManager;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.udp.UDPBroadcast;
@@ -62,6 +63,7 @@ public class App extends BaseApplication {
         initConfig();
         LinkDataManager.getInstance().createLinkData(this);
         FinalDataManager.getInstance().initObject();
+        LinkAlarmManager.getInstance().startRemind(this);
 
     }
 
@@ -97,7 +99,7 @@ public class App extends BaseApplication {
 
     }
 
-    public  void fix() {
+    public void fix() {
         try {
             Class clazz = Class.forName("java.lang.Daemons$FinalizerWatchdogDaemon");
             Method method = clazz.getSuperclass().getDeclaredMethod("stop");
@@ -105,8 +107,7 @@ public class App extends BaseApplication {
             Field field = clazz.getDeclaredField("INSTANCE");
             field.setAccessible(true);
             method.invoke(field.get(null));
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }

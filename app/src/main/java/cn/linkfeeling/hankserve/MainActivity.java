@@ -1,15 +1,13 @@
 package cn.linkfeeling.hankserve;
 
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.le.ScanRecord;
-import android.bluetooth.le.ScanResult;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -23,9 +21,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import cn.linkfeeling.hankserve.adapter.BLEAdapter;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
@@ -35,14 +33,13 @@ import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
-import cn.linkfeeling.hankserve.udp.UDPBroadcast;
 import cn.linkfeeling.hankserve.ui.IUploadContract;
 import cn.linkfeeling.hankserve.ui.UploadPresenter;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 import cn.linkfeeling.link_socketserve.NettyServer;
-import cn.linkfeeling.link_socketserve.bean.ScanData;
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
+import cn.linkfeeling.link_socketserve.unpack.SmartCarProtocol;
 import cn.linkfeeling.link_websocket.RxWebSocket;
 import cn.linkfeeling.link_websocket.WebSocketSubscriber;
 import io.reactivex.Observable;
@@ -58,8 +55,12 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private TextView tv_ipTip, tv_ipTipRemove;
     private Gson gson = new Gson();
     private SimpleDateFormat simpleDateFormat;
-    private   Disposable disposable;
+    private Disposable disposable;
 
+    private RecyclerView recycleView;
+    private BLEAdapter bleAdapter;
+
+    private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
 
     @Override
     protected int getLayoutRes() {
@@ -68,6 +69,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
     @Override
     protected void init(@Nullable Bundle savedInstanceState) {
+        recycleView = findViewById(R.id.recycleView);
         tv_ipTip = findViewById(R.id.tv_ipTip);
         tv_ipTipRemove = findViewById(R.id.tv_ipTipRemove);
         tv_ipTip.setMovementMethod(ScrollingMovementMethod.getInstance());
@@ -76,10 +78,14 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
 
 
+        recycleView.setLayoutManager(new LinearLayoutManager(this));
+        bleAdapter = new BLEAdapter(this, bleDeviceInfos);
+        recycleView.setAdapter(bleAdapter);
+
         if (!App.getApplication().isStart()) {
             startServer();
         }
-       // UDPBroadcast.udpBroadcast(this);
+        // UDPBroadcast.udpBroadcast(this);
         connectWebSocket();
         startIntervalListener();
     }
@@ -104,6 +110,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                             }
                         });
                     }
+
                     @Override
                     public void disconnectSuccess(String ip, int channelsNum) {
                         runOnUiThread(new Runnable() {
@@ -117,15 +124,16 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                             }
                         });
                     }
+
                     @Override
-                    public void getBLEStream(byte[] stream) {
+                    public void getBLEStream(SmartCarProtocol smartCarProtocol) {
+                        Log.i("ppppppppppp", Thread.currentThread().getName());
                         ThreadPoolManager.getInstance().execute(new Runnable() {
                             @Override
                             public void run() {
-                                Log.i("thread_rece", Thread.currentThread().getName());
-                               // onLeScanSelf(data.getName(), data.getRssi(), data.getScanRecord());
-                                onLeScanSelf(stream);
-
+                                Log.i("wwwwwwww", Thread.currentThread().getName());
+                                Log.i("Server接受的客户端的信息", smartCarProtocol.toString());
+                                onLeScanSelf(smartCarProtocol.getContent());
                             }
                         });
 
@@ -160,14 +168,13 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 String s = gson.toJson(value);
                                 L.i("rrrrrrrrrrrrrrrr", s);
 
-                                //  getPresenter().uploadBleData(value);
+                                getPresenter().uploadBleData(value);
 
                             }
                         }
                     });
         }
     }
-
 
 
     /**
@@ -179,9 +186,12 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private void onLeScanSelf(byte[] scanRecord) {
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         String name = linkScanRecord.getDeviceName();
-        if(name==null){
+        if (name == null) {
             return;
         }
+
+
+        Log.i("nnnnnnnnnnnnn", name);
         if (LinkDataManager.getInstance().getUwbCode_wristbandName().containsValue(name)) {
             try {
                 BleDeviceInfo bleDeviceInfo;
@@ -403,11 +413,38 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     }
 
     @Override
-    public void uploadBleStatus(BleDeviceInfo bleDeviceInfo, boolean status) {
-        LinkDataManager.getInstance().cleanFlyBird(bleDeviceInfo);
-        if (!status) {
-            //todo 上传失败做后续操作
+    public void uploadBleStatus(BleDeviceInfo bleDeviceInfo, boolean status, Throwable throwable) {
+        try {
+            if (!status) {
+
+                String s = gson.toJson(bleDeviceInfo);
+                L.i("wwwwwwwwwwww", s);
+                L.i("wwwwwwwwwwww", throwable.getMessage());
+                bleDeviceInfo.setReport(false);
+                updateData(bleDeviceInfo);
+            } else {
+                String s = gson.toJson(bleDeviceInfo);
+                L.i("ffffffffffff", s);
+                bleDeviceInfo.setReport(true);
+                updateData(bleDeviceInfo);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        if (!"".equals(bleDeviceInfo.getTime())) {
+            LinkDataManager.getInstance().cleanFlyBird(bleDeviceInfo);
+        }
+    }
+
+    private void updateData(BleDeviceInfo bleDeviceInfo) {
+        int index = bleDeviceInfos.indexOf(bleDeviceInfo);
+        if (index == -1) {
+            bleDeviceInfos.add(bleDeviceInfo);
+        } else {
+            bleDeviceInfos.set(index, bleDeviceInfo);
+        }
+        bleAdapter.notifyDataSetChanged();
     }
 
     @Override
