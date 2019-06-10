@@ -22,6 +22,7 @@ import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkBLE;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
+import cn.linkfeeling.hankserve.bean.Wristband;
 
 import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
 
@@ -375,4 +376,56 @@ public class LinkDataManager {
     }
 
 
+    public boolean withinTheScope(UWBCoordData uwbCoorData) {
+
+        double x = uwbCoorData.getX();
+        double y = uwbCoorData.getY();
+
+        List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().getDevicesData();
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            UWBCoordData.FencePoint fencePoint = devicesDatum.getFencePoint();
+            double x1 = fencePoint.getLeft_top().getX();
+            double y1 = fencePoint.getLeft_top().getY();
+            double x2 = fencePoint.getRight_bottom().getX();
+            double y2 = fencePoint.getRight_bottom().getY();
+
+            if ((x > x1 && x < x2) && (y > y1 && y < y2)) {
+                uwbCoorData.setDevice(devicesDatum);
+                uwbCoorData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoorData.getCode())));
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+
+
+
+
+    /**
+     * 判断一个点是否在凸四边形内
+     * @param uwbCoorData
+     * @return
+     */
+    private boolean isPointInRect(UWBCoordData uwbCoorData) {
+        double x = uwbCoorData.getX();
+        double y = uwbCoorData.getY();
+        List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().getDevicesData();
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            UWBCoordData.FencePoint fencePoint = devicesDatum.getFencePoint();
+            UWBCoordData.FencePoint.Point A = fencePoint.getRight_top();
+            UWBCoordData.FencePoint.Point B = fencePoint.getLeft_top();
+            UWBCoordData.FencePoint.Point C = fencePoint.getLeft_bottom();
+            UWBCoordData.FencePoint.Point D = fencePoint.getRight_bottom();
+            final double a = (B.x - A.x) * (y - A.y) - (B.y - A.y) * (x - A.x);
+            final double b = (C.x - B.x) * (y - B.y) - (C.y - B.y) * (x - B.x);
+            final double c = (D.x - C.x) * (y - C.y) - (D.y - C.y) * (x - C.x);
+            final double d = (A.x - D.x) * (y - D.y) - (A.y - D.y) * (x - D.x);
+            if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

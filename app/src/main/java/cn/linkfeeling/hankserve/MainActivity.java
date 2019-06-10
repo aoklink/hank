@@ -127,12 +127,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
                     @Override
                     public void getBLEStream(SmartCarProtocol smartCarProtocol) {
-                        Log.i("ppppppppppp", Thread.currentThread().getName());
                         ThreadPoolManager.getInstance().execute(new Runnable() {
                             @Override
                             public void run() {
-                                Log.i("wwwwwwww", Thread.currentThread().getName());
-                                Log.i("Server接受的客户端的信息", smartCarProtocol.toString());
                                 onLeScanSelf(smartCarProtocol.getContent());
                             }
                         });
@@ -154,7 +151,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     .observeOn(Schedulers.io())
                     .subscribe(aLong -> {
                         if (FinalDataManager.getInstance().getWristbands() != null && !FinalDataManager.getInstance().getWristbands().isEmpty()) {
-                            Log.i("Disposable", "Disposable");
                             for (Map.Entry<String, BleDeviceInfo> entry : FinalDataManager.getInstance().getWristbands().entrySet()) {
                                 BleDeviceInfo value = entry.getValue();
                                 if (value != null && !TextUtils.isEmpty(value.getSpeed())) {
@@ -303,7 +299,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (newUwb == null) {
             return;
         }
-        boolean within = withinTheScope(newUwb);
+        boolean within = LinkDataManager.getInstance().withinTheScope(newUwb);
         if (within) {
             int fenceId = newUwb.getDevice().getFencePoint().getFenceId();
             if (FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId) != null) {
@@ -387,29 +383,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 }
             }
         }
-    }
-
-    private boolean withinTheScope(UWBCoordData uwbCoorData) {
-
-        double x = uwbCoorData.getX();
-        double y = uwbCoorData.getY();
-
-        List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().getDevicesData();
-        for (LinkSpecificDevice devicesDatum : devicesData) {
-            UWBCoordData.FencePoint fencePoint = devicesDatum.getFencePoint();
-            double x1 = fencePoint.getLeft_top().getX();
-            double y1 = fencePoint.getLeft_top().getY();
-            double x2 = fencePoint.getRight_bottom().getX();
-            double y2 = fencePoint.getRight_bottom().getY();
-
-            if ((x > x1 && x < x2) && (y > y1 && y < y2)) {
-                uwbCoorData.setDevice(devicesDatum);
-                uwbCoorData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoorData.getCode())));
-                return true;
-            }
-
-        }
-        return false;
     }
 
     @Override

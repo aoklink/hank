@@ -56,7 +56,7 @@ public class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
         // 添加自定义协议的编解码工具
         pipeline.addLast(new SmartCarEncoder());
         pipeline.addLast(new SmartCarDecoder());
-        pipeline.addLast(group, "handler", new MyWebSocketHandler(socketCallBack));
+        pipeline.addLast( "handler", new MyWebSocketHandler(socketCallBack));
         //   pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
 
 

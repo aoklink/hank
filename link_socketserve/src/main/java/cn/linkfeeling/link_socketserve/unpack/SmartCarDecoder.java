@@ -2,6 +2,7 @@ package cn.linkfeeling.link_socketserve.unpack;
 
 import android.util.Log;
 
+import java.net.InetSocketAddress;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -29,11 +30,13 @@ public class SmartCarDecoder extends ByteToMessageDecoder {
 	 */
 	public final int BASE_LENGTH = 2 + 1;
 
+	private SmartCarProtocol protocol;
+
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf buffer,
 			List<Object> out) throws Exception {
 
-		Log.i("qqqqqqqqqqqqq",Thread.currentThread().getName());
+		Log.i("qqqqqqqqqqqqq",((InetSocketAddress)ctx.channel().remoteAddress()).getAddress().getHostAddress());
 
 		// 可读长度必须大于基本长度
 		if (buffer.readableBytes() >= BASE_LENGTH) {
@@ -81,7 +84,7 @@ public class SmartCarDecoder extends ByteToMessageDecoder {
 			byte[] data = new byte[length];
 			buffer.readBytes(data);
 
-			SmartCarProtocol protocol = new SmartCarProtocol((byte) data.length, data);
+			protocol = new SmartCarProtocol((byte) data.length, data);
 			out.add(protocol);
 		}
 	}
