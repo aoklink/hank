@@ -299,7 +299,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (newUwb == null) {
             return;
         }
-        boolean within = LinkDataManager.getInstance().withinTheScope(newUwb);
+        boolean within = LinkDataManager.getInstance().isPointInRect(newUwb);
         if (within) {
             int fenceId = newUwb.getDevice().getFencePoint().getFenceId();
             if (FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId) != null) {

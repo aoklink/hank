@@ -408,7 +408,7 @@ public class LinkDataManager {
      * @param uwbCoorData
      * @return
      */
-    private boolean isPointInRect(UWBCoordData uwbCoorData) {
+    public boolean isPointInRect(UWBCoordData uwbCoorData) {
         double x = uwbCoorData.getX();
         double y = uwbCoorData.getY();
         List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().getDevicesData();
@@ -423,6 +423,8 @@ public class LinkDataManager {
             final double c = (D.x - C.x) * (y - C.y) - (D.y - C.y) * (x - C.x);
             final double d = (A.x - D.x) * (y - D.y) - (A.y - D.y) * (x - D.x);
             if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
+                uwbCoorData.setDevice(devicesDatum);
+                uwbCoorData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoorData.getCode())));
                 return true;
             }
         }
