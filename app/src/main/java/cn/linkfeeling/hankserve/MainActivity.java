@@ -141,12 +141,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 receiver_ip.setText(ip);
                             }
                         });
-                        Log.i("server_receive_data", gson.toJson(data));
-                        Log.i("thread_rece111", Thread.currentThread().getName());
                         ThreadPoolManager.getInstance().execute(new Runnable() {
                             @Override
                             public void run() {
-                                Log.i("thread_rece", Thread.currentThread().getName());
                                 onLeScanSelf(data.getName(), data.getRssi(), data.getScanRecord());
                             }
                         });

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="欢迎进入HANK服务端，请按说明使用！！"
+        android:text="HANK服务端，请按说明使用！！"
         android:textSize="20sp" />
 
 
