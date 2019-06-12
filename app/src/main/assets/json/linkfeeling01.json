@@ -1,11 +1,10 @@
 {
   "uwb_wristband": {
-    "0000183c": "LEAP 2FC2",
-    "00001e27": "LEAP 0DDA",
+    "0000183c": "LEAP B1CC",
+    "00001e27": "LEAP 04C0",
     "0000183f": "LEAP 0ADB",
     "00002096": "LEAP BFF4",
-    "00001e17": "LEAP 97E5",
-    "0000209a": "LEAP 1BC0"
+    "00001e17": "LEAP 97E5"
   },
   "deviceInfo": [
     {

@@ -33,6 +33,8 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
 
 
@@ -46,6 +48,7 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
     private WebSocketServerHandshaker handshaker;
     private SocketCallBack socketCallBack;
     private byte[] dataByte;
+    private int lossConnectCount = 0;
 
 
     public MyWebSocketHandler(SocketCallBack socketCallBack) {
@@ -59,13 +62,9 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
 
         //    ctx.channel().read();
         System.out.println("客户端与服务端连接开启...");
-        Log.i("3333333333333", "客户端与服务端连接开启...");
+        socketCallBack.connectSuccess(((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress(), Global.group.size());
+        super.channelActive(ctx);
 
-        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-        String hostAddress = socketAddress.getAddress().getHostAddress();
-        Log.i("客户端ip_address", hostAddress);
-
-        socketCallBack.connectSuccess(hostAddress, Global.group.size());
     }
 
     //客户端与服务端断开连接的时候调用
@@ -73,11 +72,10 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Global.group.remove(ctx.channel());
         System.out.println("客户端与服务端连接关闭...");
-        Log.i("3333333333333", "客户端与服务端连接关闭...");
-        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-        String hostAddress = socketAddress.getAddress().getHostAddress();
 
-        socketCallBack.disconnectSuccess(hostAddress, Global.group.size());
+        socketCallBack.disconnectSuccess(((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress(), Global.group.size());
+        super.channelActive(ctx);
+
     }
 
     //服务端接收客户端发送过来的数据结束之后调用
@@ -123,7 +121,7 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
 
         ScanData scanData = new Gson().fromJson(request, ScanData.class);
 
-     //   socketCallBack.getSubjectData(scanData);
+        //   socketCallBack.getSubjectData(scanData);
 
 
         InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
@@ -232,9 +230,25 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
 
 
     @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent event = (IdleStateEvent) evt;
+            if (event.state() == IdleState.READER_IDLE) {
+                lossConnectCount++;
+                if (lossConnectCount == 5) {
+                    ctx.channel().close();
+                }
+            }
+        } else {
+            super.userEventTriggered(ctx, evt);
+        }
+    }
+
+    @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         super.channelRead(ctx, msg);
-        Log.i("xxxxxxxxxxx",Thread.currentThread().getName());
+        Log.i("xxxxxxxxxxx", Thread.currentThread().getName());
+        lossConnectCount = 0;
         SmartCarProtocol body = (SmartCarProtocol) msg;
         socketCallBack.getBLEStream(body);
     }

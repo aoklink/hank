@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -46,6 +48,7 @@ import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.WebSocket;
+import okio.AsyncTimeout;
 import okio.ByteString;
 
 import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
@@ -61,6 +64,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private BLEAdapter bleAdapter;
 
     private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
+
 
     @Override
     protected int getLayoutRes() {
@@ -186,7 +190,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             return;
         }
 
-
         Log.i("nnnnnnnnnnnnn", name);
         if (LinkDataManager.getInstance().getUwbCode_wristbandName().containsValue(name)) {
             try {
@@ -257,7 +260,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             @Override
             protected void onMessage(@NonNull String text) {
                 super.onMessage(text);
-                L.i("========", "onMessageString---" + text);
                 dealMessage(text);
 
             }
@@ -423,6 +425,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     @Override
     public IUploadContract.IBleUploadPresenter createPresenter() {
         return new UploadPresenter();
+    }
+
+
+    @Override
+    public void onBackPressed() {
     }
 
     @Override

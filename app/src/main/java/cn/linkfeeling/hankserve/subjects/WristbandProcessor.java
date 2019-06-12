@@ -34,8 +34,6 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
         }
 
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(bytes);
-        Log.i("jjjjjjjjjjjjjj", Arrays.toString(linkScanRecord.getManufacturerSpecificData().valueAt(0)));
-
         if (linkScanRecord == null) {
             return null;
         }
