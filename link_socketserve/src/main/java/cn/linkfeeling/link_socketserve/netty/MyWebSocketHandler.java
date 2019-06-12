@@ -62,7 +62,7 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
 
         //    ctx.channel().read();
         System.out.println("客户端与服务端连接开启...");
-        socketCallBack.connectSuccess(((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress(), Global.group.size());
+        socketCallBack.connectSuccess(((InetSocketAddress) ctx.channel().remoteAddress()).getHostString(), Global.group.size());
         super.channelActive(ctx);
 
     }
@@ -73,7 +73,7 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
         Global.group.remove(ctx.channel());
         System.out.println("客户端与服务端连接关闭...");
 
-        socketCallBack.disconnectSuccess(((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress(), Global.group.size());
+        socketCallBack.disconnectSuccess(((InetSocketAddress) ctx.channel().remoteAddress()).getHostString(), Global.group.size());
         super.channelActive(ctx);
 
     }
@@ -247,9 +247,11 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         super.channelRead(ctx, msg);
-        Log.i("xxxxxxxxxxx", Thread.currentThread().getName());
+
         lossConnectCount = 0;
         SmartCarProtocol body = (SmartCarProtocol) msg;
+        String hostString = ((InetSocketAddress) ctx.channel().remoteAddress()).getHostString();
+        Log.i("xxxxxxxxxxx", hostString);
         socketCallBack.getBLEStream(body);
     }
 
