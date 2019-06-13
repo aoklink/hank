@@ -149,7 +149,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
     }
 
-
     private void startIntervalListener() {
         if (disposable == null) {
             disposable = Observable.interval(INTERVAL_TIME, TimeUnit.SECONDS)
