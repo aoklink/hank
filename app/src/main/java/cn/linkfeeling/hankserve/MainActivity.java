@@ -79,7 +79,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         tv_ipTip.setMovementMethod(ScrollingMovementMethod.getInstance());
         tv_ipTipRemove.setMovementMethod(ScrollingMovementMethod.getInstance());
 
-        simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
+        simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm:ss:SSS");
 
 
         recycleView.setLayoutManager(new LinearLayoutManager(this));
@@ -131,12 +131,14 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
                     @Override
                     public void getBLEStream(SmartCarProtocol smartCarProtocol) {
-                        ThreadPoolManager.getInstance().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                onLeScanSelf(smartCarProtocol.getContent());
-                            }
-                        });
+
+                        onLeScanSelf(smartCarProtocol.getContent());
+//                        ThreadPoolManager.getInstance().execute(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                onLeScanSelf(smartCarProtocol.getContent());
+//                            }
+//                        });
 
 
                     }
