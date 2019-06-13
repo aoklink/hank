@@ -149,8 +149,13 @@
       },
       "linkBLES": [
         {
-          "bleId": 5,
+          "bleId": 4,
           "bleName": "LKFL12",
+          "type": "飞鸟左"
+        },
+        {
+          "bleId": 5,
+          "bleName": "LKFL13",
           "type": "飞鸟左"
         }
       ]

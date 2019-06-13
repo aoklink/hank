@@ -57,6 +57,13 @@ public class FlyBirdProcessor implements IDataAnalysis {
 //        }
 
 
+
+
+        byte serviceTemp = serviceData[11];
+        if (serviceTemp < serialNum && (serialNum - serviceTemp) <= 10) {
+            return null;
+
+        }
         deviceByBleName.setAbility(serviceData[0]);
 
         serialNum = serviceData[11];

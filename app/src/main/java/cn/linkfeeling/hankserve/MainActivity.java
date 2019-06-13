@@ -361,6 +361,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     UWBCoordData oldUwbValue = (UWBCoordData) entry.getValue();
 
                     if (oldUwbValue.getCode().equals(newUwb.getCode())) {
+
+                        L.i("bbbbbbbbbbb",oldUwbValue.getDevice().getDeviceName()+"---"+oldUwbValue.getDevice().getAbility());
                         if (oldUwbValue.getDevice().getAbility() != 0) {
                             return;
                         }
