@@ -22,8 +22,6 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  */
 public class OvalProcessor implements IDataAnalysis {
 
-
-    private static final float perimeter = 2.04f;   //单位 米
     float speed;
 
     public static OvalProcessor getInstance() {
@@ -52,24 +50,7 @@ public class OvalProcessor implements IDataAnalysis {
         }
 
         Log.i("vvvvvvv", Arrays.toString(serviceData));
-        byte[] turns = new byte[2];
-        turns[0] = serviceData[0];
-        turns[1] = serviceData[1];
 
-
-        byte[] ticks = new byte[2];
-        ticks[0] = serviceData[3];
-        ticks[1] = serviceData[2];
-
-        if (CalculateUtil.byteArrayToInt(ticks) == 0) {
-            speed = 0;
-        } else if (turns[0] == -1 && turns[1] == -1) {
-            speed = 0;
-        } else {
-            BigDecimal bigDecimal = CalculateUtil.floatDivision(perimeter, (float) CalculateUtil.byteArrayToInt(ticks));
-            speed = calculateEllipticalSpeed(bigDecimal.floatValue() * 3600);
-            Log.i("ticks", speed + "");
-        }
 
 
 //        Log.i("tttttttttttttt", Arrays.toString(scanRecord));
@@ -87,6 +68,26 @@ public class OvalProcessor implements IDataAnalysis {
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
         if (deviceByBleName == null) {
             return null;
+        }
+
+
+        byte[] turns = new byte[2];
+        turns[0] = serviceData[0];
+        turns[1] = serviceData[1];
+
+
+        byte[] ticks = new byte[2];
+        ticks[0] = serviceData[3];
+        ticks[1] = serviceData[2];
+
+        if (CalculateUtil.byteArrayToInt(ticks) == 0) {
+            speed = 0;
+        } else if (turns[0] == -1 && turns[1] == -1) {
+            speed = 0;
+        } else {
+            BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
+            speed = calculateEllipticalSpeed(bigDecimal.floatValue() * 3600);
+            Log.i("ticks", speed + "");
         }
 
         deviceByBleName.setAbility(speed);

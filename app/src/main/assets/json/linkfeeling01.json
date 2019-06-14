@@ -66,6 +66,7 @@
       "id": 2,
       "deviceName": "单车",
       "type": "单车",
+      "perimeter":3.84,
       "fencePoint": {
         "fenceId": 2,
         "left_top": {
@@ -97,6 +98,7 @@
       "id": 3,
       "deviceName": "椭圆机",
       "type": "椭圆机",
+      "perimeter":2.04,
       "fencePoint": {
         "fenceId": 3,
         "left_top": {

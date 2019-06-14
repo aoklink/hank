@@ -13,6 +13,7 @@ import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
+import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
 
@@ -44,10 +45,11 @@ public class FlyBirdProcessor implements IDataAnalysis {
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
         Log.i("999999999", Arrays.toString(serviceData));
 
-        if (serviceData == null || serialNum == serviceData[11]) {
+        if (serviceData == null || serialNum == serviceData[11] || serviceData[12]==0) {
             return null;
-
         }
+
+
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
         if (deviceByBleName == null) {
             return null;
@@ -66,10 +68,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (serviceData[0] == -1 && serviceData[1] == -1) {
             deviceByBleName.setAbility(0);
 
-            byte act_time = serviceData[12];
-            if (act_time == 0) {
-                return null;
-            }
+
 
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
@@ -83,11 +82,19 @@ public class FlyBirdProcessor implements IDataAnalysis {
             if (bleDeviceInfoNow == null) {
                 return null;
             }
+
+            byte act_time = serviceData[12];
             byte gravity = serviceData[10];
             float actualGravity = SELF_GRAVITY * gravity;
 
+
+            byte[] u_time=new byte[2];
+            u_time[0]=serviceData[13];
+            u_time[1]=serviceData[14];
+
             bleDeviceInfoNow.setGravity(String.valueOf(actualGravity));
             bleDeviceInfoNow.setTime(String.valueOf(act_time));
+            bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteArrayToInt(u_time)));
         }
         return bleDeviceInfoNow;
 

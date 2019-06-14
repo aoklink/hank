@@ -347,6 +347,7 @@ public class LinkDataManager {
         bleDeviceInfo.setDistance("");
         bleDeviceInfo.setGravity("");
         bleDeviceInfo.setTime("");
+        bleDeviceInfo.setU_time("");
     }
 
 
@@ -363,6 +364,7 @@ public class LinkDataManager {
         bleDeviceInfo.setTime("");
         bleDeviceInfo.setGravity("");
         bleDeviceInfo.setTime("");
+        bleDeviceInfo.setU_time("");
     }
 
     /**
@@ -373,6 +375,7 @@ public class LinkDataManager {
     public void cleanFlyBird(BleDeviceInfo bleDeviceInfo) {
         bleDeviceInfo.setGravity("");
         bleDeviceInfo.setTime("");
+        bleDeviceInfo.setU_time("");
     }
 
 
@@ -394,7 +397,6 @@ public class LinkDataManager {
                 uwbCoorData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoorData.getCode())));
                 return true;
             }
-
         }
         return false;
     }

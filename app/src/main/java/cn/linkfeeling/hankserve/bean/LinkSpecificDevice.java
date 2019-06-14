@@ -11,6 +11,7 @@ public class LinkSpecificDevice {
     private int id;
     private String deviceName;
     private String type; //设备类型
+    private float perimeter;
     private float ability;  //设备的当前速度，判断是否在运转
     private UWBCoordData.FencePoint fencePoint;
 
@@ -55,6 +56,14 @@ public class LinkSpecificDevice {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public float getPerimeter() {
+        return perimeter;
+    }
+
+    public void setPerimeter(float perimeter) {
+        this.perimeter = perimeter;
     }
 
     public UWBCoordData.FencePoint getFencePoint() {

@@ -1,6 +1,7 @@
 package cn.linkfeeling.link_socketserve;
 
 import java.util.Arrays;
+import java.util.Calendar;
 
 import cn.linkfeeling.link_socketserve.bean.ScanData;
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
@@ -18,6 +19,7 @@ public class Test {
 
 //        byte[] bytes = putShort((short) 0xAA55);
 //        System.out.println(Arrays.toString(bytes));
+
 
         short aa= (short) 0x55AA;
 

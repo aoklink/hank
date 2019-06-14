@@ -23,8 +23,6 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  */
 public class BicycleProcessor implements IDataAnalysis {
 
-    private static final float perimeter = 3.84f;   //单位 米
-
     public static BicycleProcessor getInstance() {
         return BicycleProcessorHolder.sBicycleProcessor;
     }
@@ -53,6 +51,16 @@ public class BicycleProcessor implements IDataAnalysis {
 
         Log.i("vvvvvvv", Arrays.toString(serviceData));
 
+
+
+//        int speedInt = Integer.parseInt(String.valueOf(CalculateUtil.byteArrayToInt(speed)));
+//        int gradientInt = Integer.parseInt(String.valueOf(gradient[0]));
+        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
+        if (deviceByBleName == null) {
+            return null;
+        }
+
+
         byte[] turns = new byte[2];
         turns[0] = serviceData[0];
         turns[1] = serviceData[1];
@@ -68,17 +76,11 @@ public class BicycleProcessor implements IDataAnalysis {
         } else if (turns[0] == -1 && turns[1] == -1) {
             speed = 0;
         } else {
-            BigDecimal bigDecimal = CalculateUtil.floatDivision(perimeter, (float) CalculateUtil.byteArrayToInt(ticks));
+            BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
             speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600);
             Log.i("ticks", speed + "");
         }
 
-//        int speedInt = Integer.parseInt(String.valueOf(CalculateUtil.byteArrayToInt(speed)));
-//        int gradientInt = Integer.parseInt(String.valueOf(gradient[0]));
-        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
-        if (deviceByBleName == null) {
-            return null;
-        }
         deviceByBleName.setAbility(speed);
 
 
