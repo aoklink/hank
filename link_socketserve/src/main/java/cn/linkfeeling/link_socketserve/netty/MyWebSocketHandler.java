@@ -16,6 +16,7 @@ import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
 import cn.linkfeeling.link_socketserve.unpack.SmartCarProtocol;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -106,7 +107,7 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
         //判断是否是ping消息
         if (frame instanceof PingWebSocketFrame) {
             Log.i("ppppppppppppp", "ping包");
-            ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
+            ctx.channel().writeAndFlush(new PongWebSocketFrame(frame.content().retain()));
             return;
         }
 
@@ -135,7 +136,7 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
 
         //群发，服务端向每个连接上来的客户端群发消息
         Global.group.writeAndFlush(tws);
-    }
+        }
 
     /**
      * 处理客户端向服务端发起http握手请求的业务

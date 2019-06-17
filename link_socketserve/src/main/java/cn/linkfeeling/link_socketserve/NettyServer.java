@@ -35,8 +35,9 @@ public class NettyServer {
         sb.group(bossGroup, workGroup).
                 channel(NioServerSocketChannel.class).
                 option(ChannelOption.SO_BACKLOG, 1024).
-                childHandler(new ChildChannelHandler(socketCallBack)).
-                childOption(ChannelOption.SO_KEEPALIVE, true);
+                option(ChannelOption.TCP_NODELAY, true).
+                option(ChannelOption.SO_KEEPALIVE, true).
+                childHandler(new ChildChannelHandler(socketCallBack));
 
         try {
             //4、绑定端口，同步等待成功

@@ -407,12 +407,12 @@ public class LinkDataManager {
 
     /**
      * 判断一个点是否在凸四边形内
-     * @param uwbCoorData
+     * @param uwbCoordData
      * @return
      */
-    public boolean isPointInRect(UWBCoordData uwbCoorData) {
-        double x = uwbCoorData.getX();
-        double y = uwbCoorData.getY();
+    public boolean isPointInRect(UWBCoordData uwbCoordData) {
+        double x = uwbCoordData.getX();
+        double y = uwbCoordData.getY();
         List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().getDevicesData();
         for (LinkSpecificDevice devicesDatum : devicesData) {
             UWBCoordData.FencePoint fencePoint = devicesDatum.getFencePoint();
@@ -425,8 +425,8 @@ public class LinkDataManager {
             final double c = (D.x - C.x) * (y - C.y) - (D.y - C.y) * (x - C.x);
             final double d = (A.x - D.x) * (y - D.y) - (A.y - D.y) * (x - D.x);
             if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
-                uwbCoorData.setDevice(devicesDatum);
-                uwbCoorData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoorData.getCode())));
+                uwbCoordData.setDevice(devicesDatum);
+                uwbCoordData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoordData.getCode())));
                 return true;
             }
         }
