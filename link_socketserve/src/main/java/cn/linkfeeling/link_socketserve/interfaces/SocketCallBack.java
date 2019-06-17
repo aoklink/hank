@@ -13,7 +13,7 @@ public interface SocketCallBack {
     void connectSuccess(String ip,int channelsNum);
     void disconnectSuccess(String ip,int channelsNum );
 
-    void getBLEStream(SmartCarProtocol tbody);
+    void getBLEStream(String hostString,SmartCarProtocol tbody);
 
 
 }

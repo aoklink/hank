@@ -252,6 +252,6 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
         SmartCarProtocol body = (SmartCarProtocol) msg;
         String hostString = ((InetSocketAddress) ctx.channel().remoteAddress()).getHostString();
         Log.i("xxxxxxxxxxx", hostString);
-        socketCallBack.getBLEStream(body);
+        socketCallBack.getBLEStream(hostString,body);
     }
 }

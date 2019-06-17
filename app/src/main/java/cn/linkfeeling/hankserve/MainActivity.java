@@ -130,9 +130,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     }
 
                     @Override
-                    public void getBLEStream(SmartCarProtocol smartCarProtocol) {
+                    public void getBLEStream(String hostString,SmartCarProtocol smartCarProtocol) {
 
-                        onLeScanSelf(smartCarProtocol.getContent());
+                        onLeScanSelf(hostString,smartCarProtocol.getContent());
 //                        ThreadPoolManager.getInstance().execute(new Runnable() {
 //                            @Override
 //                            public void run() {
@@ -184,14 +184,14 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
      * @author zhangyong
      * @time 2019/3/20 14:55
      */
-    private void onLeScanSelf(byte[] scanRecord) {
+    private void onLeScanSelf(String hostString,byte[] scanRecord) {
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         String name = linkScanRecord.getDeviceName();
         if (name == null) {
             return;
         }
 
-        Log.i("nnnnnnnnnnnnn", name);
+        Log.i("nnnnnnnnnnnnn",hostString+"-----"+name);
         if (LinkDataManager.getInstance().getUwbCode_wristbandName().containsValue(name)) {
             try {
                 BleDeviceInfo bleDeviceInfo;
