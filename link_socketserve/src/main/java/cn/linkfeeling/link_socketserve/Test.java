@@ -13,6 +13,9 @@ import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
 public class Test {
     public static void main(String args[]){
 
+        byte ss=(byte)0xaa;
+        System.out.println(ss);
+
 
 //        byte[] kk={(byte)0xAA,(byte)0x55};
 //        System.out.println(getShort(kk));
