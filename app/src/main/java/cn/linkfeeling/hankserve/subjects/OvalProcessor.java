@@ -52,7 +52,6 @@ public class OvalProcessor implements IDataAnalysis {
         Log.i("vvvvvvv", Arrays.toString(serviceData));
 
 
-
 //        Log.i("tttttttttttttt", Arrays.toString(scanRecord));
 //        byte[] speed = new byte[1];
 //        byte[] gradient = new byte[2];
@@ -86,7 +85,7 @@ public class OvalProcessor implements IDataAnalysis {
             speed = 0;
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
-            speed = calculateEllipticalSpeed(bigDecimal.floatValue() * 3600);
+            speed = calculateEllipticalSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
             Log.i("ticks", speed + "");
         }
 
@@ -136,8 +135,8 @@ public class OvalProcessor implements IDataAnalysis {
     }
 
 
-    private float calculateEllipticalSpeed(float measureSpeed) {
-        BigDecimal bigDecimal = CalculateUtil.floatDivision(measureSpeed, 0.129164f);
+    private float calculateEllipticalSpeed(float measureSpeed, float slope) {
+        BigDecimal bigDecimal = CalculateUtil.floatDivision(measureSpeed, slope);
         float v = (float) (1.837 * Math.pow(Math.E, (0.0259 * bigDecimal.floatValue())));
         if (v < 0) {
             return (float) 0;

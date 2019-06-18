@@ -77,7 +77,7 @@ public class BicycleProcessor implements IDataAnalysis {
             speed = 0;
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
-            speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600);
+            speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600,deviceByBleName.getSlope());
             Log.i("ticks", speed + "");
         }
 
@@ -129,8 +129,8 @@ public class BicycleProcessor implements IDataAnalysis {
         return v;
     }
 
-    private float calculateBicycleSpeed(float measureSpeed) {
-        BigDecimal bigDecimal = CalculateUtil.floatDivision(measureSpeed, 0.226829f);
+    private float calculateBicycleSpeed(float measureSpeed,float slope) {
+        BigDecimal bigDecimal = CalculateUtil.floatDivision(measureSpeed, slope);
 
         float v = (float) ((bigDecimal.floatValue() * 0.3378) - 7.3649);
         if (v < 0) {
