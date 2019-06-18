@@ -15,8 +15,6 @@ import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
-import static cn.linkfeeling.hankserve.utils.CalculateUtil.txFloat;
-
 
 /**
  * @author create by zhangyong
@@ -56,61 +54,40 @@ public class TreadMillProcessor implements IDataAnalysis {
             return null;
         }
 
-        int speed;
+        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
+        if (deviceByBleName == null) {
+            return null;
+        }
+
+        Log.i("6767676",Arrays.toString(serviceData));
+
+        float speed;
         if (serviceData[0] == -1 && serviceData[1] == -1) {
             speed = 0;
         } else {
             byte[] serviceDatum = {serviceData[11]};
-            CalculateUtil.byteArrayToInt(serviceDatum)*
-
-
+            speed = CalculateUtil.byteArrayToInt(serviceDatum) * 0.263158f;
         }
 
+        Log.i("6767676",speed+"");
 
-        if (scanRecord != null) {
-            byte[] speed = new byte[1];
-            byte[] gradient = new byte[2];
-            speed[0] = scanRecord[11];
-            // speed[1] = scanRecord[12];
-            gradient[0] = scanRecord[13];
-            gradient[1] = scanRecord[14];
+        deviceByBleName.setAbility(speed);
 
-            int speedInt = Integer.parseInt(String.valueOf(CalculateUtil.byteArrayToInt(speed)));
-            int gradientInt = Integer.parseInt(String.valueOf(gradient[0]));
-
-            LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
-            if (deviceByBleName == null) {
-                return null;
-            }
-
-            Log.i("ooooooooooo", speedInt + "");
-
-            float floatSpeed = txFloat(speedInt, 10);
-
-            Log.i("ooooooooooo11", floatSpeed + "");
-            float floatGradient = txFloat(gradientInt, 10);
-
-            deviceByBleName.setAbility(floatSpeed);
-
-
-            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
-            boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
-            if (!containsKey) {
-                return null;
-            }
-            UWBCoordData uwbCoordData = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId);
-
-            String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
-            bleDeviceInfoNow = FinalDataManager.getInstance().getWristbands().get(bracelet_id);
-            if (bleDeviceInfoNow == null) {
-                return null;
-            }
-
-
-            bleDeviceInfoNow.setSpeed(String.valueOf(floatSpeed));
-            bleDeviceInfoNow.setGradient(String.valueOf(floatGradient));
-
+        int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+        boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
+        if (!containsKey) {
+            return null;
         }
+        UWBCoordData uwbCoordData = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId);
+
+        String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
+        bleDeviceInfoNow = FinalDataManager.getInstance().getWristbands().get(bracelet_id);
+        if (bleDeviceInfoNow == null) {
+            return null;
+        }
+
+        bleDeviceInfoNow.setSpeed(String.valueOf(speed));
+
         return bleDeviceInfoNow;
 
     }

@@ -23,7 +23,6 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  */
 public class OvalProcessor implements IDataAnalysis {
 
-    float speed;
 
     public static ConcurrentHashMap<String, OvalProcessor> map;
 
@@ -86,6 +85,7 @@ public class OvalProcessor implements IDataAnalysis {
         ticks[0] = serviceData[3];
         ticks[1] = serviceData[2];
 
+        float speed;
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
             speed = 0;
         } else if (turns[0] == -1 && turns[1] == -1) {

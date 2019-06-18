@@ -41,7 +41,7 @@ public class BicycleProcessor implements IDataAnalysis {
     @Override
     public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
-        float speed;
+
 
         if (scanRecord == null) {
             return null;
@@ -75,7 +75,7 @@ public class BicycleProcessor implements IDataAnalysis {
         ticks[0] = serviceData[3];
         ticks[1] = serviceData[2];
 
-
+        float speed;
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
             speed = 0;
         } else if (turns[0] == -1 && turns[1] == -1) {
