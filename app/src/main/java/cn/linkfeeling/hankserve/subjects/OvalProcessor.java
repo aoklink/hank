@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
@@ -23,6 +24,12 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 public class OvalProcessor implements IDataAnalysis {
 
     float speed;
+
+    public static ConcurrentHashMap<String, OvalProcessor> map;
+
+    static {
+        map = new ConcurrentHashMap<>();
+    }
 
     public static OvalProcessor getInstance() {
         return OvalProcessorHolder.sOvalProcessor;

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
@@ -22,6 +23,11 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  * 单车数据解析
  */
 public class BicycleProcessor implements IDataAnalysis {
+    public static ConcurrentHashMap<String, BicycleProcessor> map;
+
+    static {
+        map = new ConcurrentHashMap<>();
+    }
 
     public static BicycleProcessor getInstance() {
         return BicycleProcessorHolder.sBicycleProcessor;
@@ -34,7 +40,7 @@ public class BicycleProcessor implements IDataAnalysis {
 
     @Override
     public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
-        BleDeviceInfo bleDeviceInfoNow ;
+        BleDeviceInfo bleDeviceInfoNow;
         float speed;
 
         if (scanRecord == null) {
@@ -50,7 +56,6 @@ public class BicycleProcessor implements IDataAnalysis {
         }
 
         Log.i("vvvvvvv", Arrays.toString(serviceData));
-
 
 
 //        int speedInt = Integer.parseInt(String.valueOf(CalculateUtil.byteArrayToInt(speed)));
@@ -77,7 +82,7 @@ public class BicycleProcessor implements IDataAnalysis {
             speed = 0;
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
-            speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600,deviceByBleName.getSlope());
+            speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
             Log.i("ticks", speed + "");
         }
 
@@ -129,7 +134,7 @@ public class BicycleProcessor implements IDataAnalysis {
         return v;
     }
 
-    private float calculateBicycleSpeed(float measureSpeed,float slope) {
+    private float calculateBicycleSpeed(float measureSpeed, float slope) {
         BigDecimal bigDecimal = CalculateUtil.floatDivision(measureSpeed, slope);
 
         float v = (float) ((bigDecimal.floatValue() * 0.3378) - 7.3649);
