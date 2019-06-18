@@ -1,5 +1,6 @@
 package cn.linkfeeling.hankserve.subjects;
 
+import android.os.ParcelUuid;
 import android.util.Log;
 
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
+import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
 import static cn.linkfeeling.hankserve.utils.CalculateUtil.txFloat;
 
@@ -41,6 +43,29 @@ public class TreadMillProcessor implements IDataAnalysis {
     public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
         Log.i("pppppppppppppp", Arrays.toString(scanRecord));
         BleDeviceInfo bleDeviceInfoNow = null;
+
+        if (scanRecord == null) {
+            return null;
+        }
+        LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
+        if (linkScanRecord == null) {
+            return null;
+        }
+        byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
+        if (serviceData == null) {
+            return null;
+        }
+
+        int speed;
+        if (serviceData[0] == -1 && serviceData[1] == -1) {
+            speed = 0;
+        } else {
+            byte[] serviceDatum = {serviceData[11]};
+            CalculateUtil.byteArrayToInt(serviceDatum)*
+
+
+        }
+
 
         if (scanRecord != null) {
             byte[] speed = new byte[1];
