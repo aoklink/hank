@@ -245,6 +245,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         });
     }
 
+    /**
+     * 连接uwb基站webSocket
+     * @param url
+     */
     private void createWsConnect(String url) {
         RxWebSocket.get(url).subscribe(new WebSocketSubscriber() {
             @Override
