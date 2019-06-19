@@ -1,6 +1,7 @@
 package cn.linkfeeling.hankserve;
 
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import cn.linkfeeling.hankserve.adapter.BLEAdapter;
@@ -59,7 +62,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private Gson gson = new Gson();
     private SimpleDateFormat simpleDateFormat;
     private Disposable disposable;
-
     private RecyclerView recycleView;
     private BLEAdapter bleAdapter;
 
@@ -130,9 +132,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     }
 
                     @Override
-                    public void getBLEStream(String hostString,SmartCarProtocol smartCarProtocol) {
+                    public void getBLEStream(String hostString, SmartCarProtocol smartCarProtocol) {
 
-                        onLeScanSelf(hostString,smartCarProtocol.getContent());
+                        onLeScanSelf(hostString, smartCarProtocol.getContent());
 //                        ThreadPoolManager.getInstance().execute(new Runnable() {
 //                            @Override
 //                            public void run() {
@@ -184,14 +186,14 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
      * @author zhangyong
      * @time 2019/3/20 14:55
      */
-    private void onLeScanSelf(String hostString,byte[] scanRecord) {
+    private void onLeScanSelf(String hostString, byte[] scanRecord) {
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         String name = linkScanRecord.getDeviceName();
         if (name == null) {
             return;
         }
 
-        Log.i("nnnnnnnnnnnnn",hostString+"-----"+name);
+        Log.i("nnnnnnnnnnnnn", hostString + "-----" + name);
         if (LinkDataManager.getInstance().getUwbCode_wristbandName().containsValue(name)) {
             try {
                 BleDeviceInfo bleDeviceInfo;
@@ -247,6 +249,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
     /**
      * 连接uwb基站webSocket
+     *
      * @param url
      */
     private void createWsConnect(String url) {
@@ -366,7 +369,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
                     if (oldUwbValue.getCode().equals(newUwb.getCode())) {
 
-                        L.i("bbbbbbbbbbb",oldUwbValue.getDevice().getDeviceName()+"---"+oldUwbValue.getDevice().getAbility());
+                        L.i("bbbbbbbbbbb", oldUwbValue.getDevice().getDeviceName() + "---" + oldUwbValue.getDevice().getAbility());
                         if (oldUwbValue.getDevice().getAbility() != 0) {
                             return;
                         }

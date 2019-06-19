@@ -66,7 +66,8 @@ public class TreadMillProcessor implements IDataAnalysis {
             speed = 0;
         } else {
             byte[] serviceDatum = {serviceData[11]};
-            speed = CalculateUtil.byteArrayToInt(serviceDatum) * 0.263158f;
+            speed = CalculateUtil.byteArrayToInt(serviceDatum) * 0.256410f;
+            //0.256410
         }
 
         Log.i("6767676",speed+"");
