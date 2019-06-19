@@ -84,6 +84,7 @@ public class BicycleProcessor implements IDataAnalysis {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
             speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
             Log.i("ticks", speed + "");
+            Log.i("ticks----", (float) CalculateUtil.byteArrayToInt(ticks) + "");
         }
 
         deviceByBleName.setAbility(speed);

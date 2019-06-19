@@ -23,6 +23,8 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  */
 public class TreadMillProcessor implements IDataAnalysis {
 
+    private int currentPags;
+
     public static ConcurrentHashMap<String, TreadMillProcessor> map;
 
     static {
@@ -60,6 +62,16 @@ public class TreadMillProcessor implements IDataAnalysis {
         }
 
         Log.i("6767676", Arrays.toString(serviceData));
+
+        byte[] pages = new byte[2];
+        pages[0] = serviceData[2];
+        pages[1] = serviceData[3];
+        int nowPack = CalculateUtil.byteArrayToInt(pages);
+        if (nowPack < currentPags && currentPags - nowPack < 10) {
+            return null;
+        }
+
+        currentPags = nowPack;
 
         float speed;
         if (serviceData[0] == -1 && serviceData[1] == -1) {
