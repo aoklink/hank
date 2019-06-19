@@ -21,8 +21,8 @@ public class ExampleUnitTest {
     @Test
     public void testTime(){
         byte[] u_time=new byte[2];
-        u_time[0]=124;
-        u_time[1]=-6;
+        u_time[0]=13;
+        u_time[1]=-84;
         int i = CalculateUtil.byteArrayToInt(u_time);
         System.out.println(i);
     }
