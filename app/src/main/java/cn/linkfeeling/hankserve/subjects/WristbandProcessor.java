@@ -49,7 +49,11 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
 
 
             byte[] heart = new byte[1];
-            heart[0] = bytes1[0];
+            if ("I7PLUS".equals(bleName)) {
+                heart[0] = bytes1[6];
+            } else {
+                heart[0] = bytes1[0];
+            }
             int heartInt = CalculateUtil.byteArrayToInt(heart);
             String heatRate = String.valueOf(heartInt);
 
