@@ -77,7 +77,7 @@ public class BicycleProcessor implements IDataAnalysis {
 
         float speed;
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
-            speed = 0;
+            return null;
         } else if (turns[0] == -1 && turns[1] == -1) {
             speed = 0;
         } else {
