@@ -49,7 +49,7 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
 
 
             byte[] heart = new byte[1];
-            if ("I7PLUS".equals(bleName)) {
+            if ("I7PLUS".equals(bleName) || "SA".equals(bleName)) {
                 heart[0] = bytes1[6];
             } else {
                 heart[0] = bytes1[0];
