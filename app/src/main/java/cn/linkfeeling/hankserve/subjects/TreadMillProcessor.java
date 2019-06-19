@@ -59,18 +59,23 @@ public class TreadMillProcessor implements IDataAnalysis {
             return null;
         }
 
-        Log.i("6767676",Arrays.toString(serviceData));
+        Log.i("6767676", Arrays.toString(serviceData));
 
         float speed;
         if (serviceData[0] == -1 && serviceData[1] == -1) {
             speed = 0;
         } else {
-            byte[] serviceDatum = {serviceData[11]};
-            speed = CalculateUtil.byteArrayToInt(serviceDatum) * 0.256410f;
+            byte[] serviceDatum = new byte[2];
+            serviceDatum[0] = serviceData[11];
+            serviceDatum[1] = serviceData[12];
+            int numbers = CalculateUtil.byteArrayToInt(serviceDatum);
+            float v = CalculateUtil.txFloat(numbers, 100);
+
+            speed = v * 0.256410f;
             //0.256410
         }
 
-        Log.i("6767676",speed+"");
+        Log.i("6767676", speed + "");
 
         deviceByBleName.setAbility(speed);
 
