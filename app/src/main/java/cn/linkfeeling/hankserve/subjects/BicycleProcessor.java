@@ -55,7 +55,7 @@ public class BicycleProcessor implements IDataAnalysis {
             return null;
         }
 
-        Log.i("vvvvvvv", Arrays.toString(serviceData));
+        Log.i("danchedata", Arrays.toString(serviceData));
 
 
 //        int speedInt = Integer.parseInt(String.valueOf(CalculateUtil.byteArrayToInt(speed)));

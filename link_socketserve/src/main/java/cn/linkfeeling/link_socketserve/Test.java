@@ -11,10 +11,10 @@ import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
  * @time 2019/5/25
  */
 public class Test {
-    public static void main(String args[]){
+    public static void main(String args[]) {
 
-        byte ss=(byte)0xaa;
-        System.out.println(ss);
+//        byte ss=(byte)0xaa;
+//        System.out.println(ss);
 
 
 //        byte[] kk={(byte)0xAA,(byte)0x55};
@@ -24,31 +24,27 @@ public class Test {
 //        System.out.println(Arrays.toString(bytes));
 
 
-        short aa= (short) 0x55AA;
+        //    short aa= (short) 0x55AA;
 
+
+        int a = ' ';
 //        byte[] bytes = putShort(aa);
 //        System.out.println(Arrays.toString(bytes));
 //
 //        System.out.println(getShort(bytes));
-        System.out.println(aa);
-
-
-
-
-
+        System.out.println(a);
 
 
 
 
     }
 
-    public static short getShort(byte[] bytes)
-    {
+    public static short getShort(byte[] bytes) {
         return (short) ((0xff & bytes[0]) | (0xff00 & (bytes[1] << 8)));
     }
 
-    public static byte[] putShort( short s) {
-        byte[] b=new byte[2];
+    public static byte[] putShort(short s) {
+        byte[] b = new byte[2];
         b[1] = (byte) (s >> 8);
         b[0] = (byte) (s >> 0);
 

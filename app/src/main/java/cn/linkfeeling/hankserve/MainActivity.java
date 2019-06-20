@@ -1,16 +1,12 @@
 package cn.linkfeeling.hankserve;
 
 import android.os.Bundle;
-import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -24,20 +20,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import cn.linkfeeling.hankserve.adapter.BLEAdapter;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
-import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
-import cn.linkfeeling.hankserve.bean.Wristband;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
+import cn.linkfeeling.hankserve.manager.LinkWSManager;
 import cn.linkfeeling.hankserve.ui.IUploadContract;
 import cn.linkfeeling.hankserve.ui.UploadPresenter;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
@@ -45,14 +38,9 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 import cn.linkfeeling.link_socketserve.NettyServer;
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
 import cn.linkfeeling.link_socketserve.unpack.SmartCarProtocol;
-import cn.linkfeeling.link_websocket.RxWebSocket;
-import cn.linkfeeling.link_websocket.WebSocketSubscriber;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.WebSocket;
-import okio.AsyncTimeout;
-import okio.ByteString;
 
 import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
 
@@ -66,7 +54,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private BLEAdapter bleAdapter;
 
     private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
-
 
     @Override
     protected int getLayoutRes() {
@@ -93,6 +80,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         }
         // UDPBroadcast.udpBroadcast(this);
         connectWebSocket();
+        connectLinkWS();
         startIntervalListener();
     }
 
@@ -188,10 +176,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
      */
     private void onLeScanSelf(String hostString, byte[] scanRecord) {
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
-        String name = linkScanRecord.getDeviceName();
-        if (name == null) {
+        if (linkScanRecord == null || linkScanRecord.getDeviceName() == null) {
             return;
         }
+        String name = linkScanRecord.getDeviceName();
 
         Log.i("nnnnnnnnnnnnn", hostString + "-----" + name);
         if (LinkDataManager.getInstance().getUwbCode_wristbandName().containsValue(name)) {
@@ -231,72 +219,35 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         }
     }
 
+    /**
+     * 连接UWB基站长连接
+     */
     private void connectWebSocket() {
-        ThreadPoolManager.getInstance().execute(() -> {
-            String url = "ws://47.111.183.148:8083/websocket/";
-            String api_token = "projAdmin_fb84d0dbf481f46f8f760ab3092d9a64fe78f217";
-            //  String api_token = "projAdmin_3eb3a71f555ff04d3088e4199987af58c3d1e029";
-            String project_name = BuildConfig.PROJECT_NAME;
-            StringBuilder builder = new StringBuilder(url);
-            builder.append(project_name);
-            builder.append("_0");
-            builder.append("_2D");
-            builder.append(api_token);
-            builder.append("_type|coord");
-            createWsConnect(builder.toString());
+        LinkWSManager.getInstance().connectWebSocket(text -> {
+            dealMessage(text);
         });
     }
 
     /**
-     * 连接uwb基站webSocket
-     *
-     * @param url
+     * 连接后端webSocket
      */
-    private void createWsConnect(String url) {
-        RxWebSocket.get(url).subscribe(new WebSocketSubscriber() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                super.onSubscribe(d);
-            }
-
-            @Override
-            protected void onOpen(@NonNull WebSocket webSocket) {
-                super.onOpen(webSocket);
-                L.i("========", "open");
-            }
-
-            @Override
-            protected void onMessage(@NonNull String text) {
-                super.onMessage(text);
-                dealMessage(text);
-
-            }
-
-            @Override
-            protected void onMessage(@NonNull ByteString byteString) {
-                super.onMessage(byteString);
-            }
-
-            @Override
-            protected void onReconnect() {
-                super.onReconnect();
-                L.i("========", "onReconnect");
-            }
-
-
-            @Override
-            protected void onClose() {
-                super.onClose();
-                L.i("========", "onClose");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                super.onError(e);
-                L.i("========", "onError");
-            }
+    public void connectLinkWS() {
+        LinkWSManager.getInstance().connectLinkWsConnect(text -> {
+            Log.i("link==ws", text);
+//            ChannelMatcher matcher = new ChannelMatcher() {
+//                @Override
+//                public boolean matches(Channel channel) {
+//                    String hostString = ((InetSocketAddress) channel.remoteAddress()).getHostString();
+//                    if (channel.isOpen() && channel.isActive() && hostString.equals("192.168.0.105")) {
+//                        return true;
+//                    }
+//                    return false;
+//                }
+//            };
+//            Global.group.writeAndFlush(text, matcher);
         });
     }
+
 
     /**
      * 处理uwb设备数据
@@ -330,7 +281,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     UWBCoordData oldUwbValue = (UWBCoordData) entry.getValue();
                     if (oldUwbValue.getCode().equals(newUwb.getCode())) {
                         //运动过程中 uwb偏移了
-                        Log.i("77777",oldUwbValue.getDevice().getAbility()+"");
+                        Log.i("77777", oldUwbValue.getDevice().getAbility() + "");
 
                         if (oldUwbValue.getDevice().getAbility() != 0) {
                             return;

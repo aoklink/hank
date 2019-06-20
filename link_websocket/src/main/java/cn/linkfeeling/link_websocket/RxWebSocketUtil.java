@@ -9,6 +9,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLSocketFactory;
@@ -34,6 +35,7 @@ import io.reactivex.internal.operators.completable.CompletableDisposeOn;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
@@ -44,16 +46,16 @@ public class RxWebSocketUtil {
 
     private OkHttpClient client;
 
-    private Map<String, Observable<WebSocketInfo>> observableMap;
-    private Map<String, WebSocket> webSocketMap;
+    private ConcurrentHashMap<String, Observable<WebSocketInfo>> observableMap;
+    private ConcurrentHashMap<String, WebSocket> webSocketMap;
     private boolean showLog;
     private String logTag = "RxWebSocket";
     private long interval = 1;
     private TimeUnit reconnectIntervalTimeUnit = TimeUnit.SECONDS;
 
     private RxWebSocketUtil() {
-        observableMap = new ArrayMap<>();
-        webSocketMap = new ArrayMap<>();
+        observableMap = new ConcurrentHashMap<>();
+        webSocketMap = new ConcurrentHashMap<>();
         client = new OkHttpClient();
     }
 
@@ -237,11 +239,11 @@ public class RxWebSocketUtil {
         }
     }
 
-
     private Request getRequest(String url) {
         return new Request.Builder()
                 .get()
                 .url(url)
+                .addHeader("gym_id","link_office")
                 .build();
     }
 

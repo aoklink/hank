@@ -104,7 +104,6 @@ public class LinkDataManager {
             bufferedReader.close();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.i("iiiiiiii",e.getMessage());
         } finally {
             try {
                 bufferedReader.close();
