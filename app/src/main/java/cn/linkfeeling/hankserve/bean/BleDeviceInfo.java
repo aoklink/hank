@@ -28,11 +28,8 @@ public class BleDeviceInfo {
     private String gravity;
     private String time;
     private String exercise_time;
+    private String u_time; //飞鸟单组运动时长
     private boolean report;
-    private String u_time;
-
-
-
 
     public boolean isReport() {
         return report;
@@ -122,6 +119,13 @@ public class BleDeviceInfo {
         this.time = time;
     }
 
+    public String getU_time() {
+        return u_time;
+    }
+
+    public void setU_time(String u_time) {
+        this.u_time = u_time;
+    }
 
     @Override
     public int hashCode() {

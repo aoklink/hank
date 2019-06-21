@@ -91,7 +91,7 @@ public class LinkDataManager {
                 devicesData.addAll(linkSpecificDevices);
             }
 
-            Log.i("5555555",gson.toJson(deviceInfo));
+            Log.i("5555555", gson.toJson(deviceInfo));
 
             for (LinkSpecificDevice devicesDatum : devicesData) {
                 List<LinkBLE> linkBLES = devicesDatum.getLinkBLES();
@@ -104,7 +104,7 @@ public class LinkDataManager {
             bufferedReader.close();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.i("iiiiiiii",e.getMessage());
+            Log.i("iiiiiiii", e.getMessage());
         } finally {
             try {
                 bufferedReader.close();
@@ -347,6 +347,7 @@ public class LinkDataManager {
         bleDeviceInfo.setDistance("");
         bleDeviceInfo.setGravity("");
         bleDeviceInfo.setTime("");
+        bleDeviceInfo.setU_time("");
     }
 
 
@@ -363,6 +364,7 @@ public class LinkDataManager {
         bleDeviceInfo.setTime("");
         bleDeviceInfo.setGravity("");
         bleDeviceInfo.setTime("");
+        bleDeviceInfo.setU_time("");
     }
 
     /**
@@ -373,6 +375,7 @@ public class LinkDataManager {
     public void cleanFlyBird(BleDeviceInfo bleDeviceInfo) {
         bleDeviceInfo.setGravity("");
         bleDeviceInfo.setTime("");
+        bleDeviceInfo.setU_time("");
     }
 
 
@@ -400,11 +403,9 @@ public class LinkDataManager {
     }
 
 
-
-
-
     /**
      * 判断一个点是否在凸四边形内
+     *
      * @param uwbCoorData
      * @return
      */
