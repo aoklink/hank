@@ -25,7 +25,9 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 public class FlyBirdProcessor implements IDataAnalysis {
     private int serialNum = -1;
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
-    private static final float SELF_GRAVITY = 2.5f;
+    private static final float SELF_GRAVITY_BIG = 7.5f;
+    private static final float SELF_GRAVITY_SMALL = 5f;
+    private static final float SELF_GRAVITY_SUPER = 10f;
 
     static {
         map = new ConcurrentHashMap<>();
@@ -84,7 +86,14 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
             byte act_time = serviceData[12];
             byte gravity = serviceData[10];
-            float actualGravity = SELF_GRAVITY * gravity;
+            float actualGravity = 0;
+            if (gravity == 1) {
+                actualGravity = SELF_GRAVITY_SMALL;
+            } else if (gravity > 1 && gravity <= 7) {
+                actualGravity = SELF_GRAVITY_SMALL + (gravity - 1) * SELF_GRAVITY_BIG;
+            } else if (gravity > 7) {
+                actualGravity = (gravity - 7) * SELF_GRAVITY_SUPER + 50;
+            }
 
 
             byte[] u_time = new byte[2];

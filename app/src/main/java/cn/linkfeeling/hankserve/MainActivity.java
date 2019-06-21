@@ -353,6 +353,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 }
             }
 
+
             if (newUwb.getWristband().getBracelet_id() == null) {
                 return;
             }
@@ -367,6 +368,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     FinalDataManager.getInstance().getFenceId_uwbData().put(newUwb.getDevice().getFencePoint().getFenceId(), newUwb);
                 }
                 bleDeviceInfo.setDevice_name(newUwb.getDevice().getDeviceName());
+
             }
         }
 
