@@ -22,9 +22,9 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  * @time 2019/3/15
  * 飞鸟数据解析
  */
-public class FlyBirdProcessor implements IDataAnalysis {
+public class ButterFlyProcessor implements IDataAnalysis {
     private int serialNum = -1;
-    public static ConcurrentHashMap<String, FlyBirdProcessor> map;
+    public static ConcurrentHashMap<String, ButterFlyProcessor> map;
     private static final float SELF_GRAVITY = 2.5f;
 
     static {

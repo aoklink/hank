@@ -41,6 +41,7 @@ public class LinkDataManager {
     public static final String TREADMILL_1 = "跑步机t1";
     public static final String BICYCLE_1 = "单车t2";
     public static final String OVAL_1 = "椭圆机t3";
+    public static final String BUTTER_1 = "蝴蝶机t4";
     public static final String BIRD_1 = "飞鸟左";
 
     private static final LinkDataManager linkDataManager = new LinkDataManager();
@@ -360,11 +361,11 @@ public class LinkDataManager {
         bleDeviceInfo.setSpeed("");
         bleDeviceInfo.setGradient("");
         bleDeviceInfo.setDistance("");
-        bleDeviceInfo.setGravity("");
-        bleDeviceInfo.setTime("");
-        bleDeviceInfo.setGravity("");
-        bleDeviceInfo.setTime("");
-        bleDeviceInfo.setU_time("");
+//        bleDeviceInfo.setGravity("");
+//        bleDeviceInfo.setTime("");
+//        bleDeviceInfo.setGravity("");
+//        bleDeviceInfo.setTime("");
+//        bleDeviceInfo.setU_time("");
     }
 
     /**

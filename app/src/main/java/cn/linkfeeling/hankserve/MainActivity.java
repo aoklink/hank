@@ -149,7 +149,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
     }
 
-
+    BleDeviceInfo tempBleInfo;
     private void startIntervalListener() {
         if (disposable == null) {
             disposable = Observable.interval(INTERVAL_TIME, TimeUnit.SECONDS)
@@ -170,7 +170,24 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 String s = gson.toJson(value);
                                 L.i("rrrrrrrrrrrrrrrr", s);
 
-                                getPresenter().uploadBleData(value);
+                                tempBleInfo = new BleDeviceInfo();
+                                tempBleInfo.setBracelet_id(value.getBracelet_id());
+                                tempBleInfo.setU_time(value.getU_time());
+                                tempBleInfo.setDevice_name(value.getDevice_name());
+                                tempBleInfo.setDistance(value.getDistance());
+                                tempBleInfo.setExercise_time(value.getExercise_time());
+                                tempBleInfo.setGradient(value.getGradient());
+                                tempBleInfo.setGravity(value.getGravity());
+                                tempBleInfo.setGym_name(value.getGym_name());
+                                tempBleInfo.setHeart_rate(value.getHeart_rate());
+                                tempBleInfo.setReport(value.isReport());
+                                tempBleInfo.setSpeed(value.getSpeed());
+                                tempBleInfo.setTime(value.getTime());
+
+
+                                getPresenter().uploadBleData(tempBleInfo,value);
+
+
 
                             }
                         }
@@ -390,17 +407,17 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     }
 
     @Override
-    public void uploadBleStatus(BleDeviceInfo bleDeviceInfo, boolean status, Throwable throwable) {
+    public void uploadBleStatus(BleDeviceInfo temp,BleDeviceInfo bleDeviceInfo, boolean status, Throwable throwable) {
         try {
             if (!status) {
 
-                String s = gson.toJson(bleDeviceInfo);
+                String s = gson.toJson(temp);
                 L.i("wwwwwwwwwwww", s);
                 L.i("wwwwwwwwwwww", throwable.getMessage());
                 bleDeviceInfo.setReport(false);
                 updateData(bleDeviceInfo);
             } else {
-                String s = gson.toJson(bleDeviceInfo);
+                String s = gson.toJson(temp);
                 L.i("ffffffffffff", s);
                 bleDeviceInfo.setReport(true);
                 updateData(bleDeviceInfo);
@@ -409,7 +426,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             e.printStackTrace();
         }
 
-        if (!"".equals(bleDeviceInfo.getTime())) {
+        if (!"".equals(temp.getTime()) && !"".equals(temp.getU_time())) {
             LinkDataManager.getInstance().cleanFlyBird(bleDeviceInfo);
         }
     }

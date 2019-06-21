@@ -12,7 +12,6 @@
     "0000209b": "LEAP D1D6",
     "00001e29": "LEAP AFCE",
     "00002099": "LEAP 70E9"
-
   },
   "deviceInfo": [
     {
@@ -170,33 +169,59 @@
       "fencePoint": {
         "fenceId": 5,
         "left_top": {
-          "x": 1570.0,
-          "y": 290.0
+          "x": 1432.0,
+          "y": 377.0
         },
         "right_top": {
-          "x": 2115.0,
-          "y": 290.0
+          "x": 1898.0,
+          "y": 239.0
         },
         "left_bottom": {
-          "x": 1570.0,
-          "y": 1135.0
+          "x": 1550.0,
+          "y": 765.0
         },
         "right_bottom": {
-          "x": 2115.0,
-          "y": 1135.0
+          "x": 2020.0,
+          "y": 615.0
         }
       },
       "linkBLES": [
         {
           "bleId": 5,
-          "bleName": "GYM050",
-          "type": "飞鸟左"
-        },{
-          "bleId": 6,
-          "bleName": "GYM051",
+          "bleName": "GYM06",
           "type": "飞鸟左"
         }
-
+      ]
+    },
+    {
+      "id": 6,
+      "deviceName": "蝴蝶机01",
+      "type": "蝴蝶机",
+      "fencePoint": {
+        "fenceId": 6,
+        "left_top": {
+          "x": 2032.0,
+          "y": 462.0
+        },
+        "right_top": {
+          "x": 2217.0,
+          "y": 390.0
+        },
+        "left_bottom": {
+          "x": 2114.0,
+          "y": 715.0
+        },
+        "right_bottom": {
+          "x": 2308.0,
+          "y": 678.0
+        }
+      },
+      "linkBLES": [
+        {
+          "bleId": 6,
+          "bleName": "GYM07",
+          "type": "蝴蝶机t4"
+        }
       ]
     }
   ]
