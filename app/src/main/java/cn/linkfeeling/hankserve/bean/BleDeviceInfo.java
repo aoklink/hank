@@ -29,6 +29,10 @@ public class BleDeviceInfo {
     private String time;
     private String exercise_time;
     private boolean report;
+    private String u_time;
+
+
+
 
     public boolean isReport() {
         return report;

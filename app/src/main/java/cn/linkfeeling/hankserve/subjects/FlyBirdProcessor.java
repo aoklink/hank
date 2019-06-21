@@ -25,6 +25,7 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 public class FlyBirdProcessor implements IDataAnalysis {
     private int serialNum = -1;
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
+    private static final float SELF_GRAVITY = 2.5f;
 
     static {
         map = new ConcurrentHashMap<>();
@@ -36,23 +37,19 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (scanRecord == null) {
             return null;
         }
-
-//        byte[] result=new byte[16];
-//
-//        System.arraycopy(scanRecord,7, result, 0, 16);
-
-        Log.i("ppppppppp", Arrays.toString(scanRecord));
+        Log.i("ppppppppp"+bleName, Arrays.toString(scanRecord));
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         if (linkScanRecord == null) {
             return null;
         }
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
-        Log.i("999999999", Arrays.toString(serviceData));
+        Log.i("999999999"+bleName, Arrays.toString(serviceData));
 
-        if (serviceData == null || serialNum == serviceData[12]) {
+        if (serviceData == null || serialNum == serviceData[11] || serviceData[12]==0) {
             return null;
-
         }
+
+
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
         if (deviceByBleName == null) {
             return null;
@@ -60,19 +57,18 @@ public class FlyBirdProcessor implements IDataAnalysis {
 //        if(serviceData[0]!=0 && serviceData[0]!=-1){
 //            deviceByBleName.setAbility(serviceData[0]);
 //        }
-
-
+        byte serviceTemp = serviceData[11];
+        if (serviceTemp < serialNum && (serialNum - serviceTemp) <= 10) {
+            return null;
+        }
         deviceByBleName.setAbility(serviceData[0]);
 
-        serialNum = serviceData[12];
+        serialNum = serviceData[11];
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
             deviceByBleName.setAbility(0);
 
-            byte act_time = serviceData[13];
-            if (act_time == 0) {
-                return null;
-            }
+
 
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
@@ -87,59 +83,19 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 return null;
             }
 
-
-            byte[] gravity = new byte[2];
-            gravity[0] = serviceData[11];
-            gravity[1] = serviceData[10];
-
-            int act_gravity = CalculateUtil.byteArrayToInt(gravity);
+            byte act_time = serviceData[12];
+            byte gravity = serviceData[10];
+            float actualGravity = SELF_GRAVITY * gravity;
 
 
-            float v = CalculateUtil.txFloat(act_gravity, 100);
-            bleDeviceInfoNow.setGravity(String.valueOf(v));
+            byte[] u_time=new byte[2];
+            u_time[0]=serviceData[13];
+            u_time[1]=serviceData[14];
+
+            bleDeviceInfoNow.setGravity(String.valueOf(actualGravity));
             bleDeviceInfoNow.setTime(String.valueOf(act_time));
-
-
+          //  bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteArrayToInt(u_time)));
         }
-        //    byte[] bytes = serviceData.get(UUID.nameUUIDFromBytes("0000180a-0000-1000-8000-00805f9b34fb".getBytes()));
-
-//        if (manufacturerSpecificData != null && manufacturerSpecificData.size() != 0) {
-//            final byte[] bytes1 = manufacturerSpecificData.valueAt(0);
-//            Log.i("fly bird", bleName + "-----" + Arrays.toString(bytes1));
-//
-//            LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
-//            if (deviceByBleName == null) {
-//                return null;
-//            }
-//            deviceByBleName.setAbility(bytes1[0]);
-//
-//            if (bytes1[0] == 0 && bytes1[12] == 0 && bytes1[14] == 0) {
-//                return null;
-//            }
-//
-//
-//            if (serialNum == bytes1[10]) {2
-//                return null;
-//            }
-//            serialNum = bytes1[10];
-//
-//
-//            //在拉伸的过程中  原始数据不为0  但是质量和次数为0
-//            if (bytes1[12] == 0 || bytes1[14] == 0) {
-//                return null;
-//            }
-//
-//
-//            byte[] gravityBtye=new byte[1];
-//            gravityBtye[0]=bytes1[12];
-//            int gravity = byteArrayToInt(gravityBtye);
-//
-//
-//            float v = CalculateUtil.txFloat(gravity, 10);
-//            bleDeviceInfo.setGravity(String.valueOf(v));
-//            Log.i("lllllllll",String.valueOf(v));
-//            bleDeviceInfo.setTime(String.valueOf(bytes1[14]));
-//        }
         return bleDeviceInfoNow;
 
     }
