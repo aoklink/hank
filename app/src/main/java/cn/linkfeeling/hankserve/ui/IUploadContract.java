@@ -13,10 +13,10 @@ import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 public interface IUploadContract {
 
     interface IBleUploadView extends BaseMvpView {
-        void uploadBleStatus(BleDeviceInfo bleDeviceInfo,boolean status,Throwable e);
+        void uploadBleStatus(BleDeviceInfo temp,BleDeviceInfo bleDeviceInfo,boolean status,Throwable e);
     }
 
     interface IBleUploadPresenter extends BaseMvpPresenter<IBleUploadView> {
-        void uploadBleData(BleDeviceInfo bleDeviceInfo);
+        void uploadBleData(BleDeviceInfo temp,BleDeviceInfo bleDeviceInfo);
     }
 }

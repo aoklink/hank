@@ -359,11 +359,11 @@ public class LinkDataManager {
         bleDeviceInfo.setSpeed("");
         bleDeviceInfo.setGradient("");
         bleDeviceInfo.setDistance("");
-        bleDeviceInfo.setGravity("");
-        bleDeviceInfo.setTime("");
-        bleDeviceInfo.setGravity("");
-        bleDeviceInfo.setTime("");
-        bleDeviceInfo.setU_time("");
+//        bleDeviceInfo.setGravity("");
+//        bleDeviceInfo.setTime("");
+//        bleDeviceInfo.setGravity("");
+//        bleDeviceInfo.setTime("");
+//        bleDeviceInfo.setU_time("");
     }
 
     /**

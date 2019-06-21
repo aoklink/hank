@@ -15,8 +15,8 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class UploadPresenter extends BasePresenter<IUploadContract.IBleUploadView> implements IUploadContract.IBleUploadPresenter {
     @Override
-    public void uploadBleData(BleDeviceInfo bleDeviceInfo) {
-        Completable completable = LinkDataRepositories.getInstance().uploadBleGymData(bleDeviceInfo);
+    public void uploadBleData(BleDeviceInfo temp,BleDeviceInfo bleDeviceInfo) {
+        Completable completable = LinkDataRepositories.getInstance().uploadBleGymData(temp);
         completable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -26,7 +26,7 @@ public class UploadPresenter extends BasePresenter<IUploadContract.IBleUploadVie
                         super.onComplete();
 
                         onceViewAttached(view -> {
-                            view.uploadBleStatus(bleDeviceInfo, true,null);
+                            view.uploadBleStatus(temp,bleDeviceInfo, true,null);
                         });
 
                     }
@@ -35,7 +35,7 @@ public class UploadPresenter extends BasePresenter<IUploadContract.IBleUploadVie
                     public void onError(Throwable e) {
                         super.onError(e);
                         onceViewAttached(view -> {
-                            view.uploadBleStatus(bleDeviceInfo, false,e);
+                            view.uploadBleStatus(temp,bleDeviceInfo, false,e);
                           //  showToast(e.getMessage());
                         });
                     }
