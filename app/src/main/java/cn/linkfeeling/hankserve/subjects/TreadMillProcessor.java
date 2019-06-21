@@ -3,6 +3,7 @@ package cn.linkfeeling.hankserve.subjects;
 import android.util.Log;
 
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
@@ -22,6 +23,12 @@ import static cn.linkfeeling.hankserve.utils.CalculateUtil.txFloat;
  */
 public class TreadMillProcessor implements IDataAnalysis {
 
+
+    public static ConcurrentHashMap<String, TreadMillProcessor> map;
+
+    static {
+        map = new ConcurrentHashMap<>();
+    }
 
     public static TreadMillProcessor getInstance() {
         return TreadMillProcessorHolder.sTreadMillProcessor;

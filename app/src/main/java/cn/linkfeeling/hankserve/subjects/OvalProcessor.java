@@ -3,6 +3,7 @@ package cn.linkfeeling.hankserve.subjects;
 import android.util.Log;
 
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
@@ -19,6 +20,13 @@ import cn.linkfeeling.hankserve.utils.CalculateUtil;
  * 椭圆机数据解析
  */
 public class OvalProcessor implements IDataAnalysis {
+
+    public static ConcurrentHashMap<String, OvalProcessor> map;
+
+    static {
+        map = new ConcurrentHashMap<>();
+    }
+
 
     public static OvalProcessor getInstance() {
         return OvalProcessorHolder.sOvalProcessor;

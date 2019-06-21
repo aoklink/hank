@@ -25,19 +25,51 @@ public class DataProcessorFactory {
                 return WristbandProcessor.getInstance();
 
             case LinkDataManager.TREADMILL_1:
-                return TreadMillProcessor.getInstance();
+                ConcurrentHashMap<String, TreadMillProcessor> treadMillMap = TreadMillProcessor.map;
+                if (treadMillMap != null) {
+                    TreadMillProcessor treadMillProcessor = treadMillMap.get(name);
+                    if (treadMillProcessor != null) {
+                        return treadMillProcessor;
+                    } else {
+                        TreadMillProcessor treadMillProcessor1 = new TreadMillProcessor();
+                        TreadMillProcessor.map.put(name, treadMillProcessor1);
+                        return treadMillProcessor1;
+                    }
+                }
+                return null;
 
             case LinkDataManager.BICYCLE_1:
-                return BicycleProcessor.getInstance();
+                ConcurrentHashMap<String, BicycleProcessor> bicycleMap = BicycleProcessor.map;
+                if (bicycleMap != null) {
+                    BicycleProcessor bicycleProcessor = bicycleMap.get(name);
+                    if (bicycleProcessor != null) {
+                        return bicycleProcessor;
+                    } else {
+                        BicycleProcessor bicycleProcessor1 = new BicycleProcessor();
+                        BicycleProcessor.map.put(name, bicycleProcessor1);
+                        return bicycleProcessor1;
+                    }
+                }
+                return null;
 
             case LinkDataManager.OVAL_1:
-                return OvalProcessor.getInstance();
-
+                ConcurrentHashMap<String, OvalProcessor> ovalMap = OvalProcessor.map;
+                if (ovalMap != null) {
+                    OvalProcessor ovalProcessor = ovalMap.get(name);
+                    if (ovalProcessor != null) {
+                        return ovalProcessor;
+                    } else {
+                        OvalProcessor ovalProcessor01 = new OvalProcessor();
+                        OvalProcessor.map.put(name, ovalProcessor01);
+                        return ovalProcessor01;
+                    }
+                }
+                return null;
             case LinkDataManager.BIRD_1:
 
-                ConcurrentHashMap<String, FlyBirdProcessor> map = FlyBirdProcessor.map;
-                if (map != null) {
-                    FlyBirdProcessor flyBirdProcessor = map.get(name);
+                ConcurrentHashMap<String, FlyBirdProcessor> birdMap = FlyBirdProcessor.map;
+                if (birdMap != null) {
+                    FlyBirdProcessor flyBirdProcessor = birdMap.get(name);
                     if (flyBirdProcessor != null) {
                         return flyBirdProcessor;
                     } else {

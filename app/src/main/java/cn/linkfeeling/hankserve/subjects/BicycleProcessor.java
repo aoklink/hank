@@ -3,6 +3,7 @@ package cn.linkfeeling.hankserve.subjects;
 import android.util.Log;
 
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
@@ -18,6 +19,12 @@ import cn.linkfeeling.hankserve.utils.CalculateUtil;
  * 单车数据解析
  */
 public class BicycleProcessor implements IDataAnalysis {
+    public static ConcurrentHashMap<String, BicycleProcessor> map;
+
+    static {
+        map = new ConcurrentHashMap<>();
+    }
+
 
     public static BicycleProcessor getInstance() {
         return BicycleProcessorHolder.sBicycleProcessor;
