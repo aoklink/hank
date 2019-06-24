@@ -161,24 +161,25 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 String s = gson.toJson(value);
                                 L.i("rrrrrrrrrrrrrrrr", s);
 
+                                tempBleInfo = gson.fromJson(gson.toJson(value), BleDeviceInfo.class);
+//
+//
+//                                tempBleInfo = new BleDeviceInfo();
+//                                tempBleInfo.setBracelet_id(value.getBracelet_id());
+//                                tempBleInfo.setU_time(value.getU_time());
+//                                tempBleInfo.setDevice_name(value.getDevice_name());
+//                                tempBleInfo.setDistance(value.getDistance());
+//                                tempBleInfo.setExercise_time(value.getExercise_time());
+//                                tempBleInfo.setGradient(value.getGradient());
+//                                tempBleInfo.setGravity(value.getGravity());
+//                                tempBleInfo.setGym_name(value.getGym_name());
+//                                tempBleInfo.setHeart_rate(value.getHeart_rate());
+//                                tempBleInfo.setReport(value.isReport());
+//                                tempBleInfo.setSpeed(value.getSpeed());
+//                                tempBleInfo.setTime(value.getTime());
+//
 
-
-                                tempBleInfo = new BleDeviceInfo();
-                                tempBleInfo.setBracelet_id(value.getBracelet_id());
-                                tempBleInfo.setU_time(value.getU_time());
-                                tempBleInfo.setDevice_name(value.getDevice_name());
-                                tempBleInfo.setDistance(value.getDistance());
-                                tempBleInfo.setExercise_time(value.getExercise_time());
-                                tempBleInfo.setGradient(value.getGradient());
-                                tempBleInfo.setGravity(value.getGravity());
-                                tempBleInfo.setGym_name(value.getGym_name());
-                                tempBleInfo.setHeart_rate(value.getHeart_rate());
-                                tempBleInfo.setReport(value.isReport());
-                                tempBleInfo.setSpeed(value.getSpeed());
-                                tempBleInfo.setTime(value.getTime());
-
-
-                                getPresenter().uploadBleData(tempBleInfo,value);
+                                getPresenter().uploadBleData(tempBleInfo, value);
 
                             }
                         }
@@ -370,7 +371,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     }
 
     @Override
-    public void uploadBleStatus(BleDeviceInfo temp,BleDeviceInfo bleDeviceInfo, boolean status, Throwable throwable) {
+    public void uploadBleStatus(BleDeviceInfo temp, BleDeviceInfo bleDeviceInfo, boolean status, Throwable throwable) {
         try {
             if (!status) {
 
