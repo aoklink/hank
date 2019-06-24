@@ -122,7 +122,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     @Override
                     public void getBLEStream(String hostString, SmartCarProtocol smartCarProtocol) {
 
-                        onLeScanSelf(hostString, smartCarProtocol.getContent());
+                      onLeScanSelf(hostString, smartCarProtocol.getContent());
 //                        ThreadPoolManager.getInstance().execute(new Runnable() {
 //                            @Override
 //                            public void run() {
