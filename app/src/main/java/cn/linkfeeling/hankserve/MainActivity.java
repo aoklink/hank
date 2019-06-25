@@ -34,6 +34,7 @@ import cn.linkfeeling.hankserve.manager.LinkWSManager;
 import cn.linkfeeling.hankserve.ui.IUploadContract;
 import cn.linkfeeling.hankserve.ui.UploadPresenter;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
+import cn.linkfeeling.hankserve.utils.HexUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 import cn.linkfeeling.link_socketserve.NettyServer;
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
@@ -54,6 +55,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private BLEAdapter bleAdapter;
 
     private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
+
 
     @Override
     protected int getLayoutRes() {
@@ -122,7 +124,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     @Override
                     public void getBLEStream(String hostString, SmartCarProtocol smartCarProtocol) {
 
-                      onLeScanSelf(hostString, smartCarProtocol.getContent());
+                        onLeScanSelf(hostString, smartCarProtocol.getContent());
 //                        ThreadPoolManager.getInstance().execute(new Runnable() {
 //                            @Override
 //                            public void run() {
@@ -200,6 +202,17 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             return;
         }
         String name = linkScanRecord.getDeviceName();
+
+        if ("I7PLUS".equals(name)) {
+            byte[] bytes = linkScanRecord.getManufacturerSpecificData().valueAt(0);
+            byte[] mac = new byte[2];
+            mac[0] = bytes[0];
+            mac[1] = bytes[1];
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(name);
+            stringBuilder.append(HexUtil.encodeHexStr(mac));
+            name = stringBuilder.toString();
+        }
 
         Log.i("nnnnnnnnnnnnn", hostString + "-----" + name);
         if (LinkDataManager.getInstance().getUwbCode_wristbandName().containsValue(name)) {

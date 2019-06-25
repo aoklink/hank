@@ -29,6 +29,8 @@ public class BicycleProcessor implements IDataAnalysis {
         map = new ConcurrentHashMap<>();
     }
 
+    private int serialNum = -1;
+
     public static BicycleProcessor getInstance() {
         return BicycleProcessorHolder.sBicycleProcessor;
     }
@@ -65,6 +67,13 @@ public class BicycleProcessor implements IDataAnalysis {
             return null;
         }
 
+        byte seq = serviceData[4];
+        if (seq < serialNum && serialNum - seq < 10) {
+            return null;
+        }
+
+        serialNum = seq;
+
 
         byte[] turns = new byte[2];
         turns[0] = serviceData[0];
@@ -83,10 +92,10 @@ public class BicycleProcessor implements IDataAnalysis {
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
             speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
-            Log.i("ticks", speed + "");
-            Log.i("ticks----", (float) CalculateUtil.byteArrayToInt(ticks) + "");
-            Log.i("ticks===", Arrays.toString(ticks));
         }
+        Log.i("ticks", speed + "");
+        Log.i("ticks----", (float) CalculateUtil.byteArrayToInt(ticks) + "");
+        Log.i("ticks===", Arrays.toString(ticks));
 
         deviceByBleName.setAbility(speed);
 

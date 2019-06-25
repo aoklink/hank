@@ -37,15 +37,15 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (scanRecord == null) {
             return null;
         }
-        Log.i("ppppppppp"+bleName, Arrays.toString(scanRecord));
+        Log.i("ppppppppp" + bleName, Arrays.toString(scanRecord));
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         if (linkScanRecord == null) {
             return null;
         }
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
-        Log.i("999999999"+bleName, Arrays.toString(serviceData));
+        Log.i("999999999" + bleName, Arrays.toString(serviceData));
 
-        if (serviceData == null || serialNum == serviceData[11] || serviceData[12]==0) {
+        if (serviceData == null || serialNum == serviceData[11] || serviceData[12] == 0) {
             return null;
         }
 
@@ -66,13 +66,11 @@ public class FlyBirdProcessor implements IDataAnalysis {
         serialNum = serviceData[11];
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
-            deviceByBleName.setAbility(0);
-
-
 
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
             if (!containsKey) {
+                deviceByBleName.setAbility(0);
                 return null;
             }
             UWBCoordData uwbCoordData = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId);
@@ -80,6 +78,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
             bleDeviceInfoNow = FinalDataManager.getInstance().getWristbands().get(bracelet_id);
             if (bleDeviceInfoNow == null) {
+                deviceByBleName.setAbility(0);
                 return null;
             }
 
@@ -88,13 +87,14 @@ public class FlyBirdProcessor implements IDataAnalysis {
             float actualGravity = SELF_GRAVITY * gravity;
 
 
-            byte[] u_time=new byte[2];
-            u_time[0]=serviceData[13];
-            u_time[1]=serviceData[14];
+            byte[] u_time = new byte[2];
+            u_time[0] = serviceData[13];
+            u_time[1] = serviceData[14];
 
             bleDeviceInfoNow.setGravity(String.valueOf(actualGravity));
             bleDeviceInfoNow.setTime(String.valueOf(act_time));
             bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteArrayToInt(u_time)));
+            deviceByBleName.setAbility(0);
         }
         return bleDeviceInfoNow;
 

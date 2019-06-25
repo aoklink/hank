@@ -3,6 +3,7 @@ package cn.linkfeeling.hankserve;
 import org.junit.Test;
 
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
+import cn.linkfeeling.hankserve.utils.HexUtil;
 
 import static org.junit.Assert.*;
 
@@ -21,9 +22,8 @@ public class ExampleUnitTest {
     @Test
     public void testTime(){
         byte[] u_time=new byte[2];
-        u_time[0]=13;
-        u_time[1]=-84;
-        int i = CalculateUtil.byteArrayToInt(u_time);
-        System.out.println(i);
+        u_time[0]=-8;
+        u_time[1]=-9;
+        System.out.println(HexUtil.encodeHexStr(u_time,false));
     }
 }

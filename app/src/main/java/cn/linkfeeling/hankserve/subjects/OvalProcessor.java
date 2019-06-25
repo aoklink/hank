@@ -30,6 +30,8 @@ public class OvalProcessor implements IDataAnalysis {
         map = new ConcurrentHashMap<>();
     }
 
+    private int serialNum = -1;
+
     public static OvalProcessor getInstance() {
         return OvalProcessorHolder.sOvalProcessor;
     }
@@ -75,6 +77,12 @@ public class OvalProcessor implements IDataAnalysis {
             return null;
         }
 
+        byte seq = serviceData[4];
+        if (seq < serialNum && serialNum - seq < 10) {
+            return null;
+        }
+
+        serialNum = seq;
 
         byte[] turns = new byte[2];
         turns[0] = serviceData[0];
