@@ -89,6 +89,7 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
+        Log.i("link-throwable",cause.getMessage());
         ctx.close();
     }
 
@@ -247,12 +248,11 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        super.channelRead(ctx, msg);
-
         lossConnectCount = 0;
         SmartCarProtocol body = (SmartCarProtocol) msg;
         String hostString = ((InetSocketAddress) ctx.channel().remoteAddress()).getHostString();
         Log.i("xxxxxxxxxxx", hostString);
         socketCallBack.getBLEStream(hostString,body);
+     //   super.channelRead(ctx, msg);
     }
 }
