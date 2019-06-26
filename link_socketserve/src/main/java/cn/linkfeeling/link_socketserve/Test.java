@@ -5,6 +5,7 @@ import java.util.Calendar;
 
 import cn.linkfeeling.link_socketserve.bean.ScanData;
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
+import io.netty.buffer.ByteBuf;
 
 /**
  * @author create by zhangyong
@@ -12,6 +13,7 @@ import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
  */
 public class Test {
     public static void main(String args[]) {
+
 
 
 //        byte ss=(byte)0xaa;
