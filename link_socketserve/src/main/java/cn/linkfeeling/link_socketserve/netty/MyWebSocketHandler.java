@@ -90,7 +90,7 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
         Log.i("link-throwable",cause.getMessage());
-        ctx.close();
+      //  ctx.close();
     }
 
 

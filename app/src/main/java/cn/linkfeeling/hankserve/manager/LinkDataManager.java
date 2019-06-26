@@ -42,6 +42,7 @@ public class LinkDataManager {
     public static final String BICYCLE_1 = "单车t2";
     public static final String OVAL_1 = "椭圆机t3";
     public static final String BIRD_1 = "飞鸟左";
+    public static final String BUTTER_1 = "蝴蝶机t4";
 
     private static final LinkDataManager linkDataManager = new LinkDataManager();
     private ConcurrentHashMap<String, String> deviceBleTypeMaps;

@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.subjects.BicycleProcessor;
+import cn.linkfeeling.hankserve.subjects.ButterFlyProcessor;
 import cn.linkfeeling.hankserve.subjects.FlyBirdProcessor;
 import cn.linkfeeling.hankserve.subjects.OvalProcessor;
 import cn.linkfeeling.hankserve.subjects.TreadMillProcessor;
@@ -80,6 +81,20 @@ public class DataProcessorFactory {
                 }
                 return null;
 
+            case LinkDataManager.BUTTER_1:
+
+                ConcurrentHashMap<String, ButterFlyProcessor> butterFlyMap = ButterFlyProcessor.map;
+                if (butterFlyMap != null) {
+                    ButterFlyProcessor butterFlyProcessor = butterFlyMap.get(name);
+                    if (butterFlyProcessor != null) {
+                        return butterFlyProcessor;
+                    } else {
+                        ButterFlyProcessor butterFlyProcessor1 = new ButterFlyProcessor();
+                        ButterFlyProcessor.map.put(name, butterFlyProcessor1);
+                        return butterFlyProcessor1;
+                    }
+                }
+                return null;
 
             default:
                 return null;
