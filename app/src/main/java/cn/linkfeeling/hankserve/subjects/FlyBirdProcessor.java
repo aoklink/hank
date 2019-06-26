@@ -25,7 +25,7 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 public class FlyBirdProcessor implements IDataAnalysis {
     private int serialNum = -1;
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
-    private static final float SELF_GRAVITY = 2.5f;
+    private static final float SELF_GRAVITY = 5f;
 
     static {
         map = new ConcurrentHashMap<>();
