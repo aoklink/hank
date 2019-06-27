@@ -82,7 +82,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         }
         // UDPBroadcast.udpBroadcast(this);
         connectWebSocket();
-        connectLinkWS();
+        //connectLinkWS();
         startIntervalListener();
     }
 
