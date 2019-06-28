@@ -30,7 +30,7 @@ public class HexUtil {
 
 
     public static String encodeHexStr(byte[] data) {
-        return encodeHexStr(data, true);
+        return encodeHexStr(data, false);
     }
 
     public static String encodeHexStr(byte[] data, boolean toLowerCase) {

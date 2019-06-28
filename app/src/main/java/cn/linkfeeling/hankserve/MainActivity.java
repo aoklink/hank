@@ -38,6 +38,7 @@ import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.ui.IUploadContract;
 import cn.linkfeeling.hankserve.ui.UploadPresenter;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
+import cn.linkfeeling.hankserve.utils.HexUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 import cn.linkfeeling.link_socketserve.NettyServer;
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
@@ -206,6 +207,17 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         String name = linkScanRecord.getDeviceName();
         if (name == null) {
             return;
+        }
+
+        if ("I7PLUS".equals(name)) {
+            byte[] bytes = linkScanRecord.getManufacturerSpecificData().valueAt(0);
+            byte[] mac = new byte[2];
+            mac[0] = bytes[0];
+            mac[1] = bytes[1];
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(name);
+            stringBuilder.append(HexUtil.encodeHexStr(mac));
+            name = stringBuilder.toString();
         }
 
         Log.i("nnnnnnnnnnnnn", name);
