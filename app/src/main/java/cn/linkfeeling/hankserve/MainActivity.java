@@ -290,7 +290,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
      * @time 2019/3/20 14:57
      */
     private synchronized void dealMessage(String text) {
-        L.i("LLLLLLLLLLLLLLL", Thread.currentThread().getName());
         newUwb = gson.fromJson(text, UWBCoordData.class);
         if (newUwb == null) {
             return;
