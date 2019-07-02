@@ -85,10 +85,10 @@ public class BicycleProcessor implements IDataAnalysis {
         ticks[1] = serviceData[2];
 
         float speed;
-        if (CalculateUtil.byteArrayToInt(ticks) == 0) {
-            return null;
-        } else if (turns[0] == -1 && turns[1] == -1) {
+        if (turns[0] == -1 && turns[1] == -1) {
             speed = 0;
+        } else if (CalculateUtil.byteArrayToInt(ticks) == 0) {
+            return null;
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
             speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
