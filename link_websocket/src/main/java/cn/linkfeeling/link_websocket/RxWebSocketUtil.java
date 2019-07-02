@@ -146,7 +146,7 @@ public class RxWebSocketUtil {
                     })
                     .share()
                     .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread());
+                    .observeOn(Schedulers.io());
             observableMap.put(url, observable);
         } else {
             WebSocket webSocket = webSocketMap.get(url);

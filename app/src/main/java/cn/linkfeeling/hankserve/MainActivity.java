@@ -281,6 +281,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         });
     }
 
+    private UWBCoordData newUwb;
 
     /**
      * 处理uwb设备数据
@@ -288,8 +289,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
      * @author zhangyong
      * @time 2019/3/20 14:57
      */
-    private void dealMessage(String text) {
-        UWBCoordData newUwb = gson.fromJson(text, UWBCoordData.class);
+    private synchronized void dealMessage(String text) {
+        L.i("LLLLLLLLLLLLLLL", Thread.currentThread().getName());
+        newUwb = gson.fromJson(text, UWBCoordData.class);
         if (newUwb == null) {
             return;
         }
