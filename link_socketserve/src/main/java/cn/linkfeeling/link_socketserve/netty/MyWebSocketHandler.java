@@ -89,7 +89,8 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
-        Log.i("link-throwable",cause.getMessage());
+        Log.i("link-throwable1", cause.getMessage());
+        Log.i("link-throwable2", cause.toString());
         ctx.close();
     }
 
@@ -137,7 +138,7 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
 
         //群发，服务端向每个连接上来的客户端群发消息
         Global.group.writeAndFlush(tws);
-        }
+    }
 
     /**
      * 处理客户端向服务端发起http握手请求的业务
@@ -252,7 +253,7 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
         SmartCarProtocol body = (SmartCarProtocol) msg;
         String hostString = ((InetSocketAddress) ctx.channel().remoteAddress()).getHostString();
         Log.i("xxxxxxxxxxx", hostString);
-        socketCallBack.getBLEStream(hostString,body);
-     //   super.channelRead(ctx, msg);
+        socketCallBack.getBLEStream(hostString, body);
+        //   super.channelRead(ctx, msg);
     }
 }
