@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.LinkBLE;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
@@ -25,7 +26,7 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 public class ButterFlyProcessor implements IDataAnalysis {
     private int serialNum = -1;
     public static ConcurrentHashMap<String, ButterFlyProcessor> map;
-    private static final float SELF_GRAVITY = 2.5f;
+
 
     static {
         map = new ConcurrentHashMap<>();
@@ -84,7 +85,15 @@ public class ButterFlyProcessor implements IDataAnalysis {
 
             byte act_time = serviceData[12];
             byte gravity = serviceData[10];
-            float actualGravity = SELF_GRAVITY * gravity;
+            float actualGravity = 0;
+            if (gravity > 0) {
+                LinkBLE linkBLE = LinkDataManager.getInstance().queryLinkBle(deviceByBleName, bleName);
+                if (linkBLE != null) {
+                    float[] weight = linkBLE.getWeight();
+                    actualGravity = weight[gravity - 1];
+                }
+                Log.i("zhiliang",actualGravity+"");
+            }
 
 
             byte[] u_time = new byte[2];

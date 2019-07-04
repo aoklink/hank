@@ -9,6 +9,7 @@ import cn.linkfeeling.hankserve.subjects.BicycleProcessor;
 import cn.linkfeeling.hankserve.subjects.ButterFlyProcessor;
 import cn.linkfeeling.hankserve.subjects.FlyBirdProcessor;
 import cn.linkfeeling.hankserve.subjects.OvalProcessor;
+import cn.linkfeeling.hankserve.subjects.SitPostureProcessor;
 import cn.linkfeeling.hankserve.subjects.TreadMillProcessor;
 import cn.linkfeeling.hankserve.subjects.WristbandProcessor;
 
@@ -97,6 +98,19 @@ public class DataProcessorFactory {
                 return null;
 
 
+            case LinkDataManager.SIT_POSTURE_1:
+                ConcurrentHashMap<String, SitPostureProcessor> sitPostureMap = SitPostureProcessor.map;
+                if (sitPostureMap != null) {
+                    SitPostureProcessor sitPostureProcessor = sitPostureMap.get(name);
+                    if (sitPostureProcessor != null) {
+                        return sitPostureProcessor;
+                    } else {
+                        SitPostureProcessor sitPostureProcessor1 = new SitPostureProcessor();
+                        SitPostureProcessor.map.put(name, sitPostureProcessor1);
+                        return sitPostureProcessor1;
+                    }
+                }
+                return null;
             default:
                 return null;
         }

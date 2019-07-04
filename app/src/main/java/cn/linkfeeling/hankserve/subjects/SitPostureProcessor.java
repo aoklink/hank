@@ -23,9 +23,9 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  * @time 2019/3/15
  * 飞鸟数据解析
  */
-public class FlyBirdProcessor implements IDataAnalysis {
+public class SitPostureProcessor implements IDataAnalysis {
     private int serialNum = -1;
-    public static ConcurrentHashMap<String, FlyBirdProcessor> map;
+    public static ConcurrentHashMap<String, SitPostureProcessor> map;
 
     static {
         map = new ConcurrentHashMap<>();
@@ -93,8 +93,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 }
                 Log.i("zhiliang",actualGravity+"");
             }
-
-
             byte[] u_time = new byte[2];
             u_time[0] = serviceData[13];
             u_time[1] = serviceData[14];

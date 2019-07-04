@@ -42,6 +42,7 @@ public class LinkDataManager {
     public static final String BICYCLE_1 = "单车t2";
     public static final String OVAL_1 = "椭圆机t3";
     public static final String BUTTER_1 = "蝴蝶机t4";
+    public static final String SIT_POSTURE_1 = "坐姿抬腿t5";
     public static final String BIRD_1 = "飞鸟左";
 
     private static final LinkDataManager linkDataManager = new LinkDataManager();
@@ -62,11 +63,6 @@ public class LinkDataManager {
 
 
     public LinkDataManager createLinkData(Context context) {
-//        uwbCode_wristbandName.put("0000183c", "LEAP 2FC2");
-//        uwbCode_wristbandName.put("0000183d", "LEAP BFF4");
-//        uwbCode_wristbandName.put("0000183f", "LEAP 0ADB");
-//        uwbCode_wristbandName.put("00001e27", "LEAP 0DDA");
-
         BufferedReader bufferedReader = null;
         StringBuilder rewardJson = new StringBuilder();
         String rewardJsonLine;
@@ -431,5 +427,23 @@ public class LinkDataManager {
             }
         }
         return false;
+    }
+
+    /**
+     * 根据蓝牙名字查询对象
+     *
+     * @param bleName
+     * @return
+     */
+    public LinkBLE queryLinkBle(LinkSpecificDevice specificDevice, String bleName) {
+        List<LinkBLE> linkBLES = specificDevice.getLinkBLES();
+        if (linkBLES != null && !linkBLES.isEmpty()) {
+            for (LinkBLE linkBLE : linkBLES) {
+                if (linkBLE.getBleName().equals(bleName)) {
+                    return linkBLE;
+                }
+            }
+        }
+        return null;
     }
 }
