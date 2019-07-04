@@ -2,19 +2,18 @@
   "uwb_wristband": {
     "0000183c": "LEAP B1CC",
     "00001e27": "LEAP 04C0",
-    "0000183d": "LEAP 0ADB",
     "00002096": "LEAP BFF4",
-    "00001e17": "LEAP 97E5",
     "00000001": "SA",
     "00001e1a": "I7PLUSDD1C",
     "00001e15": "I7PLUSD712",
     "00001e16": "I7PLUSF888",
     "00000004": "I7PLUSC14A",
     "00000005": "I7PLUSF8F7",
-    "00000006": "I7PLUSD661",
+    "00001e17": "I7PLUSD661",
     "00000007": "SH09UE6EB",
     "00000008": "I7PLUSE6EB",
-    "00000009": "I7PLUSF8F7"
+    "00000009": "I7PLUSF8F7",
+    "0000183d": "I7PLUSD46F"
   },
   "deviceInfo": [
     {
