@@ -4,7 +4,12 @@ package cn.linkfeeling.hankserve.subjects;
 import android.os.ParcelUuid;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
@@ -31,6 +36,9 @@ public class FlyBirdProcessor implements IDataAnalysis {
         map = new ConcurrentHashMap<>();
     }
 
+
+    private Vector<Integer> list = new Vector<>();
+
     @Override
     public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow = null;
@@ -45,7 +53,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
         Log.i("999999999" + bleName, Arrays.toString(serviceData));
 
-        if (serviceData == null || serialNum == serviceData[11] || serviceData[12] == 0) {
+        if (serviceData == null || serialNum == serviceData[11]) {
             return null;
         }
 
@@ -65,23 +73,44 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
         serialNum = serviceData[11];
 
+
+        int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+        boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
+        if (!containsKey) {
+            deviceByBleName.setAbility(0);
+            return null;
+        }
+        UWBCoordData uwbCoordData = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId);
+        String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
+        bleDeviceInfoNow = FinalDataManager.getInstance().getWristbands().get(bracelet_id);
+        if (bleDeviceInfoNow == null) {
+            deviceByBleName.setAbility(0);
+            return null;
+        }
+
+
+        if (serviceData[0] != -1 && serviceData[1] != -1) {
+            for (int j = 0; j < 10; j = j + 2) {
+                byte[] c = new byte[2];
+                c[0] = serviceData[j];
+                c[1] = serviceData[j + 1];
+                int cuv1 = CalculateUtil.byteArrayToInt(c);
+                bleDeviceInfoNow.getCurve().add(cuv1);
+
+                list.add(cuv1);
+            }
+        }
+
+
+
+
         if (serviceData[0] == -1 && serviceData[1] == -1) {
 
-            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
-            boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
-            if (!containsKey) {
+            Log.i("iiiiiiiiiiiii",JSON.toJSONString(list));
+            if (serviceData[12] == 0) {
                 deviceByBleName.setAbility(0);
                 return null;
             }
-            UWBCoordData uwbCoordData = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId);
-
-            String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
-            bleDeviceInfoNow = FinalDataManager.getInstance().getWristbands().get(bracelet_id);
-            if (bleDeviceInfoNow == null) {
-                deviceByBleName.setAbility(0);
-                return null;
-            }
-
             byte act_time = serviceData[12];
             byte gravity = serviceData[10];
             float actualGravity = SELF_GRAVITY * gravity;

@@ -18,7 +18,7 @@ public final class ServerConfig {
      * 拓展类...
      */
     public static void initEnv() {
-        HOST = "https://ll.linkfeeling.cn/api/";
+        HOST = "https://dev.linkfeeling.cn/api/";
     }
 
 

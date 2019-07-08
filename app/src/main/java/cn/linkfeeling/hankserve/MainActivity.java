@@ -9,6 +9,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.link.feeling.framework.base.FrameworkBaseActivity;
 import com.link.feeling.framework.executor.ThreadPoolManager;
@@ -160,27 +161,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                         value.setDistance(bigDecimal.toString());
                                     }
                                 }
-                                String s = gson.toJson(value);
-                                L.i("rrrrrrrrrrrrrrrr", s);
+                                //   String s = gson.toJson(value);
+                                //    L.i("rrrrrrrrrrrrrrrr", s);
 
                                 tempBleInfo = gson.fromJson(gson.toJson(value), BleDeviceInfo.class);
-//
-//
-//                                tempBleInfo = new BleDeviceInfo();
-//                                tempBleInfo.setBracelet_id(value.getBracelet_id());
-//                                tempBleInfo.setU_time(value.getU_time());
-//                                tempBleInfo.setDevice_name(value.getDevice_name());
-//                                tempBleInfo.setDistance(value.getDistance());
-//                                tempBleInfo.setExercise_time(value.getExercise_time());
-//                                tempBleInfo.setGradient(value.getGradient());
-//                                tempBleInfo.setGravity(value.getGravity());
-//                                tempBleInfo.setGym_name(value.getGym_name());
-//                                tempBleInfo.setHeart_rate(value.getHeart_rate());
-//                                tempBleInfo.setReport(value.isReport());
-//                                tempBleInfo.setSpeed(value.getSpeed());
-//                                tempBleInfo.setTime(value.getTime());
-//
-
                                 getPresenter().uploadBleData(tempBleInfo, value);
 
                             }
@@ -402,6 +386,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        if (temp.getCurve() != null && !temp.getCurve().isEmpty()) {
+            Log.i("33333333333",JSON.toJSONString(temp.getCurve()));
+            bleDeviceInfo.getCurve().removeAll(temp.getCurve());
         }
 
         if (!"".equals(temp.getTime()) && !"".equals(temp.getU_time())) {

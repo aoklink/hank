@@ -1,5 +1,8 @@
 package cn.linkfeeling.hankserve.bean;
 
+import java.util.List;
+import java.util.Vector;
+
 /**
  * @author create by zhangyong
  * @time 2019/3/13
@@ -30,6 +33,7 @@ public class BleDeviceInfo {
     private String exercise_time;
     private String u_time; //飞鸟单组运动时长
     private boolean report;
+    private Vector<Integer> curve;
 
     public boolean isReport() {
         return report;
@@ -125,6 +129,14 @@ public class BleDeviceInfo {
 
     public void setU_time(String u_time) {
         this.u_time = u_time;
+    }
+
+    public Vector<Integer> getCurve() {
+        return curve;
+    }
+
+    public void setCurve(Vector<Integer> curve) {
+        this.curve = curve;
     }
 
     @Override

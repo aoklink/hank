@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.BuildConfig;
@@ -91,7 +92,7 @@ public class LinkDataManager {
                 devicesData.addAll(linkSpecificDevices);
             }
 
-            Log.i("5555555",gson.toJson(deviceInfo));
+            Log.i("5555555", gson.toJson(deviceInfo));
 
             for (LinkSpecificDevice devicesDatum : devicesData) {
                 List<LinkBLE> linkBLES = devicesDatum.getLinkBLES();
@@ -347,6 +348,7 @@ public class LinkDataManager {
         bleDeviceInfo.setGravity("");
         bleDeviceInfo.setTime("");
         bleDeviceInfo.setU_time("");
+        bleDeviceInfo.setCurve(new Vector<>());
     }
 
 
@@ -375,6 +377,7 @@ public class LinkDataManager {
         bleDeviceInfo.setGravity("");
         bleDeviceInfo.setTime("");
         bleDeviceInfo.setU_time("");
+
     }
 
 
@@ -401,11 +404,9 @@ public class LinkDataManager {
     }
 
 
-
-
-
     /**
      * 判断一个点是否在凸四边形内
+     *
      * @param uwbCoordData
      * @return
      */
