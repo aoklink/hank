@@ -40,7 +40,7 @@ public class TreadMillProcessor implements IDataAnalysis {
     }
 
     @Override
-    public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostName,byte[] scanRecord, String bleName) {
         Log.i("pppppppppppppp", Arrays.toString(scanRecord));
         BleDeviceInfo bleDeviceInfoNow = null;
 

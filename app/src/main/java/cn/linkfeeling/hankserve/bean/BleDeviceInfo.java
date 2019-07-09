@@ -33,7 +33,7 @@ public class BleDeviceInfo {
     private String exercise_time;
     private String u_time; //飞鸟单组运动时长
     private boolean report;
-    private Vector<Integer> curve;
+    private List<Integer> curve;
 
     public boolean isReport() {
         return report;
@@ -131,11 +131,11 @@ public class BleDeviceInfo {
         this.u_time = u_time;
     }
 
-    public Vector<Integer> getCurve() {
+    public List<Integer> getCurve() {
         return curve;
     }
 
-    public void setCurve(Vector<Integer> curve) {
+    public void setCurve(List<Integer> curve) {
         this.curve = curve;
     }
 

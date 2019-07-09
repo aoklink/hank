@@ -42,7 +42,7 @@ public class OvalProcessor implements IDataAnalysis {
     }
 
     @Override
-    public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostName,byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow = null;
 
         if (scanRecord == null) {

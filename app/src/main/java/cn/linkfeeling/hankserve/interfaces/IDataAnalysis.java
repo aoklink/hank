@@ -9,5 +9,5 @@ import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
  */
 public interface IDataAnalysis {
 
-    BleDeviceInfo analysisBLEData(byte[] bytes, String bleName);
+    BleDeviceInfo analysisBLEData(String hostName,byte[] bytes, String bleName);
 }

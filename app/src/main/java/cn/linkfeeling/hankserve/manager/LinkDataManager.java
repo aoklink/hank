@@ -13,10 +13,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
@@ -348,7 +350,7 @@ public class LinkDataManager {
         bleDeviceInfo.setGravity("");
         bleDeviceInfo.setTime("");
         bleDeviceInfo.setU_time("");
-        bleDeviceInfo.setCurve(new Vector<>());
+        bleDeviceInfo.setCurve(new CopyOnWriteArrayList<>());
     }
 
 

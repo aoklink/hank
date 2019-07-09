@@ -40,7 +40,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     private Vector<Integer> list = new Vector<>();
 
     @Override
-    public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostName,byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow = null;
         if (scanRecord == null) {
             return null;
@@ -51,7 +51,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             return null;
         }
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
-        Log.i("999999999" + bleName, Arrays.toString(serviceData));
+        Log.i("999999999" + bleName+"--"+hostName, Arrays.toString(serviceData));
 
         if (serviceData == null || serialNum == serviceData[11]) {
             return null;
@@ -89,7 +89,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
 
 
-        if (serviceData[0] != -1 && serviceData[1] != -1) {
+        if (serviceData[0] != -1 && serviceData[0] != 0 && serviceData[1] != -1 && serviceData[1] != 0) {
             for (int j = 0; j < 10; j = j + 2) {
                 byte[] c = new byte[2];
                 c[0] = serviceData[j];
@@ -102,11 +102,9 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
 
 
-
-
         if (serviceData[0] == -1 && serviceData[1] == -1) {
 
-            Log.i("iiiiiiiiiiiii",JSON.toJSONString(list));
+            Log.i("iiiiiiiiiiiii", JSON.toJSONString(list));
             if (serviceData[12] == 0) {
                 deviceByBleName.setAbility(0);
                 return null;

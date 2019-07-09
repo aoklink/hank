@@ -161,8 +161,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                         value.setDistance(bigDecimal.toString());
                                     }
                                 }
-                                //   String s = gson.toJson(value);
-                                //    L.i("rrrrrrrrrrrrrrrr", s);
+                                   String s = gson.toJson(value);
+                                    L.i("rrrrrrrrrrrrrrrr", s);
 
                                 tempBleInfo = gson.fromJson(gson.toJson(value), BleDeviceInfo.class);
                                 getPresenter().uploadBleData(tempBleInfo, value);
@@ -225,7 +225,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (bleType != null) {
             try {
                 IDataAnalysis iDataAnalysis = DataProcessorFactory.creteProcess(bleType, name);
-                BleDeviceInfo bleDeviceInfoFinal = iDataAnalysis.analysisBLEData(scanRecord, name);
+                BleDeviceInfo bleDeviceInfoFinal = iDataAnalysis.analysisBLEData(hostString,scanRecord, name);
                 if (bleDeviceInfoFinal == null) {
                     return;
                 }

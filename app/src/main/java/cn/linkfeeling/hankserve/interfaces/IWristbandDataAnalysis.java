@@ -10,7 +10,7 @@ import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 public abstract class IWristbandDataAnalysis implements IDataAnalysis {
 
     @Override
-    public BleDeviceInfo analysisBLEData(byte[] bytes, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostName,byte[] bytes, String bleName) {
         return null;
     }
 
