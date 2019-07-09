@@ -153,7 +153,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                         if (FinalDataManager.getInstance().getWristbands() != null && !FinalDataManager.getInstance().getWristbands().isEmpty()) {
                             for (Map.Entry<String, BleDeviceInfo> entry : FinalDataManager.getInstance().getWristbands().entrySet()) {
                                 BleDeviceInfo value = entry.getValue();
-                                if (value != null && !TextUtils.isEmpty(value.getSpeed())) {
+                                if (value == null) {
+                                    return;
+                                }
+                                if (!TextUtils.isEmpty(value.getSpeed())) {
                                     if (Float.parseFloat(value.getSpeed()) == 0) {
                                         value.setDistance(String.valueOf((float) 0));
                                     } else {
@@ -161,12 +164,14 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                         value.setDistance(bigDecimal.toString());
                                     }
                                 }
-                                   String s = gson.toJson(value);
-                                    L.i("rrrrrrrrrrrrrrrr", s);
 
-                                tempBleInfo = gson.fromJson(gson.toJson(value), BleDeviceInfo.class);
-                                getPresenter().uploadBleData(tempBleInfo, value);
-
+                                String s = gson.toJson(value);
+                                L.i("rrrrrrrrrrrrrrrr", s);
+                                Object clone = value.clone();
+                                if (clone != null) {
+                                    tempBleInfo = (BleDeviceInfo) clone;
+                                    getPresenter().uploadBleData(tempBleInfo, value);
+                                }
                             }
                         }
                     });
@@ -225,7 +230,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (bleType != null) {
             try {
                 IDataAnalysis iDataAnalysis = DataProcessorFactory.creteProcess(bleType, name);
-                BleDeviceInfo bleDeviceInfoFinal = iDataAnalysis.analysisBLEData(hostString,scanRecord, name);
+                BleDeviceInfo bleDeviceInfoFinal = iDataAnalysis.analysisBLEData(hostString, scanRecord, name);
                 if (bleDeviceInfoFinal == null) {
                     return;
                 }
@@ -389,7 +394,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         }
 
         if (temp.getCurve() != null && !temp.getCurve().isEmpty()) {
-            Log.i("33333333333",JSON.toJSONString(temp.getCurve()));
+            Log.i("33333333333", JSON.toJSONString(temp.getCurve()));
             bleDeviceInfo.getCurve().removeAll(temp.getCurve());
         }
 

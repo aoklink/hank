@@ -7,7 +7,7 @@ import java.util.Vector;
  * @author create by zhangyong
  * @time 2019/3/13
  */
-public class BleDeviceInfo {
+public class BleDeviceInfo implements Cloneable {
     /**
      * bracelet_id : 00000943
      * heart_rate : 98
@@ -163,5 +163,17 @@ public class BleDeviceInfo {
         }
 
         return false;
+    }
+
+    @Override
+    public Object clone() {
+        BleDeviceInfo bleDeviceInfo = null;
+        try {
+            bleDeviceInfo = (BleDeviceInfo) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return bleDeviceInfo;
+
     }
 }
