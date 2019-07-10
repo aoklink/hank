@@ -394,7 +394,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         }
 
         if (temp.getCurve() != null && !temp.getCurve().isEmpty()) {
-            Log.i("33333333333", JSON.toJSONString(temp.getCurve()));
             bleDeviceInfo.getCurve().removeAll(temp.getCurve());
         }
 

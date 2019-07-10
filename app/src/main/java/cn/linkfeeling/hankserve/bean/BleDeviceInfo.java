@@ -1,5 +1,6 @@
 package cn.linkfeeling.hankserve.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -170,6 +171,11 @@ public class BleDeviceInfo implements Cloneable {
         BleDeviceInfo bleDeviceInfo = null;
         try {
             bleDeviceInfo = (BleDeviceInfo) super.clone();
+
+            List<Integer> curve = bleDeviceInfo.getCurve();
+            List<Integer> integers = new ArrayList<>(curve);
+            bleDeviceInfo.setCurve(integers);
+
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }

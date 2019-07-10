@@ -20,9 +20,13 @@ public class ExampleUnitTest {
 
 
     @Test
-    public void testTime(){
-        byte[] u_time=new byte[1];
-        u_time[0]=64;
-        System.out.println(CalculateUtil.byteToInt((byte) -64));
+    public void testTime() {
+//        byte[] u_time=new byte[1];
+//        u_time[0]=64;
+//        System.out.println(CalculateUtil.byteToInt((byte) -64));
+
+        float ee = 2.6f;
+        System.out.println((int)ee);
+
     }
 }

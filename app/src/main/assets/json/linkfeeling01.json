@@ -99,7 +99,7 @@
       "linkBLES": [
         {
           "bleId": 2,
-          "bleName": "LKFL09",
+          "bleName": "LKFL009",
           "type": "单车t2"
         }
       ]
@@ -132,7 +132,7 @@
       "linkBLES": [
         {
           "bleId": 3,
-          "bleName": "LKFL08",
+          "bleName": "LKFL008",
           "type": "椭圆机t3"
         }
       ]
