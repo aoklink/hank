@@ -350,7 +350,7 @@ public class LinkDataManager {
         bleDeviceInfo.setGravity("");
         bleDeviceInfo.setTime("");
         bleDeviceInfo.setU_time("");
-        bleDeviceInfo.setCurve(new CopyOnWriteArrayList<>());
+        bleDeviceInfo.setCurve(Collections.synchronizedList(new ArrayList<>()));
     }
 
 

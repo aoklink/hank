@@ -21,9 +21,8 @@ public class ExampleUnitTest {
 
     @Test
     public void testTime(){
-        byte[] u_time=new byte[2];
-        u_time[0]=-8;
-        u_time[1]=-9;
-        System.out.println(HexUtil.encodeHexStr(u_time,false));
+        byte[] u_time=new byte[1];
+        u_time[0]=64;
+        System.out.println(CalculateUtil.byteToInt((byte) -64));
     }
 }
