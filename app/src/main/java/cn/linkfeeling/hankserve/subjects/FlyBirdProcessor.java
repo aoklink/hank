@@ -93,15 +93,15 @@ public class FlyBirdProcessor implements IDataAnalysis {
             for (int j = 0; j < 10; j++) {
                 int cuv1 = CalculateUtil.byteToInt(serviceData[j]);
                 bleDeviceInfoNow.getCurve().add(cuv1);
-                list.add(cuv1);
+              //  list.add(cuv1);
             }
         }
 
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
 
-            Log.i("iiiiiiiiiiiii", JSON.toJSONString(list));
-            list.clear();
+//            Log.i("iiiiiiiiiiiii", JSON.toJSONString(list));
+//            list.clear();
             if (serviceData[12] == 0) {
                 deviceByBleName.setAbility(0);
                 return null;
