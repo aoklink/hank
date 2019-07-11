@@ -151,7 +151,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                         if (FinalDataManager.getInstance().getWristbands() != null && !FinalDataManager.getInstance().getWristbands().isEmpty()) {
                             for (Map.Entry<String, BleDeviceInfo> entry : FinalDataManager.getInstance().getWristbands().entrySet()) {
                                 BleDeviceInfo value = entry.getValue();
-                                if (value != null && !TextUtils.isEmpty(value.getSpeed())) {
+                                if (value == null) {
+                                    return;
+                                }
+                                if (!TextUtils.isEmpty(value.getSpeed())) {
                                     if (Float.parseFloat(value.getSpeed()) == 0) {
                                         value.setDistance(String.valueOf((float) 0));
                                     } else {
@@ -161,27 +164,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 }
                                 String s = gson.toJson(value);
                                 L.i("rrrrrrrrrrrrrrrr", s);
-
-                                tempBleInfo = gson.fromJson(gson.toJson(value), BleDeviceInfo.class);
-//
-//
-//                                tempBleInfo = new BleDeviceInfo();
-//                                tempBleInfo.setBracelet_id(value.getBracelet_id());
-//                                tempBleInfo.setU_time(value.getU_time());
-//                                tempBleInfo.setDevice_name(value.getDevice_name());
-//                                tempBleInfo.setDistance(value.getDistance());
-//                                tempBleInfo.setExercise_time(value.getExercise_time());
-//                                tempBleInfo.setGradient(value.getGradient());
-//                                tempBleInfo.setGravity(value.getGravity());
-//                                tempBleInfo.setGym_name(value.getGym_name());
-//                                tempBleInfo.setHeart_rate(value.getHeart_rate());
-//                                tempBleInfo.setReport(value.isReport());
-//                                tempBleInfo.setSpeed(value.getSpeed());
-//                                tempBleInfo.setTime(value.getTime());
-//
-
-                                getPresenter().uploadBleData(tempBleInfo, value);
-
+                                Object clone = value.clone();
+                                if (clone != null) {
+                                    tempBleInfo = (BleDeviceInfo) clone;
+                                    getPresenter().uploadBleData(tempBleInfo, value);
+                                }
                             }
                         }
                     });
@@ -400,6 +387,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        if (temp.getCurve() != null && !temp.getCurve().isEmpty()) {
+            bleDeviceInfo.getCurve().removeAll(temp.getCurve());
         }
 
         if (!"".equals(temp.getTime()) && !"".equals(temp.getU_time())) {

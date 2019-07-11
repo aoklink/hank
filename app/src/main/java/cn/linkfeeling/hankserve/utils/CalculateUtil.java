@@ -38,7 +38,6 @@ public class CalculateUtil {
     }
 
 
-
     /**
      * 将4字节的byte数组转成一个int值
      *
@@ -61,9 +60,19 @@ public class CalculateUtil {
         return v0 + v1 + v2 + v3;
     }
 
+    /**
+     * byte转int
+     * @param b
+     * @return
+     */
+    public static int byteToInt(byte b) {
+        return b & 0xff;
+    }
+
 
     /**
      * int to byte
+     *
      * @param number
      * @return
      */
@@ -72,10 +81,10 @@ public class CalculateUtil {
         if ((tmp & 0x80) == 0x80) {
             int bit = 1;
             int mask = 0;
-            for(;;) {
+            for (; ; ) {
                 mask |= bit;
                 if ((tmp & bit) == 0) {
-                    bit <<=1;
+                    bit <<= 1;
                     continue;
                 }
                 int left = tmp & (~mask);
