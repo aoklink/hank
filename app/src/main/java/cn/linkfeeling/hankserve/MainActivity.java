@@ -165,8 +165,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                     }
                                 }
 
-                                String s = gson.toJson(value);
-                                L.i("rrrrrrrrrrrrrrrr", s);
                                 Object clone = value.clone();
                                 if (clone != null) {
                                     tempBleInfo = (BleDeviceInfo) clone;
