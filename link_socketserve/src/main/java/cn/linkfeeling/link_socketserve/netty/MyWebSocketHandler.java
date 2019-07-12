@@ -91,7 +91,10 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
         cause.printStackTrace();
         Log.i("link-throwable1", cause.getMessage());
         Log.i("link-throwable2", cause.toString());
-        ctx.close();
+        if(!ctx.channel().isActive()){
+            ctx.close();
+        }
+
     }
 
 
