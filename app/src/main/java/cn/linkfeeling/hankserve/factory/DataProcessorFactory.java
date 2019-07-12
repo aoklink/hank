@@ -8,7 +8,11 @@ import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.subjects.BicycleProcessor;
 import cn.linkfeeling.hankserve.subjects.ButterFlyProcessor;
 import cn.linkfeeling.hankserve.subjects.FlyBirdProcessor;
+import cn.linkfeeling.hankserve.subjects.LegLiftProcessor;
 import cn.linkfeeling.hankserve.subjects.OvalProcessor;
+import cn.linkfeeling.hankserve.subjects.RollBellyProcessor;
+import cn.linkfeeling.hankserve.subjects.ShoulderProcessor;
+import cn.linkfeeling.hankserve.subjects.SwivelProcessor;
 import cn.linkfeeling.hankserve.subjects.TreadMillProcessor;
 import cn.linkfeeling.hankserve.subjects.WristbandProcessor;
 
@@ -96,6 +100,60 @@ public class DataProcessorFactory {
                 }
                 return null;
 
+            case LinkDataManager.ROLLBELLY_1:
+                ConcurrentHashMap<String, RollBellyProcessor> rollMap = RollBellyProcessor.map;
+                if (rollMap != null) {
+                    RollBellyProcessor rollBellyProcessor = rollMap.get(name);
+                    if (rollBellyProcessor != null) {
+                        return rollBellyProcessor;
+                    } else {
+                        RollBellyProcessor rollBellyProcessor1 = new RollBellyProcessor();
+                        RollBellyProcessor.map.put(name, rollBellyProcessor1);
+                        return rollBellyProcessor1;
+                    }
+                }
+                return null;
+            case LinkDataManager.LEGLIFT_1:
+                ConcurrentHashMap<String, LegLiftProcessor> legLiftMap = LegLiftProcessor.map;
+                if (legLiftMap != null) {
+                    LegLiftProcessor legLiftProcessor = legLiftMap.get(name);
+                    if (legLiftProcessor != null) {
+                        return legLiftProcessor;
+                    } else {
+                        LegLiftProcessor legLiftProcessor1 = new LegLiftProcessor();
+                        LegLiftProcessor.map.put(name, legLiftProcessor1);
+                        return legLiftProcessor1;
+                    }
+                }
+                return null;
+
+            case LinkDataManager.SWIVEL_1:
+                ConcurrentHashMap<String, SwivelProcessor> swivelMap = SwivelProcessor.map;
+                if (swivelMap != null) {
+                    SwivelProcessor swivelProcessor = swivelMap.get(name);
+                    if (swivelProcessor != null) {
+                        return swivelProcessor;
+                    } else {
+                        SwivelProcessor swivelProcessor1 = new SwivelProcessor();
+                        SwivelProcessor.map.put(name, swivelProcessor1);
+                        return swivelProcessor1;
+                    }
+                }
+                return null;
+
+            case LinkDataManager.Shoulder_1:
+                ConcurrentHashMap<String, ShoulderProcessor> shoulderMap = ShoulderProcessor.map;
+                if (shoulderMap != null) {
+                    ShoulderProcessor shoulderProcessor = shoulderMap.get(name);
+                    if (shoulderProcessor != null) {
+                        return shoulderProcessor;
+                    } else {
+                        ShoulderProcessor shoulderProcessor1 = new ShoulderProcessor();
+                        ShoulderProcessor.map.put(name, shoulderProcessor1);
+                        return shoulderProcessor1;
+                    }
+                }
+                return null;
             default:
                 return null;
         }

@@ -61,14 +61,14 @@ public class TreadMillProcessor implements IDataAnalysis {
             return null;
         }
 
-        Log.i("6767676", Arrays.toString(serviceData));
+        Log.i("6767676"+bleName, Arrays.toString(serviceData));
 
         byte[] pages = new byte[2];
         pages[0] = serviceData[2];
         pages[1] = serviceData[3];
         int nowPack = CalculateUtil.byteArrayToInt(pages);
-        //此处取5是因为包数一秒增加1  所以控制为延迟5秒的数据
-        if (nowPack < currentPags && currentPags - nowPack < 5) {
+        //此处取5是因为包数一秒增加1  所以控制为延迟5秒的数据   5在宜人道有问题，所以改成10
+        if (nowPack < currentPags && currentPags - nowPack < 20) {
             return null;
         }
 

@@ -44,6 +44,10 @@ public class LinkDataManager {
     public static final String OVAL_1 = "椭圆机t3";
     public static final String BIRD_1 = "飞鸟左";
     public static final String BUTTER_1 = "蝴蝶机t4";
+    public static final String ROLLBELLY_1 = "卷腹机t5";
+    public static final String LEGLIFT_1 = "抬腿训练器t6";
+    public static final String SWIVEL_1 = "转体训练器t7";
+    public static final String Shoulder_1 = "坐式肩上举t8";
 
     private static final LinkDataManager linkDataManager = new LinkDataManager();
     private ConcurrentHashMap<String, String> deviceBleTypeMaps;
