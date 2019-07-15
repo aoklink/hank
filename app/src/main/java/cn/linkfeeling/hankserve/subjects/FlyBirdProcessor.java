@@ -59,9 +59,11 @@ public class FlyBirdProcessor implements IDataAnalysis {
 //            deviceByBleName.setAbility(serviceData[0]);
 //        }
         byte serviceTemp = serviceData[11];
+
         if (limitQueue.contains(CalculateUtil.byteToInt(serviceTemp))) {
             return null;
         }
+        Log.i("seqNum", CalculateUtil.byteToInt(serviceTemp) + "");
         limitQueue.offer(CalculateUtil.byteToInt(serviceTemp));
         deviceByBleName.setAbility(serviceData[0]);
 
@@ -92,6 +94,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (serviceData[0] == -1 && serviceData[1] == -1) {
 
 //            Log.i("iiiiiiiiiiiii", JSON.toJSONString(list));
+            Log.i("iiiiiiiiiiiii", JSON.toJSONString(limitQueue));
 //            list.clear();
             if (serviceData[12] == 0) {
                 deviceByBleName.setAbility(0);
