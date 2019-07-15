@@ -13,6 +13,7 @@ import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
+import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
@@ -24,12 +25,11 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  */
 public class BicycleProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, BicycleProcessor> map;
-
+    private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
     static {
         map = new ConcurrentHashMap<>();
     }
 
-    private int serialNum = -1;
 
     public static BicycleProcessor getInstance() {
         return BicycleProcessorHolder.sBicycleProcessor;
@@ -43,15 +43,13 @@ public class BicycleProcessor implements IDataAnalysis {
     @Override
     public BleDeviceInfo analysisBLEData(String hostName,byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
-
-
-        if (scanRecord == null) {
-            return null;
-        }
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
-        if (linkScanRecord == null) {
+        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
+
+        if (scanRecord == null || linkScanRecord==null ||deviceByBleName==null ) {
             return null;
         }
+
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
         if (serviceData == null) {
             return null;
@@ -59,22 +57,12 @@ public class BicycleProcessor implements IDataAnalysis {
 
         Log.i("danchedata", Arrays.toString(serviceData));
 
-
-//        int speedInt = Integer.parseInt(String.valueOf(CalculateUtil.byteArrayToInt(speed)));
-//        int gradientInt = Integer.parseInt(String.valueOf(gradient[0]));
-        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
-        if (deviceByBleName == null) {
-            return null;
-        }
-
         byte seq = serviceData[4];
-        if (seq < serialNum && serialNum - seq < 10) {
+        if(limitQueue.contains(CalculateUtil.byteToInt(seq))){
             return null;
         }
-
-        serialNum = seq;
-
-
+        Log.i("dancheseqNum", CalculateUtil.byteToInt(seq) + "");
+        limitQueue.offer(CalculateUtil.byteToInt(seq));
         byte[] turns = new byte[2];
         turns[0] = serviceData[0];
         turns[1] = serviceData[1];
