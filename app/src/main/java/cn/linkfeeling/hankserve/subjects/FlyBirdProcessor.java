@@ -18,6 +18,7 @@ import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
+import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
@@ -28,9 +29,9 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  * 飞鸟数据解析
  */
 public class FlyBirdProcessor implements IDataAnalysis {
-    private int serialNum = -1;
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
     private static final float SELF_GRAVITY = 2.5f;
+    private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
 
     static {
         map = new ConcurrentHashMap<>();
@@ -41,38 +42,28 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
     @Override
     public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
-        BleDeviceInfo bleDeviceInfoNow = null;
-        if (scanRecord == null) {
+        BleDeviceInfo bleDeviceInfoNow;
+        LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
+        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
+        if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
             return null;
         }
         Log.i("ppppppppp" + bleName, Arrays.toString(scanRecord));
-        LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
-        if (linkScanRecord == null) {
-            return null;
-        }
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
         Log.i("999999999" + bleName + "--" + hostName, Arrays.toString(serviceData));
 
-        if (serviceData == null || serialNum == serviceData[11]) {
-            return null;
-        }
-
-
-        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
-        if (deviceByBleName == null) {
+        if (serviceData == null) {
             return null;
         }
 //        if(serviceData[0]!=0 && serviceData[0]!=-1){
 //            deviceByBleName.setAbility(serviceData[0]);
 //        }
         byte serviceTemp = serviceData[11];
-        if (serviceTemp < serialNum && (serialNum - serviceTemp) <= 10) {
+        if (limitQueue.contains(CalculateUtil.byteToInt(serviceTemp))) {
             return null;
         }
+        limitQueue.offer(CalculateUtil.byteToInt(serviceTemp));
         deviceByBleName.setAbility(serviceData[0]);
-
-        serialNum = serviceData[11];
-
 
         int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
         boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
@@ -93,7 +84,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             for (int j = 0; j < 10; j++) {
                 int cuv1 = CalculateUtil.byteToInt(serviceData[j]);
                 bleDeviceInfoNow.getCurve().add(cuv1);
-              //  list.add(cuv1);
+                //  list.add(cuv1);
             }
         }
 

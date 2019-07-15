@@ -2,6 +2,7 @@ package cn.linkfeeling.hankserve;
 
 import org.junit.Test;
 
+import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.HexUtil;
 
@@ -26,7 +27,12 @@ public class ExampleUnitTest {
 //        System.out.println(CalculateUtil.byteToInt((byte) -64));
 
         float ee = 2.6f;
-        System.out.println((int)ee);
+  //      System.out.println((int)ee);
+
+        LimitQueue<Integer> limitQueue=new LimitQueue<>(1);
+        limitQueue.offer(10);
+        System.out.println(limitQueue.contains(10));
+        System.out.println(limitQueue.contains(11));
 
     }
 }
