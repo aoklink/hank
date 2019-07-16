@@ -4,11 +4,7 @@ package cn.linkfeeling.hankserve.subjects;
 import android.os.ParcelUuid;
 import android.util.Log;
 
-import com.alibaba.fastjson.JSON;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,9 +24,9 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  * @time 2019/3/15
  * 飞鸟数据解析
  */
-public class FlyBirdProcessor implements IDataAnalysis {
+public class WeightProcessor implements IDataAnalysis {
     private int serialNum = -1;
-    public static ConcurrentHashMap<String, FlyBirdProcessor> map;
+    public static ConcurrentHashMap<String, WeightProcessor> map;
 
     static {
         map = new ConcurrentHashMap<>();

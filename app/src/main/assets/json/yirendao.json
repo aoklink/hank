@@ -469,7 +469,7 @@
         {
           "bleId": 0,
           "bleName": "LKFL01",
-          "type": "飞鸟左",
+          "type": "砝码器械t4",
           "weight": [
             5.0,
             10.0,
@@ -492,7 +492,7 @@
         ,{
           "bleId": 1,
           "bleName": "LKFL53",
-          "type": "飞鸟左",
+          "type": "砝码器械t4",
           "weight": [
             2.5,
             5.0,
@@ -511,7 +511,7 @@
         ,{
           "bleId": 2,
           "bleName": "LKFL52",
-          "type": "飞鸟左",
+          "type": "砝码器械t4",
           "weight": [
             5.0,
             10.0,
@@ -534,7 +534,7 @@
         ,{
           "bleId": 3,
           "bleName": "LKFL51",
-          "type": "飞鸟左",
+          "type": "砝码器械t4",
           "weight": [
             5.0,
             10.0,
@@ -582,7 +582,7 @@
         {
           "bleId": 0,
           "bleName": "LKFL57",
-          "type": "蝴蝶机t4",
+          "type": "砝码器械t4",
           "weight": [
             5.0,
             10.0,
@@ -635,7 +635,7 @@
         {
           "bleId": 0,
           "bleName": "LKFL50",
-          "type": "卷腹机t5",
+          "type": "砝码器械t4",
           "weight": [
             5.0,
             10.0,
@@ -688,7 +688,7 @@
         {
           "bleId": 0,
           "bleName": "LKFL55",
-          "type": "转体训练器t7",
+          "type": "砝码器械t4",
           "weight": [
             2.5,
             5.0,
@@ -735,7 +735,7 @@
         {
           "bleId": 0,
           "bleName": "LKFL56",
-          "type": "坐式肩上举t8",
+          "type": "砝码器械t4",
           "weight": [
             2.5,
             5.0,
@@ -782,7 +782,7 @@
         {
           "bleId": 0,
           "bleName": "LKFL54",
-          "type": "抬腿训练器t6",
+          "type": "砝码器械t4",
           "weight": [
             2.5,
             5.0,

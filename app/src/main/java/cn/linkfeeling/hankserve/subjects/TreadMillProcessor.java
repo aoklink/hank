@@ -86,7 +86,6 @@ public class TreadMillProcessor implements IDataAnalysis {
             float v = CalculateUtil.txFloat(numbers, 100);
 
             speed = v * 0.4237288f;
-            //0.256410
         }
 
         Log.i("6767676", speed + "");
