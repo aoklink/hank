@@ -12,6 +12,7 @@ import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
+import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
@@ -23,8 +24,7 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  */
 public class TreadMillProcessor implements IDataAnalysis {
 
-    private int currentPags;
-
+    private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
     public static ConcurrentHashMap<String, TreadMillProcessor> map;
 
     static {
@@ -41,23 +41,15 @@ public class TreadMillProcessor implements IDataAnalysis {
 
     @Override
     public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
-        Log.i("pppppppppppppp", Arrays.toString(scanRecord));
-        BleDeviceInfo bleDeviceInfoNow = null;
-
-        if (scanRecord == null) {
-            return null;
-        }
+        BleDeviceInfo bleDeviceInfoNow ;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
-        if (linkScanRecord == null) {
+        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
+        if (scanRecord == null || linkScanRecord==null || deviceByBleName==null) {
             return null;
         }
+
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
         if (serviceData == null) {
-            return null;
-        }
-
-        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
-        if (deviceByBleName == null) {
             return null;
         }
 
@@ -67,12 +59,12 @@ public class TreadMillProcessor implements IDataAnalysis {
         pages[0] = serviceData[2];
         pages[1] = serviceData[3];
         int nowPack = CalculateUtil.byteArrayToInt(pages);
-        //此处取5是因为包数一秒增加1  所以控制为延迟5秒的数据
-        if (nowPack < currentPags && currentPags - nowPack < 5) {
+
+        if(limitQueue.contains(nowPack)){
             return null;
         }
-
-        currentPags = nowPack;
+        Log.i("seqNum", nowPack + "");
+        limitQueue.offer(nowPack);
 
         float speed;
         if (serviceData[0] == -1 && serviceData[1] == -1) {
@@ -100,6 +92,7 @@ public class TreadMillProcessor implements IDataAnalysis {
 
 
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
+        bleDeviceInfoNow.setSeq_num(String.valueOf(nowPack));
 
         return bleDeviceInfoNow;
 
