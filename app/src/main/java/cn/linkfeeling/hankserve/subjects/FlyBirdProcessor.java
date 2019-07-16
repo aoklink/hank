@@ -24,9 +24,9 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  * @time 2019/3/15
  * 飞鸟数据解析
  */
-public class WeightProcessor implements IDataAnalysis {
+public class FlyBirdProcessor implements IDataAnalysis {
     private int serialNum = -1;
-    public static ConcurrentHashMap<String, WeightProcessor> map;
+    public static ConcurrentHashMap<String, FlyBirdProcessor> map;
 
     static {
         map = new ConcurrentHashMap<>();

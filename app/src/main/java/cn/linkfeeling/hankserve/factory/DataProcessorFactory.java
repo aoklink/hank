@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.subjects.BicycleProcessor;
-import cn.linkfeeling.hankserve.subjects.WeightProcessor;
+import cn.linkfeeling.hankserve.subjects.FlyBirdProcessor;
 import cn.linkfeeling.hankserve.subjects.OvalProcessor;
 import cn.linkfeeling.hankserve.subjects.TreadMillProcessor;
 import cn.linkfeeling.hankserve.subjects.WristbandProcessor;
@@ -66,14 +66,14 @@ public class DataProcessorFactory {
                 }
                 return null;
             case LinkDataManager.BIRD_1:
-                ConcurrentHashMap<String, WeightProcessor> birdMap = WeightProcessor.map;
+                ConcurrentHashMap<String, FlyBirdProcessor> birdMap = FlyBirdProcessor.map;
                 if (birdMap != null) {
-                    WeightProcessor flyBirdProcessor = birdMap.get(name);
+                    FlyBirdProcessor flyBirdProcessor = birdMap.get(name);
                     if (flyBirdProcessor != null) {
                         return flyBirdProcessor;
                     } else {
-                        WeightProcessor flyBirdProcessorNew = new WeightProcessor();
-                        WeightProcessor.map.put(name, flyBirdProcessorNew);
+                        FlyBirdProcessor flyBirdProcessorNew = new FlyBirdProcessor();
+                        FlyBirdProcessor.map.put(name, flyBirdProcessorNew);
                         return flyBirdProcessorNew;
                     }
                 }
