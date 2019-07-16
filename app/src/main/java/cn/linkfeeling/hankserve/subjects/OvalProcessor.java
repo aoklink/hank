@@ -72,12 +72,12 @@ public class OvalProcessor implements IDataAnalysis {
 //        int gradientInt = Integer.parseInt(String.valueOf(gradient[0]));
 
 
-        byte seq = serviceData[4];
-        if(limitQueue.contains(CalculateUtil.byteToInt(seq))){
+        byte seqNum = serviceData[4];
+        if(limitQueue.contains(CalculateUtil.byteToInt(seqNum))){
             return null;
         }
-        Log.i("tuoyuanjiseqNum", CalculateUtil.byteToInt(seq) + "");
-        limitQueue.offer(CalculateUtil.byteToInt(seq));
+        Log.i("tuoyuanjiseqNum", CalculateUtil.byteToInt(seqNum) + "");
+        limitQueue.offer(CalculateUtil.byteToInt(seqNum));
 
         byte[] turns = new byte[2];
         turns[0] = serviceData[0];
@@ -102,21 +102,14 @@ public class OvalProcessor implements IDataAnalysis {
         deviceByBleName.setAbility(speed);
 
 
-        int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
-        boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
-        if (!containsKey) {
-            return null;
-        }
-        UWBCoordData uwbCoordData = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId);
-
-        String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
-        bleDeviceInfoNow = FinalDataManager.getInstance().getWristbands().get(bracelet_id);
+        bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
             return null;
         }
 
-        bleDeviceInfoNow.setSpeed(String.valueOf(speed));
 
+        bleDeviceInfoNow.setSpeed(String.valueOf(speed));
+        bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteToInt(seqNum)));
         //椭圆机
 //        if (speed == 0) {
 //            bleDeviceInfoNow.setSpeed("0.0");

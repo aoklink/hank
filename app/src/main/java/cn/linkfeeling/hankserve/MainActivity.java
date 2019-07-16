@@ -390,6 +390,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             e.printStackTrace();
         }
 
+//        temp.setSeq_num("");
+//        bleDeviceInfo.setSeq_num("");
+
         if (temp.getCurve() != null && !temp.getCurve().isEmpty()) {
             bleDeviceInfo.getCurve().removeAll(temp.getCurve());
         }

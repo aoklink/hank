@@ -58,24 +58,17 @@ public class FlyBirdProcessor implements IDataAnalysis {
 //        if(serviceData[0]!=0 && serviceData[0]!=-1){
 //            deviceByBleName.setAbility(serviceData[0]);
 //        }
-        byte serviceTemp = serviceData[11];
+        byte seqNum = serviceData[11];
 
-        if (limitQueue.contains(CalculateUtil.byteToInt(serviceTemp))) {
+        if (limitQueue.contains(CalculateUtil.byteToInt(seqNum))) {
             return null;
         }
-        Log.i("seqNum", CalculateUtil.byteToInt(serviceTemp) + "");
-        limitQueue.offer(CalculateUtil.byteToInt(serviceTemp));
+        Log.i("seqNum", CalculateUtil.byteToInt(seqNum) + "");
+        limitQueue.offer(CalculateUtil.byteToInt(seqNum));
         deviceByBleName.setAbility(serviceData[0]);
 
-        int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
-        boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
-        if (!containsKey) {
-            deviceByBleName.setAbility(0);
-            return null;
-        }
-        UWBCoordData uwbCoordData = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId);
-        String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
-        bleDeviceInfoNow = FinalDataManager.getInstance().getWristbands().get(bracelet_id);
+
+        bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
             deviceByBleName.setAbility(0);
             return null;
@@ -86,6 +79,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             for (int j = 0; j < 10; j++) {
                 int cuv1 = CalculateUtil.byteToInt(serviceData[j]);
                 bleDeviceInfoNow.getCurve().add(cuv1);
+                bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteToInt(seqNum)));
                 //  list.add(cuv1);
             }
         }
@@ -112,6 +106,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             bleDeviceInfoNow.setGravity(String.valueOf(actualGravity));
             bleDeviceInfoNow.setTime(String.valueOf(act_time));
             bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteArrayToInt(u_time)));
+            bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteToInt(seqNum)));
             deviceByBleName.setAbility(0);
         }
         return bleDeviceInfoNow;

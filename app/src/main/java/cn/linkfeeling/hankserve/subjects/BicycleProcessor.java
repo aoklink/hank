@@ -26,10 +26,10 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 public class BicycleProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, BicycleProcessor> map;
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
+
     static {
         map = new ConcurrentHashMap<>();
     }
-
 
     public static BicycleProcessor getInstance() {
         return BicycleProcessorHolder.sBicycleProcessor;
@@ -41,12 +41,12 @@ public class BicycleProcessor implements IDataAnalysis {
 
 
     @Override
-    public BleDeviceInfo analysisBLEData(String hostName,byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
 
-        if (scanRecord == null || linkScanRecord==null ||deviceByBleName==null ) {
+        if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
             return null;
         }
 
@@ -57,12 +57,13 @@ public class BicycleProcessor implements IDataAnalysis {
 
         Log.i("danchedata", Arrays.toString(serviceData));
 
-        byte seq = serviceData[4];
-        if(limitQueue.contains(CalculateUtil.byteToInt(seq))){
+        byte seqNum = serviceData[4];
+
+        if (limitQueue.contains(CalculateUtil.byteToInt(seqNum))) {
             return null;
         }
-        Log.i("dancheseqNum", CalculateUtil.byteToInt(seq) + "");
-        limitQueue.offer(CalculateUtil.byteToInt(seq));
+        Log.i("dancheseqNum", CalculateUtil.byteToInt(seqNum) + "");
+        limitQueue.offer(CalculateUtil.byteToInt(seqNum));
         byte[] turns = new byte[2];
         turns[0] = serviceData[0];
         turns[1] = serviceData[1];
@@ -87,22 +88,14 @@ public class BicycleProcessor implements IDataAnalysis {
 
         deviceByBleName.setAbility(speed);
 
-
-        int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
-        boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
-        if (!containsKey) {
-            return null;
-        }
-        UWBCoordData uwbCoordData = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId);
-
-        String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
-        bleDeviceInfoNow = FinalDataManager.getInstance().getWristbands().get(bracelet_id);
+        bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
             return null;
         }
 
 
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
+        bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteToInt(seqNum)));
 
         //单车
 //        if (speed == 0) {

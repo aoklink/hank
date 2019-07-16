@@ -40,7 +40,7 @@ public class TreadMillProcessor implements IDataAnalysis {
     }
 
     @Override
-    public BleDeviceInfo analysisBLEData(String hostName,byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         Log.i("pppppppppppppp", Arrays.toString(scanRecord));
         BleDeviceInfo bleDeviceInfoNow = null;
 
@@ -93,18 +93,11 @@ public class TreadMillProcessor implements IDataAnalysis {
 
         deviceByBleName.setAbility(speed);
 
-        int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
-        boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
-        if (!containsKey) {
-            return null;
-        }
-        UWBCoordData uwbCoordData = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId);
-
-        String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
-        bleDeviceInfoNow = FinalDataManager.getInstance().getWristbands().get(bracelet_id);
+        bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
             return null;
         }
+
 
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
 
