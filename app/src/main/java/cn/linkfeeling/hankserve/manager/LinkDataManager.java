@@ -383,6 +383,16 @@ public class LinkDataManager {
 
     }
 
+    public LinkSpecificDevice queryDeviceByName(String deviceName) {
+        List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().devicesData;
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (devicesDatum.getDeviceName().equals(deviceName)) {
+                return  devicesDatum;
+            }
+        }
+        return null;
+    }
+
 
     public boolean withinTheScope(UWBCoordData uwbCoorData) {
 

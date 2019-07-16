@@ -1,6 +1,9 @@
 package cn.linkfeeling.hankserve.subjects;
 
 
+import android.annotation.SuppressLint;
+import android.os.Handler;
+import android.os.Message;
 import android.os.ParcelUuid;
 import android.util.Log;
 
@@ -32,6 +35,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
     private static final float SELF_GRAVITY = 2.5f;
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
+    private LinkSpecificDevice deviceByBleName;
+
 
     static {
         map = new ConcurrentHashMap<>();
@@ -44,7 +49,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
-        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
+        deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
         if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
             return null;
         }
@@ -107,11 +112,9 @@ public class FlyBirdProcessor implements IDataAnalysis {
             bleDeviceInfoNow.setTime(String.valueOf(act_time));
             bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteArrayToInt(u_time)));
             bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteToInt(seqNum)));
-            deviceByBleName.setAbility(0);
+            //    deviceByBleName.setAbility(0);
         }
         return bleDeviceInfoNow;
 
     }
-
-
 }

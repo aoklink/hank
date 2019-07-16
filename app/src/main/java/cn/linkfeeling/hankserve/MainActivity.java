@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import cn.linkfeeling.hankserve.adapter.BLEAdapter;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
@@ -399,6 +400,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
         if (!"".equals(temp.getTime()) && !"".equals(temp.getU_time())) {
             LinkDataManager.getInstance().cleanFlyBird(bleDeviceInfo);
+            LinkSpecificDevice linkSpecificDevice = LinkDataManager.getInstance().queryDeviceByName(bleDeviceInfo.getDevice_name());
+            if (linkSpecificDevice != null) {
+                linkSpecificDevice.setAbility(0);
+            }
+
         }
     }
 
