@@ -35,7 +35,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
     private static final float SELF_GRAVITY = 2.5f;
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
-    private LinkSpecificDevice deviceByBleName;
 
 
     static {
@@ -49,7 +48,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
-        deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
+        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
         if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
             return null;
         }
