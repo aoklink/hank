@@ -72,12 +72,12 @@ public class OvalProcessor implements IDataAnalysis {
 //        int gradientInt = Integer.parseInt(String.valueOf(gradient[0]));
 
 
-        byte seqNum = serviceData[4];
-        if(limitQueue.contains(CalculateUtil.byteToInt(seqNum))){
+        byte[] seqNum = {serviceData[5],serviceData[4]};
+        if(limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))){
             return null;
         }
-        Log.i("tuoyuanjiseqNum", CalculateUtil.byteToInt(seqNum) + "");
-        limitQueue.offer(CalculateUtil.byteToInt(seqNum));
+        Log.i("tuoyuanjiseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
+        limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
 
         byte[] turns = new byte[2];
         turns[0] = serviceData[0];
@@ -109,7 +109,7 @@ public class OvalProcessor implements IDataAnalysis {
 
 
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
-        bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteToInt(seqNum)));
+        bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
         //椭圆机
 //        if (speed == 0) {
 //            bleDeviceInfoNow.setSpeed("0.0");
