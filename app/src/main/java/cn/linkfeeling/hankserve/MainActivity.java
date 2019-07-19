@@ -162,8 +162,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                         value.setDistance(bigDecimal.toString());
                                     }
                                 }
-                                String s = gson.toJson(value);
-                                L.i("rrrrrrrrrrrrrrrr", s);
                                 Object clone = value.clone();
                                 if (clone != null) {
                                     tempBleInfo = (BleDeviceInfo) clone;
