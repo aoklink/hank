@@ -14,12 +14,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
@@ -45,7 +42,8 @@ public class LinkDataManager {
     public static final String TREADMILL_1 = "跑步机t1";
     public static final String BICYCLE_1 = "单车t2";
     public static final String OVAL_1 = "椭圆机t3";
-    public static final String BIRD_1 = "飞鸟左";
+    public static final String BIRD_1 = "砝码器械t4";
+
 
     private static final LinkDataManager linkDataManager = new LinkDataManager();
     private ConcurrentHashMap<String, String> deviceBleTypeMaps;
@@ -65,11 +63,6 @@ public class LinkDataManager {
 
 
     public LinkDataManager createLinkData(Context context) {
-//        uwbCode_wristbandName.put("0000183c", "LEAP 2FC2");
-//        uwbCode_wristbandName.put("0000183d", "LEAP BFF4");
-//        uwbCode_wristbandName.put("0000183f", "LEAP 0ADB");
-//        uwbCode_wristbandName.put("00001e27", "LEAP 0DDA");
-
         BufferedReader bufferedReader = null;
         StringBuilder rewardJson = new StringBuilder();
         String rewardJsonLine;
@@ -115,148 +108,6 @@ public class LinkDataManager {
                 e.printStackTrace();
             }
         }
-
-
-//        LinkSpecificDevice linkSpecificDevice00 = new LinkSpecificDevice();
-//        linkSpecificDevice00.setId(0x1100);
-//        linkSpecificDevice00.setDeviceName("HIIT");
-//        linkSpecificDevice00.setType("HIIT");
-//
-//        UWBCoordData.FencePoint fencePoint00 = new UWBCoordData.FencePoint();
-//        fencePoint00.setFenceId(0x100);
-//        fencePoint00.setLeft_top(new UWBCoordData.FencePoint.Point(870, 7));
-//        fencePoint00.setRight_top(new UWBCoordData.FencePoint.Point(1476, 7));
-//        fencePoint00.setLeft_bottom(new UWBCoordData.FencePoint.Point(870, 512));
-//        fencePoint00.setRight_bottom(new UWBCoordData.FencePoint.Point(1476, 512));
-//        linkSpecificDevice00.setFencePoint(fencePoint00);
-
-//------------------------------------------------------------------------------------------------------------------------------
-
-//        LinkSpecificDevice linkSpecificDevice01 = new LinkSpecificDevice();
-//        linkSpecificDevice01.setId(0x1101);
-//        linkSpecificDevice01.setDeviceName("跑步机01");
-//        linkSpecificDevice01.setType("跑步机");
-//
-//        UWBCoordData.FencePoint fencePoint01 = new UWBCoordData.FencePoint();
-//        fencePoint01.setFenceId(0x101);
-//        fencePoint01.setLeft_top(new UWBCoordData.FencePoint.Point(0, 281));
-//        fencePoint01.setRight_top(new UWBCoordData.FencePoint.Point(312, 281));
-//        fencePoint01.setLeft_bottom(new UWBCoordData.FencePoint.Point(0, 417));
-//        fencePoint01.setRight_bottom(new UWBCoordData.FencePoint.Point(312, 417));
-//        linkSpecificDevice01.setFencePoint(fencePoint01);
-//
-//        LinkBLE linkBLE01 = new LinkBLE();
-//        linkBLE01.setBleId(0x11101);
-//        linkBLE01.setBleName("LKFL02");
-//        linkBLE01.setType(TREADMILL_1);
-//        deviceBleTypeMaps.put(linkBLE01.getBleName(), linkBLE01.getType());
-//
-//        List<LinkBLE> list01 = new ArrayList<>();
-//        list01.add(linkBLE01);
-//        linkSpecificDevice01.setLinkBLES(list01);
-
-
-//--------------------------------------------------------------------------------------------------------------//
-//        LinkSpecificDevice linkSpecificDevice02 = new LinkSpecificDevice();
-//        linkSpecificDevice02.setId(0x1102);
-//        linkSpecificDevice02.setDeviceName("单车");
-//        linkSpecificDevice02.setType("单车");
-//
-//        UWBCoordData.FencePoint fencePoint02 = new UWBCoordData.FencePoint();
-//        fencePoint02.setFenceId(0x102);
-//        fencePoint02.setLeft_top(new UWBCoordData.FencePoint.Point(1, 6));
-//        fencePoint02.setRight_top(new UWBCoordData.FencePoint.Point(316, 6));
-//        fencePoint02.setLeft_bottom(new UWBCoordData.FencePoint.Point(1, 147));
-//        fencePoint02.setRight_bottom(new UWBCoordData.FencePoint.Point(316, 147));
-//        linkSpecificDevice02.setFencePoint(fencePoint02);
-//
-//        LinkBLE linkBLE02 = new LinkBLE();
-//        linkBLE02.setBleId(0x11102);
-//        linkBLE02.setBleName("LKFL03");
-//        linkBLE02.setType(BICYCLE_1);
-//        deviceBleTypeMaps.put(linkBLE02.getBleName(), linkBLE02.getType());
-//
-//        List<LinkBLE> list02 = new ArrayList<>();
-//        list02.add(linkBLE02);
-//        linkSpecificDevice02.setLinkBLES(list02);
-
-        //----------------------------------------------------------------------------------------------------//
-
-//        LinkSpecificDevice linkSpecificDevice03 = new LinkSpecificDevice();
-//        linkSpecificDevice03.setId(0x1103);
-//        linkSpecificDevice03.setDeviceName("椭圆机");
-//        linkSpecificDevice03.setType("椭圆机");
-//
-//        UWBCoordData.FencePoint fencePoint03 = new UWBCoordData.FencePoint();
-//        fencePoint03.setFenceId(0x103);
-//        fencePoint03.setLeft_top(new UWBCoordData.FencePoint.Point(0, 158));
-//        fencePoint03.setRight_top(new UWBCoordData.FencePoint.Point(357, 158));
-//        fencePoint03.setLeft_bottom(new UWBCoordData.FencePoint.Point(0, 275));
-//        fencePoint03.setRight_bottom(new UWBCoordData.FencePoint.Point(357, 275));
-//        linkSpecificDevice03.setFencePoint(fencePoint03);
-//
-//        LinkBLE linkBLE03 = new LinkBLE();
-//        linkBLE03.setBleId(0x11103);
-//        linkBLE03.setBleName("LKFL05");
-//        linkBLE03.setType(OVAL_1);
-//
-//        deviceBleTypeMaps.put(linkBLE03.getBleName(), linkBLE03.getType());
-//
-//        List<LinkBLE> list03 = new ArrayList<>();
-//        list03.add(linkBLE03);
-//        linkSpecificDevice03.setLinkBLES(list03);
-
-        //--------------------------------------------------------------------------------------------------------------------
-
-//        LinkSpecificDevice linkSpecificDevice04 = new LinkSpecificDevice();
-//        linkSpecificDevice04.setId(0x1104);
-//        linkSpecificDevice04.setDeviceName("飞鸟架01");
-//        linkSpecificDevice04.setType("飞鸟架01");
-//
-//        UWBCoordData.FencePoint fencePoint04 = new UWBCoordData.FencePoint();
-//        fencePoint04.setFenceId(0x104);
-//        fencePoint04.setLeft_top(new UWBCoordData.FencePoint.Point(578, 9));
-//        fencePoint04.setRight_top(new UWBCoordData.FencePoint.Point(860, 9));
-//        fencePoint04.setLeft_bottom(new UWBCoordData.FencePoint.Point(578, 417));
-//        fencePoint04.setRight_bottom(new UWBCoordData.FencePoint.Point(860, 417));
-//        linkSpecificDevice04.setFencePoint(fencePoint04);
-//
-//        LinkBLE linkBLE04 = new LinkBLE();
-//        linkBLE04.setBleId(0x11104);
-//        linkBLE04.setBleName("LKFL06");
-//        linkBLE04.setType(BIRD_1);
-//
-//        deviceBleTypeMaps.put(linkBLE04.getBleName(), linkBLE04.getType());
-//
-//        List<LinkBLE> list04 = new ArrayList<>();
-//        list04.add(linkBLE04);
-//        linkSpecificDevice04.setLinkBLES(list04);
-
-
-        //------------------------------------------------------------------------------------------------------
-        /*以下为测试区域*/
-
-//        LinkSpecificDevice linkSpecificDevice05 = new LinkSpecificDevice();
-//        linkSpecificDevice05.setId(0x1105);
-//        linkSpecificDevice05.setDeviceName("飞鸟架02");
-//        linkSpecificDevice05.setType("飞鸟架02");
-//
-//        UWBCoordData.FencePoint fencePoint05 = new UWBCoordData.FencePoint();
-//        fencePoint05.setFenceId(0x105);
-//        fencePoint05.setLeft_top(new UWBCoordData.FencePoint.Point(0, 1041));
-//        fencePoint05.setRight_top(new UWBCoordData.FencePoint.Point(550, 1041));
-//        fencePoint05.setLeft_bottom(new UWBCoordData.FencePoint.Point(0, 1781));
-//        fencePoint05.setRight_bottom(new UWBCoordData.FencePoint.Point(550, 1781));
-//        linkSpecificDevice05.setFencePoint(fencePoint05);
-
-
-//=====================================================================================================
-//        devicesData.add(linkSpecificDevice00);
-//        devicesData.add(linkSpecificDevice01);
-//        devicesData.add(linkSpecificDevice02);
-//        devicesData.add(linkSpecificDevice03);
-//        devicesData.add(linkSpecificDevice04);
-//        devicesData.add(linkSpecificDevice05);
 
         return this;
     }
@@ -380,17 +231,6 @@ public class LinkDataManager {
         bleDeviceInfo.setGravity("");
         bleDeviceInfo.setTime("");
         bleDeviceInfo.setU_time("");
-
-    }
-
-    public LinkSpecificDevice queryDeviceByName(String deviceName) {
-        List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().devicesData;
-        for (LinkSpecificDevice devicesDatum : devicesData) {
-            if (devicesDatum.getDeviceName().equals(deviceName)) {
-                return  devicesDatum;
-            }
-        }
-        return null;
     }
 
 
@@ -444,5 +284,35 @@ public class LinkDataManager {
             }
         }
         return false;
+    }
+
+
+    /**
+     * 根据蓝牙名字查询对象
+     *
+     * @param bleName
+     * @return
+     */
+    public LinkBLE queryLinkBle(LinkSpecificDevice specificDevice, String bleName) {
+        List<LinkBLE> linkBLES = specificDevice.getLinkBLES();
+        if (linkBLES != null && !linkBLES.isEmpty()) {
+            for (LinkBLE linkBLE : linkBLES) {
+                if (linkBLE.getBleName().equals(bleName)) {
+                    return linkBLE;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    public LinkSpecificDevice queryDeviceByName(String deviceName) {
+        List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().devicesData;
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (devicesDatum.getDeviceName().equals(deviceName)) {
+                return devicesDatum;
+            }
+        }
+        return null;
     }
 }
