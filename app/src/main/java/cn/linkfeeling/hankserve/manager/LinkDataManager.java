@@ -14,9 +14,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
@@ -42,12 +45,7 @@ public class LinkDataManager {
     public static final String TREADMILL_1 = "跑步机t1";
     public static final String BICYCLE_1 = "单车t2";
     public static final String OVAL_1 = "椭圆机t3";
-    public static final String BIRD_1 = "砝码器械t4";
-
-
-
-
-
+    public static final String BIRD_1 = "飞鸟左";
 
     private static final LinkDataManager linkDataManager = new LinkDataManager();
     private ConcurrentHashMap<String, String> deviceBleTypeMaps;
@@ -382,6 +380,17 @@ public class LinkDataManager {
         bleDeviceInfo.setGravity("");
         bleDeviceInfo.setTime("");
         bleDeviceInfo.setU_time("");
+
+    }
+
+    public LinkSpecificDevice queryDeviceByName(String deviceName) {
+        List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().devicesData;
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (devicesDatum.getDeviceName().equals(deviceName)) {
+                return  devicesDatum;
+            }
+        }
+        return null;
     }
 
 
@@ -435,24 +444,5 @@ public class LinkDataManager {
             }
         }
         return false;
-    }
-
-
-    /**
-     * 根据蓝牙名字查询对象
-     *
-     * @param bleName
-     * @return
-     */
-    public LinkBLE queryLinkBle(LinkSpecificDevice specificDevice, String bleName) {
-        List<LinkBLE> linkBLES = specificDevice.getLinkBLES();
-        if (linkBLES != null && !linkBLES.isEmpty()) {
-            for (LinkBLE linkBLE : linkBLES) {
-                if (linkBLE.getBleName().equals(bleName)) {
-                    return linkBLE;
-                }
-            }
-        }
-        return null;
     }
 }

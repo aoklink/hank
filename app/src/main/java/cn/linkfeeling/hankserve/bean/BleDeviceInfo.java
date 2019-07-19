@@ -35,6 +35,15 @@ public class BleDeviceInfo implements Cloneable {
     private String u_time; //飞鸟单组运动时长
     private boolean report;
     private List<Integer> curve;
+    private String seq_num;
+
+    public String getSeq_num() {
+        return seq_num;
+    }
+
+    public void setSeq_num(String seq_num) {
+        this.seq_num = seq_num;
+    }
 
     public boolean isReport() {
         return report;

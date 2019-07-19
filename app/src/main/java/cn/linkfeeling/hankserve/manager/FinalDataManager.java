@@ -41,4 +41,40 @@ public class FinalDataManager {
     public ConcurrentHashMap<Integer, UWBCoordData> getFenceId_uwbData() {
         return fenceId_uwbData;
     }
+
+    /**
+     * 根据蓝牙名字判断当前围栏是否已经绑定uwb
+     *
+     * @param bleName
+     * @return
+     */
+    public boolean containFenceId(String bleName) {
+        int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+        return fenceId_uwbData.containsKey(fenceId);
+    }
+
+
+    /**
+     * 判断围栏范围是否包含uwb并且手环
+     * @param bleName
+     * @return
+     */
+    public BleDeviceInfo containUwbAndWristband(String bleName) {
+        if (!containFenceId(bleName)) {
+            return null;
+        }
+
+        int fenceIdByBleName = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+        if (fenceIdByBleName == -1) {
+            return null;
+        }
+        UWBCoordData uwbCoordData = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceIdByBleName);
+        if (uwbCoordData != null && uwbCoordData.getWristband() != null) {
+            String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
+            return FinalDataManager.getInstance().getWristbands().get(bracelet_id);
+
+        }
+        return null;
+
+    }
 }

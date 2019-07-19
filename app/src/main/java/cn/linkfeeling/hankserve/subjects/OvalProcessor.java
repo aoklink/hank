@@ -13,6 +13,7 @@ import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
+import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
@@ -23,14 +24,13 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  */
 public class OvalProcessor implements IDataAnalysis {
 
-
+    private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
     public static ConcurrentHashMap<String, OvalProcessor> map;
 
     static {
         map = new ConcurrentHashMap<>();
     }
 
-    private int serialNum = -1;
 
     public static OvalProcessor getInstance() {
         return OvalProcessorHolder.sOvalProcessor;
@@ -43,15 +43,13 @@ public class OvalProcessor implements IDataAnalysis {
 
     @Override
     public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
-        BleDeviceInfo bleDeviceInfoNow = null;
-
-        if (scanRecord == null) {
-            return null;
-        }
+        BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
-        if (linkScanRecord == null) {
+        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
+        if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
             return null;
         }
+
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
         if (serviceData == null) {
             return null;
@@ -59,30 +57,11 @@ public class OvalProcessor implements IDataAnalysis {
 
         Log.i("vvvvvvv", Arrays.toString(serviceData));
 
-
-//        Log.i("tttttttttttttt", Arrays.toString(scanRecord));
-//        byte[] speed = new byte[1];
-//        byte[] gradient = new byte[2];
-//        speed[0] = scanRecord[11];
-//        //  speed[1] = scanRecord[12];
-//        gradient[0] = scanRecord[13];
-//        gradient[1] = scanRecord[14];
-//
-//        int speedInt = Integer.parseInt(String.valueOf(CalculateUtil.byteArrayToInt(speed)));
-//        int gradientInt = Integer.parseInt(String.valueOf(gradient[0]));
-
-
-        LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
-        if (deviceByBleName == null) {
-            return null;
-        }
-
         byte seq = serviceData[4];
-        if (seq < serialNum && serialNum - seq < 10) {
+        if (limitQueue.contains(CalculateUtil.byteToInt(seq))) {
             return null;
         }
-
-        serialNum = seq;
+        limitQueue.offer(CalculateUtil.byteToInt(seq));
 
         byte[] turns = new byte[2];
         turns[0] = serviceData[0];
@@ -93,11 +72,12 @@ public class OvalProcessor implements IDataAnalysis {
         ticks[0] = serviceData[3];
         ticks[1] = serviceData[2];
 
+
         float speed;
-        if (CalculateUtil.byteArrayToInt(ticks) == 0) {
-            return null;
-        } else if (turns[0] == -1 && turns[1] == -1) {
+        if (turns[0] == -1 && turns[1] == -1) {
             speed = 0;
+        } else if (CalculateUtil.byteArrayToInt(ticks) == 0) {
+            return null;
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
 
@@ -109,30 +89,13 @@ public class OvalProcessor implements IDataAnalysis {
 
         deviceByBleName.setAbility(speed);
 
-
-        int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
-        boolean containsKey = FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId);
-        if (!containsKey) {
-            return null;
-        }
-        UWBCoordData uwbCoordData = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId);
-
-        String bracelet_id = uwbCoordData.getWristband().getBracelet_id();
-        bleDeviceInfoNow = FinalDataManager.getInstance().getWristbands().get(bracelet_id);
+        bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
             return null;
         }
 
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
-
-        //椭圆机
-//        if (speed == 0) {
-//            bleDeviceInfoNow.setSpeed("0.0");
-//        } else {
-//            bleDeviceInfoNow.setSpeed(String.valueOf(calculateEllipticalSpeed(speed)));
-//        }
-
-        //  bleDeviceInfoNow.setGradient(String.valueOf(gradientInt));
+        bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteToInt(seq)));
 
         return bleDeviceInfoNow;
 
