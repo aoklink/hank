@@ -72,7 +72,11 @@ public class TreadMillProcessor implements IDataAnalysis {
             byte[] serviceDatum = new byte[2];
             serviceDatum[0] = serviceData[11];
             serviceDatum[1] = serviceData[12];
+
+
             int numbers = CalculateUtil.byteArrayToInt(serviceDatum);
+            Log.i("serviceDatum"+bleName,Arrays.toString(serviceDatum) +"---"+numbers);
+
             Log.i("67676", numbers + "");
             float v = CalculateUtil.txFloat(numbers, 100);
 

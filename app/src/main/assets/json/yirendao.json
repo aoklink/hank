@@ -610,8 +610,8 @@
     },
     {
       "id": 16,
-      "deviceName": "卷腹机01",
-      "type": "卷腹机",
+      "deviceName": "坐姿卷腹器01",
+      "type": "坐姿卷腹器",
       "fencePoint": {
         "fenceId": 16,
         "left_top": {
@@ -710,8 +710,8 @@
     },
     {
       "id": 18,
-      "deviceName": "坐式肩上举训练器01",
-      "type": "坐式肩上举",
+      "deviceName": "坐姿肩上举训练器01",
+      "type": "坐姿肩上举训练器",
       "fencePoint": {
         "fenceId": 18,
         "left_top": {
@@ -757,8 +757,8 @@
     },
     {
       "id": 19,
-      "deviceName": "抬腿训练器01",
-      "type": "抬腿训练器",
+      "deviceName": "坐姿腿屈伸训练器01",
+      "type": "坐姿腿屈伸训练器",
       "fencePoint": {
         "fenceId": 19,
         "left_top": {
