@@ -42,7 +42,7 @@ public class BicycleProcessor implements IDataAnalysis {
 
 
     @Override
-    public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostString,byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
@@ -54,7 +54,7 @@ public class BicycleProcessor implements IDataAnalysis {
             return null;
         }
 
-        Log.i("danchedata", Arrays.toString(serviceData));
+        Log.i(hostString+"danchedata", Arrays.toString(serviceData));
 
 
         byte seq = serviceData[4];

@@ -40,7 +40,7 @@ public class TreadMillProcessor implements IDataAnalysis {
     }
 
     @Override
-    public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostString,byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
@@ -53,7 +53,7 @@ public class TreadMillProcessor implements IDataAnalysis {
             return null;
         }
 
-        Log.i("6767676" + bleName, Arrays.toString(serviceData));
+        Log.i(hostString+"6767676" + bleName, Arrays.toString(serviceData));
 
         byte[] pages = new byte[2];
         pages[0] = serviceData[2];

@@ -42,7 +42,7 @@ public class OvalProcessor implements IDataAnalysis {
     }
 
     @Override
-    public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostString,byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
@@ -55,7 +55,7 @@ public class OvalProcessor implements IDataAnalysis {
             return null;
         }
 
-        Log.i("vvvvvvv", Arrays.toString(serviceData));
+        Log.i(hostString+"vvvvvvv", Arrays.toString(serviceData));
 
         byte seq = serviceData[4];
         if (limitQueue.contains(CalculateUtil.byteToInt(seq))) {

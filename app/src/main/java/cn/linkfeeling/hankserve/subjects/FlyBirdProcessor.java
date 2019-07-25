@@ -37,7 +37,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     private Vector<Integer> list = new Vector<>();
 
     @Override
-    public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostString, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
@@ -47,7 +47,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         Log.i("ppppppppp" + bleName, Arrays.toString(scanRecord));
 
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
-        Log.i("999999999" + bleName, Arrays.toString(serviceData));
+        Log.i(hostString + "999999999" + bleName, Arrays.toString(serviceData));
         if (serviceData == null) {
             return null;
         }
@@ -78,7 +78,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 //  list.add(cuv1);
             }
         }
-
 
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
