@@ -55,6 +55,7 @@ public class TreadMillProcessor implements IDataAnalysis {
 
         Log.i("6767676", Arrays.toString(serviceData));
 
+
         byte[] pages = new byte[2];
         pages[0] = serviceData[2];
         pages[1] = serviceData[3];
