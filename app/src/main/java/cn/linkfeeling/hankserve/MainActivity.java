@@ -168,6 +168,20 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                     tempBleInfo = (BleDeviceInfo) clone;
                                     getPresenter().uploadBleData(tempBleInfo, value);
                                 }
+
+                                if (tempBleInfo.getCurve() != null && !tempBleInfo.getCurve().isEmpty()) {
+                                    value.getCurve().removeAll(tempBleInfo.getCurve());
+                                }
+
+                                if (!"".equals(tempBleInfo.getTime()) && !"".equals(tempBleInfo.getU_time())) {
+                                    LinkDataManager.getInstance().cleanFlyBird(value);
+                                    LinkSpecificDevice linkSpecificDevice = LinkDataManager.getInstance().queryDeviceByName(value.getDevice_name());
+                                    if (linkSpecificDevice != null) {
+                                        linkSpecificDevice.setAbility(0);
+                                    }
+
+                                }
+
                             }
                         }
                     });
@@ -388,22 +402,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             e.printStackTrace();
         }
 
-        if (temp.getCurve() != null && !temp.getCurve().isEmpty()) {
-            bleDeviceInfo.getCurve().removeAll(temp.getCurve());
-        }
-
-        if (!"".equals(temp.getTime()) && !"".equals(temp.getU_time())) {
-            LinkDataManager.getInstance().cleanFlyBird(bleDeviceInfo);
-        }
-
-        if (!"".equals(temp.getTime()) && !"".equals(temp.getU_time())) {
-            LinkDataManager.getInstance().cleanFlyBird(bleDeviceInfo);
-            LinkSpecificDevice linkSpecificDevice = LinkDataManager.getInstance().queryDeviceByName(bleDeviceInfo.getDevice_name());
-            if (linkSpecificDevice != null) {
-                linkSpecificDevice.setAbility(0);
-            }
-
-        }
     }
 
     private void updateData(BleDeviceInfo bleDeviceInfo) {
