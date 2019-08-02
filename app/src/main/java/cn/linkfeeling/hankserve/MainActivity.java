@@ -240,7 +240,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (bleType != null) {
             try {
                 IDataAnalysis iDataAnalysis = DataProcessorFactory.creteProcess(bleType, name);
-                BleDeviceInfo bleDeviceInfoFinal = iDataAnalysis.analysisBLEData(hostString,scanRecord, name);
+                BleDeviceInfo bleDeviceInfoFinal = iDataAnalysis.analysisBLEData(hostString, scanRecord, name);
                 if (bleDeviceInfoFinal == null) {
                     return;
                 }
