@@ -52,13 +52,13 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
             return null;
         }
-        Log.i("ppppppppp" + bleName, Arrays.toString(scanRecord));
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
         Log.i("999999999" + bleName + "--" + hostName, Arrays.toString(serviceData));
 
         if (serviceData == null) {
             return null;
         }
+
 //        if(serviceData[0]!=0 && serviceData[0]!=-1){
 //            deviceByBleName.setAbility(serviceData[0]);
 //        }
