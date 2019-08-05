@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
@@ -23,9 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
 import cn.linkfeeling.hankserve.adapter.BLEAdapter;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.Power;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
@@ -86,6 +90,22 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         connectWebSocket();
         //connectLinkWS();
         startIntervalListener();
+
+
+        Power p2 = new Power();
+        p2.setDeviceName("飞鸟01");
+        p2.setBleNme("LKFL13");
+        p2.setPowerLevel(3);
+        p2.save(new SaveListener<String>() {
+            @Override
+            public void done(String objectId,BmobException e) {
+                if(e==null){
+                    Toast.makeText(MainActivity.this, "添加数据成功，返回objectId为："+objectId, Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(MainActivity.this, "创建数据失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 
