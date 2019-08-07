@@ -15,8 +15,11 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.Power;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
@@ -59,10 +62,12 @@ public class FlyBirdProcessor implements IDataAnalysis {
             return null;
         }
 
+
+     //   dealPowerData(serviceData, deviceByBleName, bleName);
 //        if(serviceData[0]!=0 && serviceData[0]!=-1){
 //            deviceByBleName.setAbility(serviceData[0]);
 //        }
-        byte[] seqNum = {serviceData[10],serviceData[11]};
+        byte[] seqNum = {serviceData[10], serviceData[11]};
 
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return null;
@@ -92,7 +97,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (serviceData[0] == -1 && serviceData[1] == -1) {
 
 //            Log.i("iiiiiiiiiiiii", JSON.toJSONString(list));
-         //   Log.i("iiiiiiiiiiiii", JSON.toJSONString(limitQueue));
+            //   Log.i("iiiiiiiiiiiii", JSON.toJSONString(limitQueue));
 //            list.clear();
             if (serviceData[12] == 0) {
                 deviceByBleName.setAbility(0);
@@ -115,5 +120,30 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
         return bleDeviceInfoNow;
 
+    }
+
+    private void dealPowerData(byte[] serviceData, LinkSpecificDevice deviceByBleName, String bleName) {
+        //  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+        int power = 0;
+        for (int i = 0; i < serviceData.length; i++) {
+
+            power = power + CalculateUtil.byteToInt(serviceData[i]);
+
+        }
+        if (power != 0) {
+            Power power1 = new Power();
+            power1.setDeviceName(deviceByBleName.getDeviceName());
+            power1.setBleNme(bleName);
+            power1.setPowerLevel(power);
+
+            power1.save(new SaveListener<String>() {
+                @Override
+                public void done(String s, BmobException e) {
+
+                }
+            });
+        }
+
+        return;
     }
 }

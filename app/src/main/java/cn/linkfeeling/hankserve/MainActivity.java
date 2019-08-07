@@ -90,22 +90,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         connectWebSocket();
         //connectLinkWS();
         startIntervalListener();
-
-
-        Power p2 = new Power();
-        p2.setDeviceName("飞鸟01");
-        p2.setBleNme("LKFL13");
-        p2.setPowerLevel(3);
-        p2.save(new SaveListener<String>() {
-            @Override
-            public void done(String objectId,BmobException e) {
-                if(e==null){
-                    Toast.makeText(MainActivity.this, "添加数据成功，返回objectId为："+objectId, Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(MainActivity.this, "创建数据失败", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
 
