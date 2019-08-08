@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
+import cn.bmob.v3.Bmob;
 import cn.linkfeeling.hankserve.alarm.LinkAlarmManager;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
@@ -58,6 +59,7 @@ public class App extends BaseApplication {
         super.onCreate();
         app = this;
         SpiderMan.init(this).setTheme(R.style.SpiderManTheme_Light);
+        Bmob.initialize(this, "8e77895692321d5403a19faff7202e36");
         initWakeLock();
 
         initConfig();

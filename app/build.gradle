@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+    useLibrary 'org.apache.http.legacy'
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     defaultConfig {
         applicationId "cn.linkfeeling.hankserve"
@@ -56,4 +57,8 @@ dependencies {
     }
 
     implementation 'com.google.code.gson:gson:2.8.5'
+
+    implementation 'cn.bmob.android:bmob-sdk:3.7.3-rc1'
+    implementation 'com.squareup.okio:okio:2.1.0'
+    implementation 'cn.bmob.android:http-legacy:1.0'
 }

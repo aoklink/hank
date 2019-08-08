@@ -5,4 +5,6 @@ package cn.linkfeeling.hankserve.bean;
  * @time 2019/8/8
  */
 public class Power {
+
+    
 }
