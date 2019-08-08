@@ -10,7 +10,15 @@ public class Power extends BmobObject {
     private String deviceName;
     private String bleNme;
     private int  powerLevel;
+    private String gymName;
 
+    public String getGymName() {
+        return gymName;
+    }
+
+    public void setGymName(String gymName) {
+        this.gymName = gymName;
+    }
 
     public String getDeviceName() {
         return deviceName;

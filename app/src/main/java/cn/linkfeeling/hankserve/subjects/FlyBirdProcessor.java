@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
+import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Power;
@@ -63,7 +64,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
 
 
-     //   dealPowerData(serviceData, deviceByBleName, bleName);
+        //   dealPowerData(serviceData, deviceByBleName, bleName);
 //        if(serviceData[0]!=0 && serviceData[0]!=-1){
 //            deviceByBleName.setAbility(serviceData[0]);
 //        }
@@ -74,6 +75,12 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
         Log.i("seqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
+
+        boolean b = dealPowerData(serviceData, deviceByBleName, bleName);
+        if (b) {
+            return null;
+        }
+
         deviceByBleName.setAbility(serviceData[0]);
 
 
@@ -122,19 +129,28 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
     }
 
-    private void dealPowerData(byte[] serviceData, LinkSpecificDevice deviceByBleName, String bleName) {
+    private boolean dealPowerData(byte[] serviceData, LinkSpecificDevice deviceByBleName, String bleName) {
         //  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
-        int power = 0;
-        for (int i = 0; i < serviceData.length; i++) {
+        if (serviceData[0] == 0 &&
+                serviceData[1] == 0 &&
+                serviceData[2] == 0 &&
+                serviceData[3] == 0 &&
+                serviceData[4] == 0 &&
+                serviceData[5] == 0 &&
+                serviceData[6] == 0 &&
+                serviceData[7] == 0 &&
+                serviceData[8] == 0 &&
+                serviceData[9] == 0 &&
+                serviceData[12] == 0 &&
+                serviceData[13] == 0 &&
+                serviceData[14] == 0) {
 
-            power = power + CalculateUtil.byteToInt(serviceData[i]);
-
-        }
-        if (power != 0) {
             Power power1 = new Power();
             power1.setDeviceName(deviceByBleName.getDeviceName());
             power1.setBleNme(bleName);
-            power1.setPowerLevel(power);
+            power1.setPowerLevel(CalculateUtil.byteToInt(serviceData[15]));
+            power1.setGymName(BuildConfig.PROJECT_NAME);
+
 
             power1.save(new SaveListener<String>() {
                 @Override
@@ -142,8 +158,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
                 }
             });
+            return true;
         }
-
-        return;
+        return false;
     }
 }

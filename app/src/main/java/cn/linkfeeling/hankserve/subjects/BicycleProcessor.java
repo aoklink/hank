@@ -127,10 +127,11 @@ public class BicycleProcessor implements IDataAnalysis {
     private float calculateBicycleSpeed(float measureSpeed, float slope) {
         float v;
         BigDecimal bigDecimal = CalculateUtil.floatDivision(measureSpeed, slope);
-        if (bigDecimal.floatValue() >= 120) {
-            v = (float) ((bigDecimal.floatValue() * 0.666) - 42.15);//向南提供的函数关系
+        if (bigDecimal.floatValue() > 90) {
+            v= (float) ((bigDecimal.floatValue() * bigDecimal.floatValue())*0.0033 - 0.194 *bigDecimal.floatValue()+13.33);
+          //  v = (float) ((bigDecimal.floatValue() * 0.666) - 42.15);//向南提供的函数关系
         } else {
-            v = (float) ((bigDecimal.floatValue() * 0.3378) - 7.3649);
+            v = (float) ((bigDecimal.floatValue() * 0.329) - 7.01);
         }
         if (v < 0) {
             return (float) 0;
