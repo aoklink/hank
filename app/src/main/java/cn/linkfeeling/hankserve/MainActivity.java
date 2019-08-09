@@ -262,6 +262,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
      */
     private void connectWebSocket() {
         LinkWSManager.getInstance().connectWebSocket(text -> {
+            gson
+            Log.i("quanji",text);
+
             dealMessage(text);
         });
     }
