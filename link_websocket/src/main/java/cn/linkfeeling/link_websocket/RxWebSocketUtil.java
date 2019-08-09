@@ -295,7 +295,8 @@ public class RxWebSocketUtil {
                 public void onMessage(WebSocket webSocket, String text) {
 
                     if (showLog) {
-                        Log.d(logTag, url + " --> " + text);
+
+                       // Log.d(logTag, url + " --> " + text);
                     }
                     if (!subscriber.isDisposed()) {
                         subscriber.onNext(new WebSocketInfo(webSocket, text));
@@ -306,7 +307,7 @@ public class RxWebSocketUtil {
                 public void onMessage(WebSocket webSocket, ByteString bytes) {
 
                     if (showLog) {
-                        Log.d(logTag, url + " --> " + bytes);
+                      //  Log.d(logTag, url + " --> " + bytes);
                     }
                     if (!subscriber.isDisposed()) {
                         subscriber.onNext(new WebSocketInfo(webSocket, bytes));

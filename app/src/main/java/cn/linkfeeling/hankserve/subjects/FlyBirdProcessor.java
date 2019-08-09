@@ -8,10 +8,13 @@ import java.util.Arrays;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
+import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkBLE;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
-import cn.linkfeeling.hankserve.bean.UWBCoordData;
+import cn.linkfeeling.hankserve.bean.Power;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
@@ -62,6 +65,12 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
         Log.i("seqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
+
+        boolean b = dealPowerData(serviceData, deviceByBleName, bleName);
+        if (b) {
+            return null;
+        }
+
         deviceByBleName.setAbility(serviceData[0]);
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
@@ -116,5 +125,38 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
     }
 
+    private boolean dealPowerData(byte[] serviceData, LinkSpecificDevice deviceByBleName, String bleName) {
+        //  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+        if (serviceData[0] == 0 &&
+                serviceData[1] == 0 &&
+                serviceData[2] == 0 &&
+                serviceData[3] == 0 &&
+                serviceData[4] == 0 &&
+                serviceData[5] == 0 &&
+                serviceData[6] == 0 &&
+                serviceData[7] == 0 &&
+                serviceData[8] == 0 &&
+                serviceData[9] == 0 &&
+                serviceData[12] == 0 &&
+                serviceData[13] == 0 &&
+                serviceData[14] == 0) {
+
+            Power power1 = new Power();
+            power1.setDeviceName(deviceByBleName.getDeviceName());
+            power1.setBleNme(bleName);
+            power1.setPowerLevel(CalculateUtil.byteToInt(serviceData[15]));
+            power1.setGymName(BuildConfig.PROJECT_NAME);
+
+
+            power1.save(new SaveListener<String>() {
+                @Override
+                public void done(String s, BmobException e) {
+
+                }
+            });
+            return true;
+        }
+        return false;
+    }
 
 }
