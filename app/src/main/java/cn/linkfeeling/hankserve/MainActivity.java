@@ -175,6 +175,13 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                     getPresenter().uploadBleData(tempBleInfo, value);
                                 }
 
+                                if (!tempBleInfo.getSpeed().equals("") && Float.parseFloat(tempBleInfo.getSpeed()) == 0) {
+                                    LinkSpecificDevice linkSpecificDevice = LinkDataManager.getInstance().queryDeviceByName(value.getDevice_name());
+                                    if (linkSpecificDevice != null) {
+                                        linkSpecificDevice.setAbility(0);
+                                    }
+                                }
+
                                 if (tempBleInfo.getCurve() != null && !tempBleInfo.getCurve().isEmpty()) {
                                     value.getCurve().removeAll(tempBleInfo.getCurve());
                                 }
