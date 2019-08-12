@@ -42,7 +42,7 @@ public class BicycleProcessor implements IDataAnalysis {
 
 
     @Override
-    public BleDeviceInfo analysisBLEData(String hostString,byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostString, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
@@ -54,14 +54,14 @@ public class BicycleProcessor implements IDataAnalysis {
             return null;
         }
 
-        Log.i(hostString+"danchedata", Arrays.toString(serviceData));
+        Log.i(hostString + "danchedata", Arrays.toString(serviceData));
 
 
-        byte seq = serviceData[4];
-        if (limitQueue.contains(CalculateUtil.byteToInt(seq))) {
+        byte[] seq ={serviceData[5],serviceData[4]} ;
+        if (limitQueue.contains(CalculateUtil.byteArrayToInt(seq))) {
             return null;
         }
-        limitQueue.offer(CalculateUtil.byteToInt(seq));
+        limitQueue.offer(CalculateUtil.byteArrayToInt(seq));
 
         byte[] turns = new byte[2];
         turns[0] = serviceData[0];
@@ -73,10 +73,8 @@ public class BicycleProcessor implements IDataAnalysis {
         ticks[1] = serviceData[2];
 
         float speed;
-        if (turns[0] == -1 && turns[1] == -1) {
+        if (CalculateUtil.byteArrayToInt(ticks) == 0) {
             speed = 0;
-        } else if (CalculateUtil.byteArrayToInt(ticks) == 0) {
-            return null;
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
             //  speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
@@ -95,7 +93,7 @@ public class BicycleProcessor implements IDataAnalysis {
 
 
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
-        bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteToInt(seq)));
+        bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seq)));
         return bleDeviceInfoNow;
 
     }
