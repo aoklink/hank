@@ -40,13 +40,11 @@ public class FlyBirdProcessor implements IDataAnalysis {
     private static final float SELF_GRAVITY = 2.5f;
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
 
+    private int flag = -1;
 
     static {
         map = new ConcurrentHashMap<>();
     }
-
-
-    private Vector<Integer> list = new Vector<>();
 
     @Override
     public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
@@ -69,6 +67,10 @@ public class FlyBirdProcessor implements IDataAnalysis {
 //            deviceByBleName.setAbility(serviceData[0]);
 //        }
         byte[] seqNum = {serviceData[10], serviceData[11]};
+
+        if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
+            return null;
+        }
 
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return null;
@@ -96,17 +98,15 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 int cuv1 = CalculateUtil.byteToInt(serviceData[j]);
                 bleDeviceInfoNow.getCurve().add(cuv1);
                 bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
-                //  list.add(cuv1);
             }
         }
 
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
 
-//            Log.i("iiiiiiiiiiiii", JSON.toJSONString(list));
-            //   Log.i("iiiiiiiiiiiii", JSON.toJSONString(limitQueue));
-//            list.clear();
-            if (serviceData[12] == 0) {
+            flag = CalculateUtil.byteArrayToInt(seqNum);
+
+            if (serviceData[9] == 0 || serviceData[12] == 0) {
                 deviceByBleName.setAbility(0);
                 return null;
             }

@@ -26,6 +26,8 @@ public class TreadMillProcessor implements IDataAnalysis {
 
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
     public static ConcurrentHashMap<String, TreadMillProcessor> map;
+    private int flag = -1;
+
 
     static {
         map = new ConcurrentHashMap<>();
@@ -41,10 +43,10 @@ public class TreadMillProcessor implements IDataAnalysis {
 
     @Override
     public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
-        BleDeviceInfo bleDeviceInfoNow ;
+        BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
-        if (scanRecord == null || linkScanRecord==null || deviceByBleName==null) {
+        if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
             return null;
         }
 
@@ -61,7 +63,11 @@ public class TreadMillProcessor implements IDataAnalysis {
         pages[1] = serviceData[3];
         int nowPack = CalculateUtil.byteArrayToInt(pages);
 
-        if(limitQueue.contains(nowPack)){
+        if (nowPack < flag && flag - nowPack < 10000) {
+            return null;
+        }
+
+        if (limitQueue.contains(nowPack)) {
             return null;
         }
         Log.i("seqNum", nowPack + "");
@@ -69,6 +75,7 @@ public class TreadMillProcessor implements IDataAnalysis {
 
         float speed;
         if (serviceData[0] == -1 && serviceData[1] == -1) {
+            flag = nowPack;
             speed = 0;
         } else {
             byte[] serviceDatum = new byte[2];
@@ -84,7 +91,10 @@ public class TreadMillProcessor implements IDataAnalysis {
 
         Log.i("6767676", speed + "");
 
-        deviceByBleName.setAbility(speed);
+        if (speed != 0) {
+            deviceByBleName.setAbility(speed);
+        }
+
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {

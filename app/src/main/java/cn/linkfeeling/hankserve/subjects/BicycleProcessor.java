@@ -26,6 +26,7 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 public class BicycleProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, BicycleProcessor> map;
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
+    private int flag = -1;
 
     static {
         map = new ConcurrentHashMap<>();
@@ -59,11 +60,16 @@ public class BicycleProcessor implements IDataAnalysis {
 
         byte[] seqNum = {serviceData[5], serviceData[4]};
 
+        if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
+            return null;
+        }
+
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return null;
         }
         Log.i("dancheseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
+
         byte[] turns = new byte[2];
         turns[0] = serviceData[0];
         turns[1] = serviceData[1];
@@ -75,6 +81,7 @@ public class BicycleProcessor implements IDataAnalysis {
 
         float speed;
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
+            flag = CalculateUtil.byteArrayToInt(seqNum);
             speed = 0;
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
@@ -84,7 +91,10 @@ public class BicycleProcessor implements IDataAnalysis {
         Log.i("ticks----", (float) CalculateUtil.byteArrayToInt(ticks) + "");
         Log.i("ticks===", Arrays.toString(ticks));
 
-        deviceByBleName.setAbility(speed);
+
+        if (speed != 0) {
+            deviceByBleName.setAbility(speed);
+        }
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
@@ -128,8 +138,8 @@ public class BicycleProcessor implements IDataAnalysis {
         float v;
         BigDecimal bigDecimal = CalculateUtil.floatDivision(measureSpeed, slope);
         if (bigDecimal.floatValue() > 90) {
-            v= (float) ((bigDecimal.floatValue() * bigDecimal.floatValue())*0.0033 - 0.194 *bigDecimal.floatValue()+13.33);
-          //  v = (float) ((bigDecimal.floatValue() * 0.666) - 42.15);//向南提供的函数关系
+            v = (float) ((bigDecimal.floatValue() * bigDecimal.floatValue()) * 0.0033 - 0.194 * bigDecimal.floatValue() + 13.33);
+            //  v = (float) ((bigDecimal.floatValue() * 0.666) - 42.15);//向南提供的函数关系
         } else {
             v = (float) ((bigDecimal.floatValue() * 0.329) - 7.01);
         }

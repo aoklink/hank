@@ -26,6 +26,7 @@ public class OvalProcessor implements IDataAnalysis {
 
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
     public static ConcurrentHashMap<String, OvalProcessor> map;
+    private int flag = -1;
 
     static {
         map = new ConcurrentHashMap<>();
@@ -59,20 +60,12 @@ public class OvalProcessor implements IDataAnalysis {
 
         Log.i("vvvvvvv", Arrays.toString(serviceData));
 
-
-//        Log.i("tttttttttttttt", Arrays.toString(scanRecord));
-//        byte[] speed = new byte[1];
-//        byte[] gradient = new byte[2];
-//        speed[0] = scanRecord[11];
-//        //  speed[1] = scanRecord[12];
-//        gradient[0] = scanRecord[13];
-//        gradient[1] = scanRecord[14];
-//
-//        int speedInt = Integer.parseInt(String.valueOf(CalculateUtil.byteArrayToInt(speed)));
-//        int gradientInt = Integer.parseInt(String.valueOf(gradient[0]));
-
-
         byte[] seqNum = {serviceData[5], serviceData[4]};
+        if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
+            return null;
+        }
+
+
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return null;
         }
@@ -90,6 +83,7 @@ public class OvalProcessor implements IDataAnalysis {
 
         float speed;
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
+            flag = CalculateUtil.byteArrayToInt(seqNum);
             speed = 0;
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
@@ -97,7 +91,9 @@ public class OvalProcessor implements IDataAnalysis {
             Log.i("ticks", speed + "");
         }
 
-        deviceByBleName.setAbility(speed);
+        if (speed != 0) {
+            deviceByBleName.setAbility(speed);
+        }
 
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
