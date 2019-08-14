@@ -25,8 +25,11 @@ import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkBLE;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.bean.Wristband;
+import cn.linkfeeling.hankserve.queue.LimitQueue;
+import cn.linkfeeling.hankserve.queue.UwbQueue;
 
 import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
 
@@ -387,33 +390,10 @@ public class LinkDataManager {
         List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().devicesData;
         for (LinkSpecificDevice devicesDatum : devicesData) {
             if (devicesDatum.getDeviceName().equals(deviceName)) {
-                return  devicesDatum;
+                return devicesDatum;
             }
         }
         return null;
-    }
-
-
-    public boolean withinTheScope(UWBCoordData uwbCoorData) {
-
-        double x = uwbCoorData.getX();
-        double y = uwbCoorData.getY();
-
-        List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().getDevicesData();
-        for (LinkSpecificDevice devicesDatum : devicesData) {
-            UWBCoordData.FencePoint fencePoint = devicesDatum.getFencePoint();
-            double x1 = fencePoint.getLeft_top().getX();
-            double y1 = fencePoint.getLeft_top().getY();
-            double x2 = fencePoint.getRight_bottom().getX();
-            double y2 = fencePoint.getRight_bottom().getY();
-
-            if ((x > x1 && x < x2) && (y > y1 && y < y2)) {
-                uwbCoorData.setDevice(devicesDatum);
-                uwbCoorData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoorData.getCode())));
-                return true;
-            }
-        }
-        return false;
     }
 
 
@@ -443,6 +423,7 @@ public class LinkDataManager {
                 return true;
             }
         }
+        uwbCoordData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoordData.getCode())));
         return false;
     }
 }

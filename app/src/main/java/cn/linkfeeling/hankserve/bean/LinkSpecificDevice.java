@@ -15,10 +15,15 @@ public class LinkSpecificDevice {
     private float slope;
     private float ability;  //设备的当前速度，判断是否在运转
     private UWBCoordData.FencePoint fencePoint;
+    private UWBCoordData.FencePoint.Point  centerPoint;
 
     private long receiveDeviceBleTime;  //接收设备ble发出非零数据的时间
 
     private List<LinkBLE> linkBLES;
+
+    public UWBCoordData.FencePoint.Point getCenterPoint() {
+        return centerPoint;
+    }
 
     public float getAbility() {
         return ability;

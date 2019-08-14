@@ -45,6 +45,15 @@ public class UWBCoordData {
     private LinkSpecificDevice device;
     private Wristband wristband;
 
+    private int semaphore;//信号量
+
+    public int getSemaphore() {
+        return semaphore;
+    }
+
+    public void setSemaphore(int semaphore) {
+        this.semaphore = semaphore;
+    }
 
     public Wristband getWristband() {
         return wristband;

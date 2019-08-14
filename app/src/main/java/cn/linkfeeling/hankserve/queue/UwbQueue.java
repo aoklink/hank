@@ -2,7 +2,6 @@ package cn.linkfeeling.hankserve.queue;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -11,13 +10,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *
  * @author gary
  */
-public class LimitQueue<E> implements Queue<E> {
-    //队列长度  
+public class UwbQueue<E> implements Queue<E> {
+    //队列长度
     private int limit;
 
     Queue<E> queue = new ConcurrentLinkedQueue<>();
 
-    public LimitQueue(int limit) {
+    public UwbQueue(int limit) {
         this.limit = limit;
     }
 
@@ -28,10 +27,6 @@ public class LimitQueue<E> implements Queue<E> {
      */
     @Override
     public synchronized boolean offer(E e) {
-        if (queue.contains(e)) {
-            return false;
-        }
-
         if (queue.size() >= limit) {
             //如果超出长度,入队时,先出队  
             queue.poll();
