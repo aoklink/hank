@@ -180,7 +180,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 }
 
                                 if (!tempBleInfo.getSpeed().equals("") && Float.parseFloat(tempBleInfo.getSpeed()) == 0) {
-                                    LinkSpecificDevice linkSpecificDevice = LinkDataManager.getInstance().queryDeviceByName(value.getDevice_name());
+                                    LinkSpecificDevice linkSpecificDevice = LinkDataManager.getInstance().queryDeviceByName(tempBleInfo.getDevice_name());
                                     if (linkSpecificDevice != null) {
                                         linkSpecificDevice.setAbility(0);
                                     }
