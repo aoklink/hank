@@ -57,8 +57,6 @@ public class OvalProcessor implements IDataAnalysis {
         if (serviceData == null) {
             return null;
         }
-        //检查是否有可绑定的手环  如果有则根据算法匹配
-        LinkDataManager.getInstance().checkBind(bleName, deviceByBleName);
 
         Log.i("vvvvvvv", Arrays.toString(serviceData));
 
@@ -73,6 +71,10 @@ public class OvalProcessor implements IDataAnalysis {
         }
         Log.i("tuoyuanjiseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
+
+        //检查是否有可绑定的手环  如果有则根据算法匹配
+        LinkDataManager.getInstance().checkBind( deviceByBleName);
+
 
         byte[] turns = new byte[2];
         turns[0] = serviceData[0];
@@ -112,15 +114,13 @@ public class OvalProcessor implements IDataAnalysis {
 
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
         bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
-        //椭圆机
-//        if (speed == 0) {
-//            bleDeviceInfoNow.setSpeed("0.0");
-//        } else {
-//            bleDeviceInfoNow.setSpeed(String.valueOf(calculateEllipticalSpeed(speed)));
-//        }
-
-        //  bleDeviceInfoNow.setGradient(String.valueOf(gradientInt));
-
+        if (speed == 0) {
+            //解除绑定
+            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+            if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+                FinalDataManager.getInstance().removeUwb(fenceId);
+            }
+        }
         return bleDeviceInfoNow;
 
     }

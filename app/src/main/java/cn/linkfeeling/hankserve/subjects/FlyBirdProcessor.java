@@ -59,8 +59,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
         if (serviceData == null) {
             return null;
-        }       //检查是否有可绑定的手环  如果有则根据算法匹配
-        LinkDataManager.getInstance().checkBind(bleName, deviceByBleName);
+        }
+
 
 
         //   dealPowerData(serviceData, deviceByBleName, bleName);
@@ -79,10 +79,15 @@ public class FlyBirdProcessor implements IDataAnalysis {
         Log.i("seqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
 
+
+
         boolean b = dealPowerData(serviceData, deviceByBleName, bleName);
         if (b) {
             return null;
         }
+        //检查是否有可绑定的手环  如果有则根据算法匹配
+        LinkDataManager.getInstance().checkBind(deviceByBleName);
+
 
       //  deviceByBleName.setAbility(serviceData[0]);
 

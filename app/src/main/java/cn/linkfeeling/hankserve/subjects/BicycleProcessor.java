@@ -61,9 +61,6 @@ public class BicycleProcessor implements IDataAnalysis {
             return null;
         }
 
-        //检查是否有可绑定的手环  如果有则根据算法匹配
-        LinkDataManager.getInstance().checkBind(bleName, deviceByBleName);
-
 
         Log.i("danchedata", Arrays.toString(serviceData));
 
@@ -78,6 +75,10 @@ public class BicycleProcessor implements IDataAnalysis {
         }
         Log.i("dancheseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
+
+        //检查是否有可绑定的手环  如果有则根据算法匹配
+        LinkDataManager.getInstance().checkBind(deviceByBleName);
+
 
         byte[] turns = new byte[2];
         turns[0] = serviceData[0];
@@ -107,7 +108,7 @@ public class BicycleProcessor implements IDataAnalysis {
         Log.i("ticks===", Arrays.toString(ticks));
 
 
-    //    deviceByBleName.setAbility(speed);
+        //    deviceByBleName.setAbility(speed);
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
@@ -117,6 +118,16 @@ public class BicycleProcessor implements IDataAnalysis {
 
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
         bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+
+        if (speed == 0) {
+            //解除绑定
+            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+            if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+                FinalDataManager.getInstance().removeUwb(fenceId);
+            }
+        }
+
+
         return bleDeviceInfoNow;
 
     }

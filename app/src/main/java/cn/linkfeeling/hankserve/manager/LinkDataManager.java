@@ -14,12 +14,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
@@ -28,7 +25,6 @@ import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.bean.Wristband;
-import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 
@@ -421,28 +417,27 @@ public class LinkDataManager {
     }
 
 
-    public ConcurrentHashMap<String, UwbQueue<Point>> queryQueueByFenceId(int fenceId) {
+    public ConcurrentHashMap<String, UwbQueue<Point>> queryQueueByDeviceId(int deviceId) {
         Point point;
         ConcurrentHashMap<String, UwbQueue<Point>> newCaculate = new ConcurrentHashMap<>();
         ConcurrentHashMap<String, UwbQueue<Point>> code_points = FinalDataManager.getInstance().getCode_points();
         for (Map.Entry<String, UwbQueue<Point>> next : code_points.entrySet()) {
             UwbQueue<Point> value = next.getValue();
             point = new Point();
-            point.setId(fenceId);
+            point.setId(deviceId);
             String key = next.getKey();
-            if (value.contains(point) && !FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+            if (value.contains(point) && FinalDataManager.getInstance().queryUwb(next.getKey()) == null) {
                 newCaculate.put(key, value);
             }
         }
         return newCaculate;
     }
 
-    public void checkBind(String bleName, LinkSpecificDevice deviceByBleName) {
-        int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+    public void checkBind(LinkSpecificDevice deviceByBleName) {
         //围栏设备在运动
-        if (!FinalDataManager.getInstance().alreadyBind(fenceId)) {
+        if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
             String minCode = "";
-            ConcurrentHashMap<String, UwbQueue<Point>> hashMap = LinkDataManager.getInstance().queryQueueByFenceId(fenceId);
+            ConcurrentHashMap<String, UwbQueue<Point>> hashMap = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (hashMap.isEmpty()) {
                 return;
             }
@@ -464,9 +459,8 @@ public class LinkDataManager {
             UWBCoordData uwb = new UWBCoordData();
             uwb.setCode(minCode);
             uwb.setSemaphore(0);
-            LinkSpecificDevice linkSpecificDevice = LinkDataManager.getInstance().queryDeviceNameByFenceId(fenceId);
-            uwb.setDevice(linkSpecificDevice);
-            FinalDataManager.getInstance().getFenceId_uwbData().put(fenceId, uwb);
+            uwb.setDevice(deviceByBleName);
+            FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwb);
 
 
             //找出带匹配手环

@@ -312,7 +312,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (newUwb == null) {
             return;
         }
-        Log.i("666666666","查看长度，，，"+FinalDataManager.getInstance().getFenceId_uwbData().size()+"");
+        Log.i("666666666", "查看长度，，，" + FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
 
         boolean within = LinkDataManager.getInstance().isPointInRect(newUwb);
 //
@@ -331,10 +331,18 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             if (uwbCoordData != null) {
                 //2.说明已经绑定围栏
                 //4、说明该标签已经绑定设备
-                if (uwbCoordData.getDevice().getDeviceName().equals(newUwb.getDevice().getDeviceName())) {
+                if (uwbCoordData.getDevice().getId() == newUwb.getDevice().getId()) {
                     //5、说明是进入了之前绑定的区域
                     uwbCoordData.setSemaphore(0);
                 } else {
+
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, uwbCoordData.getSemaphore() + "", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     //6、说明进入的不是之前绑定的区域
                     if (uwbCoordData.getSemaphore() == 50) {
                         //7、需要解除绑定
@@ -377,7 +385,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 //
 //
 //                    String minCode = "";
-//                    ConcurrentHashMap<String, UwbQueue<Point>> hashMap = LinkDataManager.getInstance().queryQueueByFenceId(fenceId);
+//                    ConcurrentHashMap<String, UwbQueue<Point>> hashMap = LinkDataManager.getInstance().queryQueueByDeviceId(fenceId);
 //                    float min = Integer.MAX_VALUE;
 //                    for (Map.Entry<String, UwbQueue<Point>> next : hashMap.entrySet()) {
 //
@@ -429,8 +437,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             writeQueue(newUwb);
             if (uwbCoordData != null) {
 
-                Log.i("666666666","空位值，，，"+uwbCoordData.getCode());
-                Log.i("666666666","空位值，，，"+FinalDataManager.getInstance().getFenceId_uwbData().size()+"");
+                Log.i("666666666", "空位值，，，" + uwbCoordData.getCode());
+                Log.i("666666666", "空位值，，，" + FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
                 //    int fenceId = newUwb.getDevice().getFencePoint().getFenceId();
                 if (uwbCoordData.getSemaphore() == 50) {
                     //7、需要解除绑定
@@ -446,6 +454,13 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     }
 
                 } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, uwbCoordData.getSemaphore() + "", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                     //8、将信号量+1
                     uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
                 }
@@ -458,34 +473,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(newUwb.getWristband().getBracelet_id());
             if (bleDeviceInfo != null) {
 
-                Log.i("666666666",bleDeviceInfo.getBracelet_id()+"清空数据了");
-
-
+                Log.i("666666666", bleDeviceInfo.getBracelet_id() + "清空数据了");
                 LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
             }
         }
-    }
-
-
-    private ConcurrentHashMap<Integer, List<String>> queryWristByFenceId(int fenceId) {
-
-        ConcurrentHashMap<Integer, List<String>> map = new ConcurrentHashMap<>();
-        List<String> codes = new ArrayList<>();
-        Point point;
-        ConcurrentHashMap<String, UwbQueue<Point>> code_points = FinalDataManager.getInstance().getCode_points();
-        for (Map.Entry<String, UwbQueue<Point>> next : code_points.entrySet()) {
-            UwbQueue<Point> value = next.getValue();
-            point = new Point();
-            point.setId(fenceId);
-            String key = next.getKey();
-            if (value.contains(point) && !FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
-                String wristband = LinkDataManager.getInstance().getUwbCode_wristbandName().get(key);
-                codes.add(wristband);
-            }
-        }
-        map.put(fenceId, codes);
-
-        return map;
     }
 
     @Override

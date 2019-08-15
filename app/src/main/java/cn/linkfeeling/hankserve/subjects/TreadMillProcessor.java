@@ -74,7 +74,7 @@ public class TreadMillProcessor implements IDataAnalysis {
 
         Log.i("6767676", Arrays.toString(serviceData));
         //检查是否有可绑定的手环  如果有则根据算法匹配
-        LinkDataManager.getInstance().checkBind(bleName, deviceByBleName);
+        LinkDataManager.getInstance().checkBind(deviceByBleName);
 
 
         float speed;
