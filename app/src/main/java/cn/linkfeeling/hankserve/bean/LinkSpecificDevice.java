@@ -13,7 +13,7 @@ public class LinkSpecificDevice {
     private String type; //设备类型
     private float perimeter;
     private float slope;
-    private float ability;  //设备的当前速度，判断是否在运转
+ //   private float ability;  //设备的当前速度，判断是否在运转
     private UWBCoordData.FencePoint fencePoint;
     private UWBCoordData.FencePoint.Point  centerPoint;
 
@@ -25,20 +25,20 @@ public class LinkSpecificDevice {
         return centerPoint;
     }
 
-    public float getAbility() {
-        return ability;
-    }
+//    public float getAbility() {
+//        return ability;
+//    }
 
-    public void setAbility(float ability) {
-        if (ability == 0) {
-            receiveDeviceBleTime = 0;
-        } else if (this.ability == 0) {
-            receiveDeviceBleTime = System.currentTimeMillis();
-        }
-        this.ability = ability;
-
-
-    }
+//    public void setAbility(float ability) {
+//        if (ability == 0) {
+//            receiveDeviceBleTime = 0;
+//        } else if (this.ability == 0) {
+//            receiveDeviceBleTime = System.currentTimeMillis();
+//        }
+//        this.ability = ability;
+//
+//
+//    }
 
     public int getId() {
         return id;

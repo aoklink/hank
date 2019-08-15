@@ -53,7 +53,7 @@ public class TreadMillProcessor implements IDataAnalysis {
         if (serviceData == null) {
             return null;
         }
-        Log.i("6767676", Arrays.toString(serviceData));
+
 
 
         byte[] pages = new byte[2];
@@ -71,10 +71,18 @@ public class TreadMillProcessor implements IDataAnalysis {
         Log.i("seqNum", nowPack + "");
         limitQueue.offer(nowPack);
 
+
+        Log.i("6767676", Arrays.toString(serviceData));
+        //检查是否有可绑定的手环  如果有则根据算法匹配
+        LinkDataManager.getInstance().checkBind(bleName, deviceByBleName);
+
+
         float speed;
         if (serviceData[0] == -1 && serviceData[1] == -1) {
             flag = nowPack;
             speed = 0;
+
+
         } else {
             byte[] serviceDatum = new byte[2];
             serviceDatum[0] = serviceData[11];
@@ -89,9 +97,9 @@ public class TreadMillProcessor implements IDataAnalysis {
 
         Log.i("6767676", speed + "");
 
-        if (speed != 0) {
-            deviceByBleName.setAbility(speed);
-        }
+//        if (speed != 0) {
+//            deviceByBleName.setAbility(speed);
+//        }
 
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
@@ -102,6 +110,19 @@ public class TreadMillProcessor implements IDataAnalysis {
 
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
         bleDeviceInfoNow.setSeq_num(String.valueOf(nowPack));
+
+        if(speed==0){
+            //解除绑定
+            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+            if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+                FinalDataManager.getInstance().removeUwb(fenceId);
+
+
+
+                Log.i("666666666",FinalDataManager.getInstance().getFenceId_uwbData().size()+"");
+                Log.i("666666666","移除了"+fenceId+"----"+LinkDataManager.getInstance().queryDeviceNameByFenceId(fenceId).getDeviceName());
+            }
+        }
 
         return bleDeviceInfoNow;
 

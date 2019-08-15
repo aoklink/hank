@@ -59,7 +59,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
         if (serviceData == null) {
             return null;
-        }
+        }       //检查是否有可绑定的手环  如果有则根据算法匹配
+        LinkDataManager.getInstance().checkBind(bleName, deviceByBleName);
 
 
         //   dealPowerData(serviceData, deviceByBleName, bleName);
@@ -83,12 +84,12 @@ public class FlyBirdProcessor implements IDataAnalysis {
             return null;
         }
 
-        deviceByBleName.setAbility(serviceData[0]);
+      //  deviceByBleName.setAbility(serviceData[0]);
 
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
-            deviceByBleName.setAbility(0);
+          //  deviceByBleName.setAbility(0);
             return null;
         }
 
@@ -107,7 +108,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             flag = CalculateUtil.byteArrayToInt(seqNum);
 
             if (serviceData[10] == 0 || serviceData[13] == 0) {
-                deviceByBleName.setAbility(0);
+         //       deviceByBleName.setAbility(0);
                 return null;
             }
             byte act_time = serviceData[13];
@@ -123,6 +124,9 @@ public class FlyBirdProcessor implements IDataAnalysis {
             bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
             bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
             //    deviceByBleName.setAbility(0);
+
+
+
         }
         return bleDeviceInfoNow;
 

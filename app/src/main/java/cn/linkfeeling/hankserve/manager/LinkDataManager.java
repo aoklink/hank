@@ -30,6 +30,7 @@ import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.bean.Wristband;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.queue.UwbQueue;
+import cn.linkfeeling.hankserve.utils.CalculateUtil;
 
 import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
 
@@ -396,6 +397,85 @@ public class LinkDataManager {
         return null;
     }
 
+
+    public LinkSpecificDevice queryDeviceNameByFenceId(int fenceId) {
+
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (devicesDatum.getFencePoint().getFenceId() == fenceId) {
+                return devicesDatum;
+
+            }
+        }
+        return null;
+
+    }
+
+    public int queryFenceIdByDeviceName(String deviceName) {
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (deviceName.equals(devicesDatum.getDeviceName())) {
+                return devicesDatum.getFencePoint().getFenceId();
+
+            }
+        }
+        return -1;
+    }
+
+
+    public ConcurrentHashMap<String, UwbQueue<Point>> queryQueueByFenceId(int fenceId) {
+        Point point;
+        ConcurrentHashMap<String, UwbQueue<Point>> newCaculate = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, UwbQueue<Point>> code_points = FinalDataManager.getInstance().getCode_points();
+        for (Map.Entry<String, UwbQueue<Point>> next : code_points.entrySet()) {
+            UwbQueue<Point> value = next.getValue();
+            point = new Point();
+            point.setId(fenceId);
+            String key = next.getKey();
+            if (value.contains(point) && !FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+                newCaculate.put(key, value);
+            }
+        }
+        return newCaculate;
+    }
+
+    public void checkBind(String bleName, LinkSpecificDevice deviceByBleName) {
+        int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+        //围栏设备在运动
+        if (!FinalDataManager.getInstance().alreadyBind(fenceId)) {
+            String minCode = "";
+            ConcurrentHashMap<String, UwbQueue<Point>> hashMap = LinkDataManager.getInstance().queryQueueByFenceId(fenceId);
+            if (hashMap.isEmpty()) {
+                return;
+            }
+            float min = Integer.MAX_VALUE;
+            for (Map.Entry<String, UwbQueue<Point>> next : hashMap.entrySet()) {
+
+                int num = 0;
+                UwbQueue<Point> value = next.getValue();
+                UWBCoordData.FencePoint.Point centerPoint = deviceByBleName.getCenterPoint();
+                for (Point point : value) {
+                    num += CalculateUtil.pointDistance(point.getX(), point.getY(), centerPoint.getX(), centerPoint.getY());
+                }
+                float v = CalculateUtil.txFloat(num, value.size());
+                if (v < min) {
+                    min = v;
+                    minCode = next.getKey();
+                }
+            }
+            UWBCoordData uwb = new UWBCoordData();
+            uwb.setCode(minCode);
+            uwb.setSemaphore(0);
+            LinkSpecificDevice linkSpecificDevice = LinkDataManager.getInstance().queryDeviceNameByFenceId(fenceId);
+            uwb.setDevice(linkSpecificDevice);
+            FinalDataManager.getInstance().getFenceId_uwbData().put(fenceId, uwb);
+
+
+            //找出带匹配手环
+            //  ConcurrentHashMap<Integer, List<String>> map = queryWristByFenceId(newUwb.getDevice().getId());
+            //      FinalDataManager.getInstance().getCode_points().get
+
+
+        }
+    }
 
     /**
      * 判断一个点是否在凸四边形内

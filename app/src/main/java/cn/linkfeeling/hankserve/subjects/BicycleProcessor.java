@@ -2,18 +2,23 @@ package cn.linkfeeling.hankserve.subjects;
 
 import android.os.ParcelUuid;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.linkfeeling.hankserve.MainActivity;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
+import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
@@ -56,6 +61,10 @@ public class BicycleProcessor implements IDataAnalysis {
             return null;
         }
 
+        //检查是否有可绑定的手环  如果有则根据算法匹配
+        LinkDataManager.getInstance().checkBind(bleName, deviceByBleName);
+
+
         Log.i("danchedata", Arrays.toString(serviceData));
 
         byte[] seqNum = {serviceData[5], serviceData[4]};
@@ -83,6 +92,12 @@ public class BicycleProcessor implements IDataAnalysis {
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
             flag = CalculateUtil.byteArrayToInt(seqNum);
             speed = 0;
+
+            //解除绑定
+            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+            if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+                FinalDataManager.getInstance().removeUwb(fenceId);
+            }
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
             speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
@@ -92,9 +107,7 @@ public class BicycleProcessor implements IDataAnalysis {
         Log.i("ticks===", Arrays.toString(ticks));
 
 
-        if (speed != 0) {
-            deviceByBleName.setAbility(speed);
-        }
+    //    deviceByBleName.setAbility(speed);
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
@@ -104,21 +117,10 @@ public class BicycleProcessor implements IDataAnalysis {
 
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
         bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
-
-        //单车
-//        if (speed == 0) {
-//            bleDeviceInfoNow.setSpeed("0.0");
-//
-//        } else {
-//            bleDeviceInfoNow.setSpeed(String.valueOf(calculateBicycleSpeed(speedInt)));
-//        }
-
-        //  bleDeviceInfoNow.setGradient(String.valueOf(gradientInt));
-
-
         return bleDeviceInfoNow;
 
     }
+
 
     /**
      * 根据转速换算速度(单车)
