@@ -81,8 +81,6 @@ public class TreadMillProcessor implements IDataAnalysis {
         if (serviceData[0] == -1 && serviceData[1] == -1) {
             flag = nowPack;
             speed = 0;
-
-
         } else {
             byte[] serviceDatum = new byte[2];
             serviceDatum[0] = serviceData[11];

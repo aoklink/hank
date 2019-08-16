@@ -1,5 +1,7 @@
 package cn.linkfeeling.hankserve.manager;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -76,20 +78,27 @@ public class FinalDataManager {
      */
     public BleDeviceInfo containUwbAndWristband(String bleName) {
         if (!containFenceId(bleName)) {
+            Log.i("00000000000contain","null");
             return null;
         }
 
         int fenceIdByBleName = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
         if (fenceIdByBleName == -1) {
+            Log.i("00000000000fence","null");
             return null;
         }
         UWBCoordData uwbCoordData1 = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceIdByBleName);
         if(uwbCoordData1==null){
+            Log.i("00000000000uwbCoordData","null");
             return null;
         }
         String code = uwbCoordData1.getCode();
+
+        Log.i("00000000000code",code+"");
         String bracelet_id = LinkDataManager.getInstance().getUwbCode_wristbandName().get(code);
+        Log.i("00000000000bracelet_id",bracelet_id+"");
         if(bracelet_id!=null){
+
             return FinalDataManager.getInstance().getWristbands().get(bracelet_id);
         }
         return null;

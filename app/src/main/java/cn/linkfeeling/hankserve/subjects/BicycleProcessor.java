@@ -93,12 +93,6 @@ public class BicycleProcessor implements IDataAnalysis {
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
             flag = CalculateUtil.byteArrayToInt(seqNum);
             speed = 0;
-
-            //解除绑定
-            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
-            if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
-                FinalDataManager.getInstance().removeUwb(fenceId);
-            }
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
             speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
@@ -107,17 +101,20 @@ public class BicycleProcessor implements IDataAnalysis {
         Log.i("ticks----", (float) CalculateUtil.byteArrayToInt(ticks) + "");
         Log.i("ticks===", Arrays.toString(ticks));
 
-
+        Log.i("00000000000---",speed+"");
         //    deviceByBleName.setAbility(speed);
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
+            Log.i("00000000000","null");
             return null;
         }
 
 
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
         bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+
+        Log.i("00000000000dddd",speed+"");
 
         if (speed == 0) {
             //解除绑定
