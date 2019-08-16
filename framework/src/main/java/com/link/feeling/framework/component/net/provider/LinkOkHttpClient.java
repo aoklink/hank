@@ -5,6 +5,9 @@ import com.link.feeling.framework.component.net.interceptor.LoggingInterceptor;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
 import okhttp3.OkHttpClient;
 
 /**
@@ -31,6 +34,12 @@ public final class LinkOkHttpClient {
                     .retryOnConnectionFailure(true);
             builder.addNetworkInterceptor(new LoggingInterceptor());
             builder.addInterceptor(new CommonParamsInterceptor());
+            builder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
             sClient = builder.build();
         }
         return sClient;
