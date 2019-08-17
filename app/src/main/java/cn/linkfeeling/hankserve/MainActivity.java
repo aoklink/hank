@@ -336,13 +336,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     uwbCoordData.setSemaphore(0);
                 } else {
 
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, uwbCoordData.getSemaphore() + "", Toast.LENGTH_SHORT).show();
-                        }
-                    });
                     //6、说明进入的不是之前绑定的区域
                     if (uwbCoordData.getSemaphore() == 50) {
                         //7、需要解除绑定
@@ -454,12 +447,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     }
 
                 } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, uwbCoordData.getSemaphore() + "", Toast.LENGTH_SHORT).show();
-                        }
-                    });
 
                     //8、将信号量+1
                     uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
