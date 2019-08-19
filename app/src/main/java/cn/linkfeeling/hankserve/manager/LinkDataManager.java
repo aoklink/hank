@@ -433,16 +433,18 @@ public class LinkDataManager {
         return newCaculate;
     }
 
-    public void checkBind(LinkSpecificDevice deviceByBleName) {
+    public boolean checkBind(LinkSpecificDevice deviceByBleName) {
         //围栏设备在运动
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
-            String minCode = "";
-            ConcurrentHashMap<String, UwbQueue<Point>> hashMap = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
-            if (hashMap.isEmpty()) {
-                return;
+            //获取备选人的集合
+            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queue = FinalDataManager.getInstance().getAlternative().get(deviceByBleName.getFencePoint().getFenceId());
+            if (queue == null || queue.isEmpty()) {
+                //可以理解成没有符合条件的人   不进行绑定
+                return false;
             }
+            UWBCoordData uwbCoordData = null;
             float min = Integer.MAX_VALUE;
-            for (Map.Entry<String, UwbQueue<Point>> next : hashMap.entrySet()) {
+            for (Map.Entry<UWBCoordData, UwbQueue<Point>> next : queue.entrySet()) {
 
                 int num = 0;
                 UwbQueue<Point> value = next.getValue();
@@ -453,15 +455,12 @@ public class LinkDataManager {
                 float v = CalculateUtil.txFloat(num, value.size());
                 if (v < min) {
                     min = v;
-                    minCode = next.getKey();
+                    uwbCoordData = next.getKey();
                 }
             }
-            UWBCoordData uwb = new UWBCoordData();
-            uwb.setCode(minCode);
-            uwb.setSemaphore(0);
-            uwb.setDevice(deviceByBleName);
-            FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwb);
-
+            FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+            queue.remove(uwbCoordData); //从备选人中移除
+            return true;
 
             //找出带匹配手环
             //  ConcurrentHashMap<Integer, List<String>> map = queryWristByFenceId(newUwb.getDevice().getId());
@@ -469,6 +468,7 @@ public class LinkDataManager {
 
 
         }
+        return true;
     }
 
     /**

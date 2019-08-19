@@ -3,16 +3,22 @@ package cn.linkfeeling.hankserve.subjects;
 import android.os.ParcelUuid;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
+import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
@@ -27,6 +33,8 @@ public class TreadMillProcessor implements IDataAnalysis {
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
     public static ConcurrentHashMap<String, TreadMillProcessor> map;
     private int flag = -1;
+
+    private volatile boolean start = true;
 
 
     static {
@@ -49,11 +57,11 @@ public class TreadMillProcessor implements IDataAnalysis {
         if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
             return null;
         }
+
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
         if (serviceData == null) {
             return null;
         }
-
 
 
         byte[] pages = new byte[2];
@@ -71,16 +79,43 @@ public class TreadMillProcessor implements IDataAnalysis {
         Log.i("seqNum", nowPack + "");
         limitQueue.offer(nowPack);
 
+        if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
+            if (start) {
+                ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
+                if (spareTire.isEmpty()) {
+                    start = false;
+                    return null;
+                }
+                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+                for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                    String key = next.getKey();
+                    UWBCoordData uwbCoordData = new UWBCoordData();
+                    uwbCoordData.setCode(key);
+                    uwbCoordData.setSemaphore(0);
+                    uwbCoordData.setDevice(deviceByBleName);
+                    queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+
+                }
+                FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
+                start = false;
+            }
+            boolean bind = LinkDataManager.getInstance().checkBind(deviceByBleName);
+            if (!bind) {
+                return null;
+            }
+
+        }
+
 
         Log.i("6767676", Arrays.toString(serviceData));
         //检查是否有可绑定的手环  如果有则根据算法匹配
-        LinkDataManager.getInstance().checkBind(deviceByBleName);
 
 
         float speed;
         if (serviceData[0] == -1 && serviceData[1] == -1) {
             flag = nowPack;
             speed = 0;
+            start = true;
         } else {
             byte[] serviceDatum = new byte[2];
             serviceDatum[0] = serviceData[11];
@@ -95,10 +130,6 @@ public class TreadMillProcessor implements IDataAnalysis {
 
         Log.i("6767676", speed + "");
 
-//        if (speed != 0) {
-//            deviceByBleName.setAbility(speed);
-//        }
-
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
@@ -109,17 +140,16 @@ public class TreadMillProcessor implements IDataAnalysis {
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
         bleDeviceInfoNow.setSeq_num(String.valueOf(nowPack));
 
-        if(speed==0){
+        if (speed == 0) {
             //解除绑定
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
                 FinalDataManager.getInstance().removeUwb(fenceId);
-
-
-
-                Log.i("666666666",FinalDataManager.getInstance().getFenceId_uwbData().size()+"");
-                Log.i("666666666","移除了"+fenceId+"----"+LinkDataManager.getInstance().queryDeviceNameByFenceId(fenceId).getDeviceName());
+                Log.i("666666666", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
+                Log.i("666666666", "移除了" + fenceId + "----" + LinkDataManager.getInstance().queryDeviceNameByFenceId(fenceId).getDeviceName());
             }
+
+            FinalDataManager.getInstance().getAlternative().remove(fenceId);
         }
 
         return bleDeviceInfoNow;

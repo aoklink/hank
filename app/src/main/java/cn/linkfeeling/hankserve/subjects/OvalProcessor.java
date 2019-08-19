@@ -7,15 +7,18 @@ import com.link.feeling.framework.utils.data.ToastUtils;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
+import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
@@ -29,6 +32,7 @@ public class OvalProcessor implements IDataAnalysis {
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
     public static ConcurrentHashMap<String, OvalProcessor> map;
     private int flag = -1;
+    private volatile boolean start = true;
 
     static {
         map = new ConcurrentHashMap<>();
@@ -74,8 +78,32 @@ public class OvalProcessor implements IDataAnalysis {
         Log.i("tuoyuanjiseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
 
-        //检查是否有可绑定的手环  如果有则根据算法匹配
-        LinkDataManager.getInstance().checkBind(deviceByBleName);
+        if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
+            if (start) {
+                ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
+                if (spareTire.isEmpty()) {
+                    start = false;
+                    return null;
+                }
+                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+                for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                    String key = next.getKey();
+                    UWBCoordData uwbCoordData = new UWBCoordData();
+                    uwbCoordData.setCode(key);
+                    uwbCoordData.setSemaphore(0);
+                    uwbCoordData.setDevice(deviceByBleName);
+                    queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+
+                }
+                FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
+                start = false;
+            }
+            boolean bind = LinkDataManager.getInstance().checkBind(deviceByBleName);
+            if (!bind) {
+                return null;
+            }
+        }
+
 
 
         byte[] turns = new byte[2];
@@ -91,6 +119,7 @@ public class OvalProcessor implements IDataAnalysis {
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
             flag = CalculateUtil.byteArrayToInt(seqNum);
             speed = 0;
+            start = true;
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
             speed = calculateEllipticalSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
@@ -107,11 +136,6 @@ public class OvalProcessor implements IDataAnalysis {
         if (bleDeviceInfoNow == null) {
             return null;
         }
-
-
-        ToastUtils.showToast(speed + "");
-
-
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
         bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
         if (speed == 0) {
@@ -120,6 +144,7 @@ public class OvalProcessor implements IDataAnalysis {
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
                 FinalDataManager.getInstance().removeUwb(fenceId);
             }
+            FinalDataManager.getInstance().getAlternative().remove(fenceId);
         }
         return bleDeviceInfoNow;
 

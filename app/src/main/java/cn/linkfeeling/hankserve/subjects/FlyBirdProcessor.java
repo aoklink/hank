@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,12 +21,14 @@ import cn.bmob.v3.listener.SaveListener;
 import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.Power;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
+import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
@@ -41,6 +44,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
 
     private int flag = -1;
+
+    private volatile boolean start = true;
 
     static {
         map = new ConcurrentHashMap<>();
@@ -62,7 +67,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
 
 
-
         //   dealPowerData(serviceData, deviceByBleName, bleName);
 //        if(serviceData[0]!=0 && serviceData[0]!=-1){
 //            deviceByBleName.setAbility(serviceData[0]);
@@ -79,22 +83,47 @@ public class FlyBirdProcessor implements IDataAnalysis {
         Log.i("seqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
 
-
-
         boolean b = dealPowerData(serviceData, deviceByBleName, bleName);
         if (b) {
             return null;
         }
-        //检查是否有可绑定的手环  如果有则根据算法匹配
-        LinkDataManager.getInstance().checkBind(deviceByBleName);
+
+        if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
+            if (start) {
+                ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
+                if (spareTire.isEmpty()) {
+                    start = false;
+                    return null;
+                }
+                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+                for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                    String key = next.getKey();
+                    UWBCoordData uwbCoordData = new UWBCoordData();
+                    uwbCoordData.setCode(key);
+                    uwbCoordData.setSemaphore(0);
+                    uwbCoordData.setDevice(deviceByBleName);
+                    queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+
+                }
+                FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
+                start = false;
+            }
+
+            boolean bind = LinkDataManager.getInstance().checkBind(deviceByBleName);
+            if (!bind) {
+                return null;
+            }
+        }
 
 
-      //  deviceByBleName.setAbility(serviceData[0]);
+
+
+        //  deviceByBleName.setAbility(serviceData[0]);
 
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
-          //  deviceByBleName.setAbility(0);
+            //  deviceByBleName.setAbility(0);
             return null;
         }
 
@@ -110,10 +139,12 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
 
+            start = true;
+
             flag = CalculateUtil.byteArrayToInt(seqNum);
 
             if (serviceData[10] == 0 || serviceData[13] == 0) {
-         //       deviceByBleName.setAbility(0);
+                //       deviceByBleName.setAbility(0);
                 return null;
             }
             byte act_time = serviceData[13];
@@ -129,7 +160,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
             bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
             bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
             //    deviceByBleName.setAbility(0);
-
 
 
         }

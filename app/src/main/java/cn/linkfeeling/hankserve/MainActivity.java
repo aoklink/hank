@@ -312,6 +312,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (newUwb == null) {
             return;
         }
+        //写入队列
+        writeQueue(newUwb);
         Log.i("666666666", "查看长度，，，" + FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
 
         boolean within = LinkDataManager.getInstance().isPointInRect(newUwb);
@@ -324,10 +326,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         //1、首先查找在哪个围栏内
         String code = newUwb.getCode();
         UWBCoordData uwbCoordData = FinalDataManager.getInstance().queryUwb(code);
+
+
         if (within) {
 
-            //写入队列
-            writeQueue(newUwb);
+
             if (uwbCoordData != null) {
                 //2.说明已经绑定围栏
                 //4、说明该标签已经绑定设备
@@ -358,6 +361,26 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 return;
             }
 
+
+            List<UWBCoordData> list = FinalDataManager.getInstance().querySpareFireUwb(code);
+            if (!list.isEmpty()) {
+                for (UWBCoordData spareFireUwb : list) {
+                    if (spareFireUwb.getDevice().getId() == newUwb.getDevice().getId()) {
+                        spareFireUwb.setSemaphore(0);
+                    } else {
+                        if (spareFireUwb.getSemaphore() == 50) {
+                            //7、需要解除绑定
+                            FinalDataManager.getInstance().removeSpareFireUwb(spareFireUwb);
+                            spareFireUwb.setSemaphore(0);
+
+                        } else {
+                            //8、将信号量+1
+                            spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
+                        }
+                    }
+                }
+            }
+
             if (newUwb.getWristband().getBracelet_id() == null) {
                 return;
             }
@@ -365,69 +388,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             if (bleDeviceInfo != null) {
                 bleDeviceInfo.setDevice_name(newUwb.getDevice().getDeviceName());
             }
-
-//            if (newUwb.getDevice().getAbility() != 0) {
-//                //围栏设备在运动
-//                if (!FinalDataManager.getInstance().alreadyBind(fenceId)) {
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Toast.makeText(MainActivity.this, "zhixingle", Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//
-//
-//                    String minCode = "";
-//                    ConcurrentHashMap<String, UwbQueue<Point>> hashMap = LinkDataManager.getInstance().queryQueueByDeviceId(fenceId);
-//                    float min = Integer.MAX_VALUE;
-//                    for (Map.Entry<String, UwbQueue<Point>> next : hashMap.entrySet()) {
-//
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Toast.makeText(MainActivity.this, "for循环", Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
-//
-//                        int num = 0;
-//                        UwbQueue<Point> value = next.getValue();
-//                        UWBCoordData.FencePoint.Point centerPoint = newUwb.getDevice().getCenterPoint();
-//                        for (Point point : value) {
-//                            num += CalculateUtil.pointDistance(point.getX(), point.getY(), centerPoint.getX(), centerPoint.getY());
-//                        }
-//
-//                        Log.i("44444", num + "");
-//                        float v = CalculateUtil.txFloat(num, value.size());
-//                        Log.i("333333333333", minCode + "====vvvvv");
-//                        Log.i("333333333333", v + "====vvvvv====" + min);
-//                        if (v < min) {
-//                            min = v;
-//                            minCode = next.getKey();
-//                            Log.i("333333333333", minCode + "====eeee");
-//                        }
-//                    }
-//                    Log.i("333333333333", min + "");
-//                    Log.i("333333333333", minCode + "");
-//                    UWBCoordData uwb = new UWBCoordData();
-//                    uwb.setCode(minCode);
-//                    uwb.setSemaphore(0);
-//                    LinkSpecificDevice linkSpecificDevice = LinkDataManager.getInstance().queryDeviceNameByFenceId(fenceId);
-//
-//                    uwb.setDevice(linkSpecificDevice);
-//
-//                    FinalDataManager.getInstance().getFenceId_uwbData().put(fenceId, uwb);
-//
-//
-//                    //找出带匹配手环
-//                    //  ConcurrentHashMap<Integer, List<String>> map = queryWristByFenceId(newUwb.getDevice().getId());
-//                    //      FinalDataManager.getInstance().getCode_points().get
-//
-//
-//                }
-//            }
         }
         if (!within) {
-            writeQueue(newUwb);
             if (uwbCoordData != null) {
 
                 Log.i("666666666", "空位值，，，" + uwbCoordData.getCode());
@@ -452,6 +414,25 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
                 }
                 return;
+            }
+
+            List<UWBCoordData> list = FinalDataManager.getInstance().querySpareFireUwb(code);
+            if (!list.isEmpty()) {
+                for (UWBCoordData spareFireUwb : list) {
+                    if (spareFireUwb.getDevice().getId() == newUwb.getDevice().getId()) {
+                        spareFireUwb.setSemaphore(0);
+                    } else {
+                        if (spareFireUwb.getSemaphore() == 50) {
+                            //7、需要解除绑定
+                            FinalDataManager.getInstance().removeSpareFireUwb(spareFireUwb);
+                            spareFireUwb.setSemaphore(0);
+
+                        } else {
+                            //8、将信号量+1
+                            spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
+                        }
+                    }
+                }
             }
 
             if (newUwb.getWristband().getBracelet_id() == null) {

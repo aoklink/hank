@@ -3,7 +3,9 @@ package cn.linkfeeling.hankserve.manager;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +30,7 @@ public class FinalDataManager {
     private ConcurrentHashMap<String, BleDeviceInfo> wristbands;
     private ConcurrentHashMap<Integer, UWBCoordData> fenceId_uwbData;
     private ConcurrentHashMap<String, UwbQueue<Point>> code_points;
-    private ConcurrentHashMap<Integer, List<UWBCoordData>> alternative;
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> alternative;
 
 
     private FinalDataManager() {
@@ -60,7 +62,7 @@ public class FinalDataManager {
         return code_points;
     }
 
-    public ConcurrentHashMap<Integer, List<UWBCoordData>> getAlternative() {
+    public ConcurrentHashMap<Integer, ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> getAlternative() {
         return alternative;
     }
 
@@ -130,6 +132,46 @@ public class FinalDataManager {
         }
         return null;
     }
+
+
+    /**
+     * 根据uwb code查询备胎的uwb
+     *
+     * @param code
+     * @return
+     */
+    public List<UWBCoordData> querySpareFireUwb(String code) {
+
+        List<UWBCoordData> list = new ArrayList<>();
+
+        Collection<ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> values = alternative.values();
+        for (ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> value : values) {
+            Enumeration<UWBCoordData> keys = value.keys();
+            if (keys.nextElement().getCode().equals(code)) {
+                list.add(keys.nextElement());
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 移除uwb
+     */
+    public void removeSpareFireUwb(UWBCoordData uwbCoordData) {
+        Collection<ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> values = alternative.values();
+        Iterator<ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> iterator = values.iterator();
+        while (iterator.hasNext()) {
+            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> next = iterator.next();
+            Iterator<Map.Entry<UWBCoordData, UwbQueue<Point>>> iterator1 = next.entrySet().iterator();
+            while (iterator1.hasNext()) {
+                Map.Entry<UWBCoordData, UwbQueue<Point>> next1 = iterator1.next();
+                if (next1.getKey().getCode().equals(uwbCoordData.getCode())) {
+                    iterator1.remove();
+                }
+            }
+        }
+    }
+
 
     /**
      * 移除uwb

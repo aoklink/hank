@@ -33,7 +33,7 @@ public class BicycleProcessor implements IDataAnalysis {
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
     private int flag = -1;
 
-    private boolean start = true;
+    private volatile boolean start = true;
 
     static {
         map = new ConcurrentHashMap<>();
@@ -78,8 +78,34 @@ public class BicycleProcessor implements IDataAnalysis {
         Log.i("dancheseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
 
-        //检查是否有可绑定的手环  如果有则根据算法匹配
-        LinkDataManager.getInstance().checkBind(deviceByBleName);
+        if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
+            if (start) {
+                ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
+                if (spareTire.isEmpty()) {
+                    start = false;
+                    return null;
+                }
+                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+                for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                    String key = next.getKey();
+                    UWBCoordData uwbCoordData = new UWBCoordData();
+                    uwbCoordData.setCode(key);
+                    uwbCoordData.setSemaphore(0);
+                    uwbCoordData.setDevice(deviceByBleName);
+                    queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+
+                }
+                FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
+                start = false;
+            }
+
+            boolean bind = LinkDataManager.getInstance().checkBind(deviceByBleName);
+            if (!bind) {
+                return null;
+            }
+        }
+
+
 
 
         byte[] turns = new byte[2];
@@ -95,6 +121,7 @@ public class BicycleProcessor implements IDataAnalysis {
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
             flag = CalculateUtil.byteArrayToInt(seqNum);
             speed = 0;
+            start = true;
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
             speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
@@ -124,6 +151,8 @@ public class BicycleProcessor implements IDataAnalysis {
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
                 FinalDataManager.getInstance().removeUwb(fenceId);
             }
+
+            FinalDataManager.getInstance().getAlternative().remove(fenceId);
         }
 
 
