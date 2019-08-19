@@ -28,6 +28,7 @@ public class FinalDataManager {
     private ConcurrentHashMap<String, BleDeviceInfo> wristbands;
     private ConcurrentHashMap<Integer, UWBCoordData> fenceId_uwbData;
     private ConcurrentHashMap<String, UwbQueue<Point>> code_points;
+    private ConcurrentHashMap<Integer, List<UWBCoordData>> alternative;
 
 
     private FinalDataManager() {
@@ -39,6 +40,7 @@ public class FinalDataManager {
         wristbands = new ConcurrentHashMap<>();  //手环对应的集合   key为手环名称   value为整合后的数据（最终上传数据）
         fenceId_uwbData = new ConcurrentHashMap<>();//围栏id uwb设备对应关系  key为围栏id  value为uwb对象
         code_points = new ConcurrentHashMap<>();  //
+        alternative = new ConcurrentHashMap<>(); //备选池子
     }
 
 
@@ -56,6 +58,10 @@ public class FinalDataManager {
 
     public ConcurrentHashMap<String, UwbQueue<Point>> getCode_points() {
         return code_points;
+    }
+
+    public ConcurrentHashMap<Integer, List<UWBCoordData>> getAlternative() {
+        return alternative;
     }
 
     /**
@@ -78,26 +84,26 @@ public class FinalDataManager {
      */
     public BleDeviceInfo containUwbAndWristband(String bleName) {
         if (!containFenceId(bleName)) {
-            Log.i("00000000000contain","null");
+            Log.i("00000000000contain", "null");
             return null;
         }
 
         int fenceIdByBleName = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
         if (fenceIdByBleName == -1) {
-            Log.i("00000000000fence","null");
+            Log.i("00000000000fence", "null");
             return null;
         }
         UWBCoordData uwbCoordData1 = FinalDataManager.getInstance().getFenceId_uwbData().get(fenceIdByBleName);
-        if(uwbCoordData1==null){
-            Log.i("00000000000uwbCoordData","null");
+        if (uwbCoordData1 == null) {
+            Log.i("00000000000uwbCoordData", "null");
             return null;
         }
         String code = uwbCoordData1.getCode();
 
-        Log.i("00000000000code",code+"");
+        Log.i("00000000000code", code + "");
         String bracelet_id = LinkDataManager.getInstance().getUwbCode_wristbandName().get(code);
-        Log.i("00000000000bracelet_id",bracelet_id+"");
-        if(bracelet_id!=null){
+        Log.i("00000000000bracelet_id", bracelet_id + "");
+        if (bracelet_id != null) {
 
             return FinalDataManager.getInstance().getWristbands().get(bracelet_id);
         }
@@ -125,31 +131,30 @@ public class FinalDataManager {
         return null;
     }
 
-        /**
-         * 移除uwb
-         *
-         * @param fenceId
-         */
-        public void removeUwb(int fenceId){
-            if(fenceId_uwbData.containsKey(fenceId)){
-                fenceId_uwbData.remove(fenceId);
-            }
+    /**
+     * 移除uwb
+     *
+     * @param fenceId
+     */
+    public void removeUwb(int fenceId) {
+        if (fenceId_uwbData.containsKey(fenceId)) {
+            fenceId_uwbData.remove(fenceId);
         }
-
-
-
-        /**
-         * 器械是否已经绑定手环
-         *
-         * @param fenceId
-         * @return
-         */
-        public boolean alreadyBind ( int fenceId){
-            if(fenceId_uwbData.containsKey(fenceId)){
-                return true;
-
-            }
-            return false;
-        }
-
     }
+
+
+    /**
+     * 器械是否已经绑定手环
+     *
+     * @param fenceId
+     * @return
+     */
+    public boolean alreadyBind(int fenceId) {
+        if (fenceId_uwbData.containsKey(fenceId)) {
+            return true;
+
+        }
+        return false;
+    }
+
+}

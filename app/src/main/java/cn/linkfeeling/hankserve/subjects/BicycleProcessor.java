@@ -33,6 +33,8 @@ public class BicycleProcessor implements IDataAnalysis {
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
     private int flag = -1;
 
+    private boolean start = true;
+
     static {
         map = new ConcurrentHashMap<>();
     }
@@ -101,12 +103,12 @@ public class BicycleProcessor implements IDataAnalysis {
         Log.i("ticks----", (float) CalculateUtil.byteArrayToInt(ticks) + "");
         Log.i("ticks===", Arrays.toString(ticks));
 
-        Log.i("00000000000---",speed+"");
+        Log.i("00000000000---", speed + "");
         //    deviceByBleName.setAbility(speed);
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
-            Log.i("00000000000","null");
+            Log.i("00000000000", "null");
             return null;
         }
 
@@ -114,7 +116,7 @@ public class BicycleProcessor implements IDataAnalysis {
         bleDeviceInfoNow.setSpeed(String.valueOf(speed));
         bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
 
-        Log.i("00000000000dddd",speed+"");
+        Log.i("00000000000dddd", speed + "");
 
         if (speed == 0) {
             //解除绑定
