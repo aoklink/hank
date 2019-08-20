@@ -92,9 +92,11 @@ public class FlyBirdProcessor implements IDataAnalysis {
             if (start) {
                 ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
                 if (spareTire.isEmpty()) {
+                    Log.i("tttttttttt","-5-5-5");
                     start = false;
                     return null;
                 }
+                Log.i("tttttttttt","-6-6-6");
                 ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
                 for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
                     String key = next.getKey();
@@ -111,6 +113,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
             boolean bind = LinkDataManager.getInstance().checkBind(deviceByBleName);
             if (!bind) {
+
+                Log.i("tttttttttt","-2-2-2");
                 return null;
             }
         }
@@ -138,6 +142,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
+
+            Log.i("tttttttttt","-1-1-1");
 
             start = true;
 

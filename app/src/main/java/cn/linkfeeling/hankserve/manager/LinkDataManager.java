@@ -440,6 +440,7 @@ public class LinkDataManager {
             ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queue = FinalDataManager.getInstance().getAlternative().get(deviceByBleName.getFencePoint().getFenceId());
             if (queue == null || queue.isEmpty()) {
                 //可以理解成没有符合条件的人   不进行绑定
+                Log.i("tttttttttt","-3-3-3");
                 return false;
             }
             UWBCoordData uwbCoordData = null;
@@ -458,6 +459,7 @@ public class LinkDataManager {
                     uwbCoordData = next.getKey();
                 }
             }
+            Log.i("tttttttttt","-4-4-4");
             FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
             queue.remove(uwbCoordData); //从备选人中移除
             return true;

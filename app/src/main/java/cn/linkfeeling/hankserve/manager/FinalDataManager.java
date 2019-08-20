@@ -146,9 +146,10 @@ public class FinalDataManager {
 
         Collection<ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> values = alternative.values();
         for (ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> value : values) {
-            Enumeration<UWBCoordData> keys = value.keys();
-            if (keys.nextElement().getCode().equals(code)) {
-                list.add(keys.nextElement());
+            for (Map.Entry<UWBCoordData, UwbQueue<Point>> next : value.entrySet()) {
+                if (next.getKey().getCode().equals(code)) {
+                    list.add(next.getKey());
+                }
             }
         }
         return list;

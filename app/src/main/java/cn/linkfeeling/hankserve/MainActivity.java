@@ -313,7 +313,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             return;
         }
         //写入队列
-        writeQueue(newUwb);
+
         Log.i("666666666", "查看长度，，，" + FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
 
         boolean within = LinkDataManager.getInstance().isPointInRect(newUwb);
@@ -329,7 +329,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
 
         if (within) {
-
+            writeQueue(newUwb);
 
             if (uwbCoordData != null) {
                 //2.说明已经绑定围栏
@@ -390,6 +390,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             }
         }
         if (!within) {
+            writeQueue(newUwb);
             if (uwbCoordData != null) {
 
                 Log.i("666666666", "空位值，，，" + uwbCoordData.getCode());
