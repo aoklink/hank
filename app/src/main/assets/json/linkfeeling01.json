@@ -157,16 +157,16 @@
     {
       "id": 4,
       "deviceName": "飞鸟架01",
-      "type": "飞鸟架01",
+      "type": "飞鸟架",
       "fencePoint": {
         "fenceId": 4,
         "left_top": {
           "x": 547.0,
-          "y": 9.0
+          "y": 230.0
         },
         "right_top": {
           "x": 860.0,
-          "y": 9.0
+          "y": 230.0
         },
         "left_bottom": {
           "x": 547.0,
@@ -179,12 +179,47 @@
       },
       "centerPoint": {
         "x": 703.5,
-        "y": 213.0
+        "y": 323.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 4,
+          "bleName": "LKFL13",
+          "type": "飞鸟左"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "deviceName": "飞鸟架02",
+      "type": "飞鸟架",
+      "fencePoint": {
+        "fenceId": 5,
+        "left_top": {
+          "x": 547.0,
+          "y": 9.0
+        },
+        "right_top": {
+          "x": 860.0,
+          "y": 9.0
+        },
+        "left_bottom": {
+          "x": 547.0,
+          "y": 230.0
+        },
+        "right_bottom": {
+          "x": 860.0,
+          "y": 230.0
+        }
+      },
+      "centerPoint": {
+        "x": 703.5,
+        "y": 119.5
       },
       "linkBLES": [
         {
           "bleId": 5,
-          "bleName": "LKFL13",
+          "bleName": "LKFL12",
           "type": "飞鸟左"
         }
       ]

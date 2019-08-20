@@ -433,17 +433,22 @@ public class LinkDataManager {
         return newCaculate;
     }
 
-    public boolean checkBind(LinkSpecificDevice deviceByBleName) {
+    public void checkBind(LinkSpecificDevice deviceByBleName) {
+
+        Log.i("ppppppppsizetop",FinalDataManager.getInstance().getFenceId_uwbData().size()+"");
         //围栏设备在运动
-        if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
+            Log.i("pppppppp","进来了");
             //获取备选人的集合
             ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queue = FinalDataManager.getInstance().getAlternative().get(deviceByBleName.getFencePoint().getFenceId());
-            if (queue == null || queue.isEmpty()) {
+
+
+            if (queue==null || queue.isEmpty()) {
                 //可以理解成没有符合条件的人   不进行绑定
-                Log.i("tttttttttt","-3-3-3");
-                return false;
+                Log.i("pppppppp","-3-3-3");
+                return;
             }
-            UWBCoordData uwbCoordData = null;
+            Log.i("pppppppp2222",queue.size()+"");
+            UWBCoordData uwbCoordData =  null;
             float min = Integer.MAX_VALUE;
             for (Map.Entry<UWBCoordData, UwbQueue<Point>> next : queue.entrySet()) {
 
@@ -459,18 +464,15 @@ public class LinkDataManager {
                     uwbCoordData = next.getKey();
                 }
             }
-            Log.i("tttttttttt","-4-4-4");
-            FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
             queue.remove(uwbCoordData); //从备选人中移除
-            return true;
+            FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+
+            Log.i("ppppppppsizebottom",FinalDataManager.getInstance().getFenceId_uwbData().size()+"");
 
             //找出带匹配手环
             //  ConcurrentHashMap<Integer, List<String>> map = queryWristByFenceId(newUwb.getDevice().getId());
             //      FinalDataManager.getInstance().getCode_points().get
 
-
-        }
-        return true;
     }
 
     /**

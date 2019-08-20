@@ -85,11 +85,6 @@ public class FinalDataManager {
      * @return
      */
     public BleDeviceInfo containUwbAndWristband(String bleName) {
-        if (!containFenceId(bleName)) {
-            Log.i("00000000000contain", "null");
-            return null;
-        }
-
         int fenceIdByBleName = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
         if (fenceIdByBleName == -1) {
             Log.i("00000000000fence", "null");

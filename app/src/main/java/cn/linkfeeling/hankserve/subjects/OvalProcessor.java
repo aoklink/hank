@@ -98,10 +98,7 @@ public class OvalProcessor implements IDataAnalysis {
                 FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
                 start = false;
             }
-            boolean bind = LinkDataManager.getInstance().checkBind(deviceByBleName);
-            if (!bind) {
-                return null;
-            }
+          LinkDataManager.getInstance().checkBind(deviceByBleName);
         }
 
 
@@ -119,7 +116,6 @@ public class OvalProcessor implements IDataAnalysis {
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
             flag = CalculateUtil.byteArrayToInt(seqNum);
             speed = 0;
-            start = true;
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
             speed = calculateEllipticalSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
@@ -133,12 +129,13 @@ public class OvalProcessor implements IDataAnalysis {
 
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
-        if (bleDeviceInfoNow == null) {
-            return null;
+        if (bleDeviceInfoNow != null) {
+            bleDeviceInfoNow.setSpeed(String.valueOf(speed));
+            bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
         }
-        bleDeviceInfoNow.setSpeed(String.valueOf(speed));
-        bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+
         if (speed == 0) {
+            start = true;
             //解除绑定
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {

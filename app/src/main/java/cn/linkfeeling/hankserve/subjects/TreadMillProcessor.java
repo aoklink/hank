@@ -57,7 +57,6 @@ public class TreadMillProcessor implements IDataAnalysis {
         if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
             return null;
         }
-
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
         if (serviceData == null) {
             return null;
@@ -79,13 +78,18 @@ public class TreadMillProcessor implements IDataAnalysis {
         Log.i("seqNum", nowPack + "");
         limitQueue.offer(nowPack);
 
+
+        Log.i("ppppppppstart", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
+
             if (start) {
                 ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
                 if (spareTire.isEmpty()) {
+                    Log.i("pppppppp", "-5-5-5");
                     start = false;
                     return null;
                 }
+
                 ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
                 for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
                     String key = next.getKey();
@@ -96,13 +100,14 @@ public class TreadMillProcessor implements IDataAnalysis {
                     queueConcurrentHashMap.put(uwbCoordData, next.getValue());
 
                 }
+                Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
+
                 FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
                 start = false;
             }
-            boolean bind = LinkDataManager.getInstance().checkBind(deviceByBleName);
-            if (!bind) {
-                return null;
-            }
+        LinkDataManager.getInstance().checkBind(deviceByBleName);
+
+            Log.i("pppppppp", "truetruetrue");
 
         }
 
@@ -115,7 +120,6 @@ public class TreadMillProcessor implements IDataAnalysis {
         if (serviceData[0] == -1 && serviceData[1] == -1) {
             flag = nowPack;
             speed = 0;
-            start = true;
         } else {
             byte[] serviceDatum = new byte[2];
             serviceDatum[0] = serviceData[11];
@@ -132,15 +136,16 @@ public class TreadMillProcessor implements IDataAnalysis {
 
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
-        if (bleDeviceInfoNow == null) {
-            return null;
+        if (bleDeviceInfoNow != null) {
+            bleDeviceInfoNow.setSpeed(String.valueOf(speed));
+            bleDeviceInfoNow.setSeq_num(String.valueOf(nowPack));
+
         }
 
-
-        bleDeviceInfoNow.setSpeed(String.valueOf(speed));
-        bleDeviceInfoNow.setSeq_num(String.valueOf(nowPack));
-
         if (speed == 0) {
+            start = true;
+//            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+//            FinalDataManager.getInstance().getAlternative().remove(fenceId);
             //解除绑定
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {

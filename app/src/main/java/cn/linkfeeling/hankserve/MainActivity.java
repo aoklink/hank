@@ -181,8 +181,13 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 //                                if (!tempBleInfo.getSpeed().equals("") && Float.parseFloat(tempBleInfo.getSpeed()) == 0) {
 //                                    LinkSpecificDevice linkSpecificDevice = LinkDataManager.getInstance().queryDeviceByName(tempBleInfo.getDevice_name());
 //                                    if (linkSpecificDevice != null) {
-//                                        linkSpecificDevice.setAbility(0);
+//                                        int fenceId = linkSpecificDevice.getFencePoint().getFenceId();
+//                                        //解除绑定
+//                                        if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+//                                            FinalDataManager.getInstance().removeUwb(fenceId);
+//                                        }
 //                                    }
+//
 //                                }
 
                                 if (tempBleInfo.getCurve() != null && !tempBleInfo.getCurve().isEmpty()) {
@@ -420,9 +425,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             List<UWBCoordData> list = FinalDataManager.getInstance().querySpareFireUwb(code);
             if (!list.isEmpty()) {
                 for (UWBCoordData spareFireUwb : list) {
-                    if (spareFireUwb.getDevice().getId() == newUwb.getDevice().getId()) {
-                        spareFireUwb.setSemaphore(0);
-                    } else {
                         if (spareFireUwb.getSemaphore() == 50) {
                             //7、需要解除绑定
                             FinalDataManager.getInstance().removeSpareFireUwb(spareFireUwb);
@@ -432,7 +434,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                             //8、将信号量+1
                             spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
                         }
-                    }
+
                 }
             }
 
