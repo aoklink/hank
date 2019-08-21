@@ -130,6 +130,7 @@ public class OvalProcessor implements IDataAnalysis {
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow != null) {
+            bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
             bleDeviceInfoNow.setSpeed(String.valueOf(speed));
             bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
         }

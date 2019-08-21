@@ -121,6 +121,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (serviceData[0] != -1 && serviceData[0] != 0 && serviceData[1] != -1 && serviceData[1] != 0 && bleDeviceInfoNow!=null) {
             for (int j = 0; j < 10; j++) {
                 int cuv1 = CalculateUtil.byteToInt(serviceData[j]);
+                bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
                 bleDeviceInfoNow.getCurve().add(cuv1);
                 bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
             }
@@ -145,6 +146,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             byte u_time = serviceData[14];
 
             if(bleDeviceInfoNow!=null){
+                bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
                 bleDeviceInfoNow.setGravity(String.valueOf(actualGravity));
                 bleDeviceInfoNow.setTime(String.valueOf(act_time));
                 bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));

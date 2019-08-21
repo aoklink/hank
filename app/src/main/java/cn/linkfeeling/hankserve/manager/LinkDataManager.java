@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -435,43 +436,51 @@ public class LinkDataManager {
 
     public void checkBind(LinkSpecificDevice deviceByBleName) {
 
-        Log.i("ppppppppsizetop",FinalDataManager.getInstance().getFenceId_uwbData().size()+"");
+        Log.i("ppppppppsizetop", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
         //围栏设备在运动
-            Log.i("pppppppp","进来了");
-            //获取备选人的集合
-            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queue = FinalDataManager.getInstance().getAlternative().get(deviceByBleName.getFencePoint().getFenceId());
+        Log.i("pppppppp", "进来了");
+        //获取备选人的集合
+        ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queue = FinalDataManager.getInstance().getAlternative().get(deviceByBleName.getFencePoint().getFenceId());
 
 
-            if (queue==null || queue.isEmpty()) {
-                //可以理解成没有符合条件的人   不进行绑定
-                Log.i("pppppppp","-3-3-3");
-                return;
+        if (queue == null || queue.isEmpty()) {
+            //可以理解成没有符合条件的人   不进行绑定
+            Log.i("pppppppp", "-3-3-3");
+            return;
+        }
+
+        //进行二次筛选    在备胎中移除所有已经绑定的标签
+        for (UWBCoordData next : queue.keySet()) {
+            if (FinalDataManager.getInstance().getFenceId_uwbData().containsValue(next)) {
+                queue.remove(next);
             }
-            Log.i("pppppppp2222",queue.size()+"");
-            UWBCoordData uwbCoordData =  null;
-            float min = Integer.MAX_VALUE;
-            for (Map.Entry<UWBCoordData, UwbQueue<Point>> next : queue.entrySet()) {
+        }
 
-                int num = 0;
-                UwbQueue<Point> value = next.getValue();
-                UWBCoordData.FencePoint.Point centerPoint = deviceByBleName.getCenterPoint();
-                for (Point point : value) {
-                    num += CalculateUtil.pointDistance(point.getX(), point.getY(), centerPoint.getX(), centerPoint.getY());
-                }
-                float v = CalculateUtil.txFloat(num, value.size());
-                if (v < min) {
-                    min = v;
-                    uwbCoordData = next.getKey();
-                }
+        Log.i("pppppppp2222", queue.size() + "");
+        UWBCoordData uwbCoordData = null;
+        float min = Integer.MAX_VALUE;
+        for (Map.Entry<UWBCoordData, UwbQueue<Point>> next : queue.entrySet()) {
+
+            int num = 0;
+            UwbQueue<Point> value = next.getValue();
+            UWBCoordData.FencePoint.Point centerPoint = deviceByBleName.getCenterPoint();
+            for (Point point : value) {
+                num += CalculateUtil.pointDistance(point.getX(), point.getY(), centerPoint.getX(), centerPoint.getY());
             }
-            queue.remove(uwbCoordData); //从备选人中移除
-            FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+            float v = CalculateUtil.txFloat(num, value.size());
+            if (v < min) {
+                min = v;
+                uwbCoordData = next.getKey();
+            }
+        }
+        queue.remove(uwbCoordData); //从备选人中移除
+        FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
 
-            Log.i("ppppppppsizebottom",FinalDataManager.getInstance().getFenceId_uwbData().size()+"");
+        Log.i("ppppppppsizebottom", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
 
-            //找出带匹配手环
-            //  ConcurrentHashMap<Integer, List<String>> map = queryWristByFenceId(newUwb.getDevice().getId());
-            //      FinalDataManager.getInstance().getCode_points().get
+        //找出带匹配手环
+        //  ConcurrentHashMap<Integer, List<String>> map = queryWristByFenceId(newUwb.getDevice().getId());
+        //      FinalDataManager.getInstance().getCode_points().get
 
     }
 
