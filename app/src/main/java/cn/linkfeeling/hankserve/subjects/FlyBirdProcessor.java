@@ -58,7 +58,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
 //        if(serviceData[0]!=0 && serviceData[0]!=-1){
 //            deviceByBleName.setAbility(serviceData[0]);
 //        }
-        byte[] seqNum = {serviceData[10], serviceData[11]};
+        byte[] seqNum = {serviceData[11], serviceData[12]};
 
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return null;
@@ -81,7 +81,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         deviceByBleName.setAbility(serviceData[0]);
 
         if (serviceData[0] != -1 && serviceData[0] != 0 && serviceData[1] != -1 && serviceData[1] != 0) {
-            for (int j = 0; j < 9; j++) {
+            for (int j = 0; j < 10; j++) {
                 int cuv1 = CalculateUtil.byteToInt(serviceData[j]);
                 bleDeviceInfoNow.getCurve().add(cuv1);
                 bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
@@ -94,13 +94,13 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
 //            Log.i("iiiiiiiiiiiii", JSON.toJSONString(list));
 //            list.clear();
-            if (serviceData[12] == 0) {
+            if (serviceData[13] == 0) {
                 deviceByBleName.setAbility(0);
                 return null;
             }
 
-            byte act_time = serviceData[12];
-            byte gravity = serviceData[9];
+            byte act_time = serviceData[13];
+            byte gravity = serviceData[10];
 
             float actualGravity = 0;
             if (gravity > 0) {
@@ -113,13 +113,11 @@ public class FlyBirdProcessor implements IDataAnalysis {
             }
 
 
-            byte[] u_time = new byte[2];
-            u_time[0] = serviceData[13];
-            u_time[1] = serviceData[14];
+            byte u_time = serviceData[14];
 
             bleDeviceInfoNow.setGravity(String.valueOf(actualGravity));
             bleDeviceInfoNow.setTime(String.valueOf(CalculateUtil.byteToInt(act_time)));
-            bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteArrayToInt(u_time)));
+            bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
             bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
         }
         return bleDeviceInfoNow;
