@@ -57,7 +57,7 @@ public class BicycleProcessor implements IDataAnalysis {
         Log.i(hostString + "danchedata", Arrays.toString(serviceData));
 
 
-        byte[] seq ={serviceData[5],serviceData[4]} ;
+        byte[] seq = {serviceData[5], serviceData[4]};
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seq))) {
             return null;
         }
@@ -84,11 +84,15 @@ public class BicycleProcessor implements IDataAnalysis {
         Log.i("ticks----", (float) CalculateUtil.byteArrayToInt(ticks) + "");
         Log.i("ticks===", Arrays.toString(ticks));
 
-        deviceByBleName.setAbility(speed);
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
+            deviceByBleName.setAbility(0);
             return null;
+        }
+
+        if (speed != 0) {
+            deviceByBleName.setAbility(speed);
         }
 
 

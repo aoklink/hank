@@ -93,13 +93,14 @@ public class TreadMillProcessor implements IDataAnalysis {
 
         Log.i("6767676", speed + "");
 
-        if (speed != 0) {
-            deviceByBleName.setAbility(speed);
-        }
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow == null) {
+            deviceByBleName.setAbility(0);
             return null;
+        }
+        if (speed != 0) {
+            deviceByBleName.setAbility(speed);
         }
 
 
