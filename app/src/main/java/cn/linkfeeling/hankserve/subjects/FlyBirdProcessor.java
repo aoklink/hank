@@ -136,7 +136,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 serviceData[7] == 0 &&
                 serviceData[8] == 0 &&
                 serviceData[9] == 0 &&
-                serviceData[12] == 0 &&
+                serviceData[10] == 0 &&
                 serviceData[13] == 0 &&
                 serviceData[14] == 0) {
 
