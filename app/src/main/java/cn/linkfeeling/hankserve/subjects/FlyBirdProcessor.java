@@ -150,6 +150,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
             power1.save(new SaveListener<String>() {
                 @Override
                 public void done(String s, BmobException e) {
+                    Log.i("99999-----",s);
+                    Log.i("99999eeeee",e.getMessage());
 
                 }
             });
