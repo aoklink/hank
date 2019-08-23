@@ -1,5 +1,6 @@
 package cn.linkfeeling.hankserve.subjects;
 
+import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
 
@@ -35,6 +36,8 @@ public class TreadMillProcessor implements IDataAnalysis {
     private int flag = -1;
 
     private volatile boolean start = true;
+
+    private Handler handler = new Handler();
 
 
     static {
@@ -105,7 +108,7 @@ public class TreadMillProcessor implements IDataAnalysis {
                 FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
                 start = false;
             }
-        LinkDataManager.getInstance().checkBind(deviceByBleName);
+            LinkDataManager.getInstance().checkBind(deviceByBleName);
 
             Log.i("pppppppp", "truetruetrue");
 
@@ -144,6 +147,13 @@ public class TreadMillProcessor implements IDataAnalysis {
         }
 
         if (speed == 0) {
+
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                }
+//            }, 1500);
             start = true;
 //            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
 //            FinalDataManager.getInstance().getAlternative().remove(fenceId);

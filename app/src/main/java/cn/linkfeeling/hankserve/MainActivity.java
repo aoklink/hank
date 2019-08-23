@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +69,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
     @Override
     protected int getLayoutRes() {
+        int flags = WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+        getWindow().addFlags(flags);
         return R.layout.activity_main;
     }
 
