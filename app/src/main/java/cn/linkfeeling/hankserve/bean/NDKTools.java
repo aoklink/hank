@@ -10,13 +10,5 @@ public class NDKTools {
 
     public static native int match_data(byte[] device_data, WatchData watchdata);
 
-    class WatchData {
-        public AccelData[] data;
 
-        class AccelData {
-            private byte x;
-            private byte y;
-            private byte z;
-        }
-    }
 }
