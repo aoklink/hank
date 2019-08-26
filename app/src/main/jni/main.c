@@ -228,7 +228,7 @@ JNIEXPORT jint JNICALL Java_cn_linkfeeling_hankserve_bean_NDKTools_match_1data
 
     jclass clazz = (*env)->FindClass(env,"cn/linkfeeling/hankserve/bean/WatchData");
 
-    jfieldID arrFieldId = (*env)->GetFieldID(env,clazz, "data", "[B");
+    jfieldID arrFieldId = (*env)->GetFieldID(env,clazz, "data", "[L");
     if (arrFieldId == 0) return 0;
     jbyteArray jarr = (jbyteArray) (*env)->GetObjectField(env,watchData, arrFieldId);
     jbyte *arr = (*env)->GetByteArrayElements(env,jarr, 0);
