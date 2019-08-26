@@ -4,6 +4,7 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
@@ -18,6 +19,13 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  */
 public class WristbandProcessor extends IWristbandDataAnalysis {
 
+    public static ConcurrentHashMap<String, WristbandProcessor> map;
+
+    static {
+        map = new ConcurrentHashMap<>();
+    }
+
+
     public static WristbandProcessor getInstance() {
         return WristbandProcessor.WristbandProcessorHolder.sWristbandProcessor;
     }
@@ -29,12 +37,8 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
 
     @Override
     public BleDeviceInfo analysisWristbandData(BleDeviceInfo bleDeviceInfo, byte[] bytes, String bleName) {
-        if (bytes == null) {
-            return null;
-        }
-
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(bytes);
-        if (linkScanRecord == null) {
+        if (bytes == null || linkScanRecord == null) {
             return null;
         }
 

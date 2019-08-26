@@ -9,9 +9,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.link.feeling.framework.base.FrameworkBaseActivity;
 import com.link.feeling.framework.executor.ThreadPoolManager;
@@ -20,19 +18,14 @@ import com.link.feeling.framework.utils.data.L;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.SaveListener;
 import cn.linkfeeling.hankserve.adapter.BLEAdapter;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
-import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.NDKTools;
 import cn.linkfeeling.hankserve.bean.Point;
-import cn.linkfeeling.hankserve.bean.Power;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
@@ -40,7 +33,6 @@ import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.manager.LinkWSManager;
-import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.ui.IUploadContract;
 import cn.linkfeeling.hankserve.ui.UploadPresenter;
@@ -76,6 +68,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
     @Override
     protected void init(@Nullable Bundle savedInstanceState) {
+        String stringFromNDK = NDKTools.getStringFromNDK();
+        Log.i("nnnnnnnnnnnnnn",stringFromNDK);
+
+
         recycleView = findViewById(R.id.recycleView);
         tv_ipTip = findViewById(R.id.tv_ipTip);
         tv_ipTipRemove = findViewById(R.id.tv_ipTipRemove);
@@ -96,6 +92,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         connectWebSocket();
         //connectLinkWS();
         startIntervalListener();
+
     }
 
 

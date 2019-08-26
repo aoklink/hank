@@ -186,6 +186,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 @Override
                 public void done(String s, BmobException e) {
 
+                    Log.i("99999-----",s==null?"null":s);
+                    Log.i("99999eeeee",e==null?"null":e.getMessage());
                 }
             });
             return true;

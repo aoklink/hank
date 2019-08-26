@@ -22,7 +22,19 @@ public class DataProcessorFactory {
         switch (type) {
 
             case LinkDataManager.TYPE_LEAP:
-                return WristbandProcessor.getInstance();
+
+                ConcurrentHashMap<String, WristbandProcessor> wristbandProcessorMap = WristbandProcessor.map;
+                if (wristbandProcessorMap != null) {
+                    WristbandProcessor wristbandProcessor = wristbandProcessorMap.get(name);
+                    if (wristbandProcessor != null) {
+                        return wristbandProcessor;
+                    } else {
+                        WristbandProcessor wristbandProcessor1 = new WristbandProcessor();
+                        WristbandProcessor.map.put(name, wristbandProcessor1);
+                        return wristbandProcessor1;
+                    }
+                }
+                return null;
 
             case LinkDataManager.TREADMILL_1:
                 ConcurrentHashMap<String, TreadMillProcessor> treadMillMap = TreadMillProcessor.map;

@@ -1,5 +1,6 @@
 package cn.linkfeeling.hankserve.subjects;
 
+import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  * 单车数据解析
  */
 public class BicycleProcessor implements IDataAnalysis {
+    private Handler handler=new Handler();
     public static ConcurrentHashMap<String, BicycleProcessor> map;
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
     private int flag = -1;
@@ -98,7 +100,7 @@ public class BicycleProcessor implements IDataAnalysis {
                 FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
                 start = false;
             }
-          LinkDataManager.getInstance().checkBind(deviceByBleName);
+            LinkDataManager.getInstance().checkBind(deviceByBleName);
         }
 
 
@@ -136,14 +138,10 @@ public class BicycleProcessor implements IDataAnalysis {
         }
 
 
-
         Log.i("00000000000dddd", speed + "");
 
         if (speed == 0) {
             start = true;
-//            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
-////            FinalDataManager.getInstance().getAlternative().remove(fenceId);
-
             //解除绑定
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
@@ -154,6 +152,8 @@ public class BicycleProcessor implements IDataAnalysis {
         return bleDeviceInfoNow;
 
     }
+
+
 
 
     /**

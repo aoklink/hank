@@ -2,6 +2,7 @@ package cn.linkfeeling.hankserve;
 
 import org.junit.Test;
 
+import cn.linkfeeling.hankserve.bean.NDKTools;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.HexUtil;
@@ -22,17 +23,10 @@ public class ExampleUnitTest {
 
     @Test
     public void testTime() {
-//        byte[] u_time=new byte[1];
-//        u_time[0]=64;
-//        System.out.println(CalculateUtil.byteToInt((byte) -64));
 
-        float ee = 2.6f;
-  //      System.out.println((int)ee);
+        String stringFromNDK = NDKTools.getStringFromNDK();
+        System.out.println(stringFromNDK);
 
-        LimitQueue<Integer> limitQueue=new LimitQueue<>(1);
-        limitQueue.offer(10);
-        System.out.println(limitQueue.contains(10));
-        System.out.println(limitQueue.contains(11));
 
     }
 }
