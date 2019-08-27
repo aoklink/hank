@@ -153,8 +153,7 @@ unsigned int match_data(signed char *device_data, WATCH_DATA *watch_data) {
         LOGD("xxxxxxxx %d,%d,%d",x_raw_data[index],y_raw_data[index],z_raw_data[index]);
 	}
 
-
-
+	LOGD("ppppppppp %d,%d,%d,%d",device_data[0],device_data[1],device_data[128],device_data[129]);
 	filter_data(device_data, MAX_DEVICE_DATA_LEN, &device_raw_data[0], &device_real_data_len);
 	//结构体里的带到函数里要用&符号，单个数据，带出来的数组不用带&符号，因为本身就带指针，带出来的数据需要用&符号带出
 
@@ -227,7 +226,8 @@ JNIEXPORT jint JNICALL Java_cn_linkfeeling_hankserve_bean_NDKTools_match_1data
 (JNIEnv *env, jclass jobj, jbyteArray deviceData, jobject watchData){
     jint ret;
     WATCH_DATA watch_data_temp;
-    int index;
+
+    jbyte * pDevice = (*env)->GetByteArrayElements(env,deviceData, 0);
 
 
    // jclass clazz = (*env)->FindClass(env,"cn/linkfeeling/hankserve/bean/WatchData");
@@ -241,7 +241,7 @@ JNIEXPORT jint JNICALL Java_cn_linkfeeling_hankserve_bean_NDKTools_match_1data
 	LOGD("########## size = %d", size);
 
 
-    for(index = 0;index < MAX_WATCH_DATA_LEN;index++)
+    for(int index = 0;index < MAX_WATCH_DATA_LEN;index++)
     {
         jobject bb = (jobject) (*env)->GetObjectArrayElement(env,jarr, index);
         if(bb==NULL){
@@ -264,7 +264,7 @@ JNIEXPORT jint JNICALL Java_cn_linkfeeling_hankserve_bean_NDKTools_match_1data
         LOGD("########## %d,%d,%d",watch_data_temp.data[index].x,watch_data_temp.data[index].y ,watch_data_temp.data[index].z);
     }
 
-    ret =  match_data(deviceData,&watch_data_temp);
+    ret =  match_data(pDevice,&watch_data_temp);
 
     return ret;
 }

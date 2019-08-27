@@ -545,9 +545,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     }
 
 
+/*
     @Override
     public void onBackPressed() {
     }
+*/
 
     @Override
     protected void onDestroy() {
