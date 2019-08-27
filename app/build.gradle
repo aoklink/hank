@@ -35,6 +35,19 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
+
+    sourceSets.main {
+        jni.srcDirs = []
+    }
+    externalNativeBuild {
+        ndkBuild {
+            path file('src/main/jni/Android.mk')
+        }
+    }
+
+    packagingOptions {
+        pickFirst "**/libMY_JNI.so"
+    }
 }
 
 dependencies {

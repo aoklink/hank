@@ -1,6 +1,6 @@
 package cn.linkfeeling.hankserve.bean;
 
-class WatchData {
+public class WatchData {
     public AccelData[] data;
 
     public AccelData[] getData() {

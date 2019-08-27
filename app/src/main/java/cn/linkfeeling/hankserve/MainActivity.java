@@ -15,6 +15,8 @@ import com.link.feeling.framework.base.FrameworkBaseActivity;
 import com.link.feeling.framework.executor.ThreadPoolManager;
 import com.link.feeling.framework.utils.data.L;
 
+import org.json.JSONObject;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,10 +25,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import cn.linkfeeling.hankserve.adapter.BLEAdapter;
+import cn.linkfeeling.hankserve.bean.AccelData;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.NDKTools;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
+import cn.linkfeeling.hankserve.bean.WatchData;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
@@ -57,6 +61,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private BLEAdapter bleAdapter;
 
     private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
+    private byte[] data = {46, 49, 54, 60, 61, 65, 67, 67, 68, 68, 68, 67, 68, 69, 70, 76, 82, 87, 87, 88, 90, 92, 93, 92, 87, 83, 74, 71, 61, 52, 41, 32, 28, 32, 37, 43, 48, 50, 50, 47, 47, 48, 50, 55, 58, 64, 68, 68, 69, 68, 67, 71, 73, 73, 76, 81, 85, 88, 91, 92, 93, 94, 90, 88, 80, 68, 58, 54, 43, 38, 36, 35, 37, 40, 44, 47, 47, 46, 47, 52, 55, 55, 58, 61, 66, 67, 69, 74, 77, 76, 77, 78, 82, 87, 91, 92, 91, 90, 90, 91, 84, 80, 68, 58, 52, 39, 32, 31, 35, 38, 42, 45, 46, 46, 45, 46, 50, 53, 55, 60, 63, 65, 71, 75, 77, 76, 74, 76, 79, 83};
+    private byte[][] content = {{11, 59, -27}, {18, 88, -22}, {14, 58, -9}, {8, 67, -9}, {10, 70, -6}, {10, 69, -8}, {29, 57, -13}, {54, 56, -13}, {48, 64, -20}, {18, 68, -27}, {-7, 67, -58}, {-4, 81, -55}, {-73, 68, -50}, {-72, 74, 10}, {-66, 69, 20}, {-56, 47, 24}, {-38, 66, 25}, {-40, 56, 3}, {-36, 53, -2}, {-18, 52, -30}, {-30, 57, -39}, {13, 70, -37}, {5, 56, -21}, {2, 64, -12}, {7, 71, -18}, {18, 70, -23}, {45, 59, -7}, {48, 66, -13}, {39, 65, -31}, {21, 73, -62}, {2, 69, -58}, {-54, 76, -41}, {-60, 56, -10}, {-52, 66, 13}, {-56, 66, 27}, {-42, 68, 21}, {-34, 67, 4}, {-42, 53, -17}, {-44, 54, -31}, {-20, 58, -34}, {-11, 68, -41}, {-2, 68, -21}, {11, 75, -25}, {16, 78, -25}, {36, 61, -15}, {40, 53, -25}, {42, 56, -14}, {33, 69, -37}, {3, 72, -56}, {-38, 72, -61}, {-71, 72, -33}, {-51, 55, 20}, {-62, 45, 28}, {-46, 57, 22}, {-47, 57, 7}, {-42, 58, -2}, {-31, 34, -25}, {-24, 63, -31}, {-11, 66, -38}, {-6, 72, -24}, {17, 70, -12}, {17, 65, -9}, {18, 55, -20}, {41, 67, -7}, {25, 70, -16}, {31, 68, -20}, {8, 62, -46}, {3, 66, -45}, {-54, 73, -41}, {-64, 59, -10}, {-60, 57, 18}, {-54, 65, 26}, {-44, 62, 15}, {-38, 58, -7}, {-27, 70, -16}, {-32, 66, -27}, {-23, 60, -33}, {-12, 60, -30}, {-9, 69, -34}, {13, 83, -19}};
+    private WatchData watchData = new WatchData();
+
+    private AccelData[] accelData = new AccelData[80];
 
 
     @Override
@@ -69,7 +78,23 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     @Override
     protected void init(@Nullable Bundle savedInstanceState) {
         String stringFromNDK = NDKTools.getStringFromNDK();
-        Log.i("nnnnnnnnnnnnnn",stringFromNDK);
+        Log.i("nnnnnnnnnnnnnn", stringFromNDK);
+        Log.i("nnnnnnnnnnnnnn", content.length + "");
+
+        for (int i = 0; i < content.length; i++) {
+            AccelData accel = new AccelData();
+            accel.setX(content[i][0]);
+            accel.setY(content[i][1]);
+            accel.setZ(content[i][2]);
+
+            accelData[i] = accel;
+
+        }
+
+        watchData.setData(accelData);
+
+        int i = NDKTools.match_data(data, watchData);
+        Log.i("nnnnnnnnnnnnnn", i + "");
 
 
         recycleView = findViewById(R.id.recycleView);
@@ -425,15 +450,15 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             List<UWBCoordData> list = FinalDataManager.getInstance().querySpareFireUwb(code);
             if (!list.isEmpty()) {
                 for (UWBCoordData spareFireUwb : list) {
-                        if (spareFireUwb.getSemaphore() == 50) {
-                            //7、需要解除绑定
-                            FinalDataManager.getInstance().removeSpareFireUwb(spareFireUwb);
-                            spareFireUwb.setSemaphore(0);
+                    if (spareFireUwb.getSemaphore() == 50) {
+                        //7、需要解除绑定
+                        FinalDataManager.getInstance().removeSpareFireUwb(spareFireUwb);
+                        spareFireUwb.setSemaphore(0);
 
-                        } else {
-                            //8、将信号量+1
-                            spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
-                        }
+                    } else {
+                        //8、将信号量+1
+                        spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
+                    }
 
                 }
             }

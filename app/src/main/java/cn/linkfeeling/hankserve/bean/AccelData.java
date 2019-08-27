@@ -1,6 +1,6 @@
 package cn.linkfeeling.hankserve.bean;
 
-class AccelData {
+public  class AccelData {
     private byte x;
     private byte y;
     private byte z;
