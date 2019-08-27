@@ -174,11 +174,17 @@ unsigned int match_data(signed char *device_data, WATCH_DATA *watch_data) {
 	average_z = average_data_one(z_raw_data, MAX_WATCH_DATA_LEN);
 	average_s = average_data_one(device_smooth_data, DEVICE_LEN);
 
+	LOGD("pingjunzhi %d,%d,%d,%d",average_x,average_y,average_z,average_s);
+
+
 	//求数组最大与最小值差
 	minu_x = minu_data(x_raw_data, MAX_WATCH_DATA_LEN);
 	minu_y = minu_data(y_raw_data, MAX_WATCH_DATA_LEN);
 	minu_z = minu_data(z_raw_data, MAX_WATCH_DATA_LEN);
 	minu_s = minu_data(device_smooth_data, DEVICE_LEN);
+
+	LOGD("pingjunzhizuidazuixiao %d,%d,%d,%d",minu_x,minu_y,minu_z,minu_s);
+
 
 	//同步归一化
 	same_amp_data(x_raw_data, MAX_WATCH_DATA_LEN, minu_x, average_x);
@@ -191,9 +197,9 @@ unsigned int match_data(signed char *device_data, WATCH_DATA *watch_data) {
 	min_sumlen_x = min_sumlen_data(x_raw_data, device_smooth_data);
 	min_sumlen_y = min_sumlen_data(y_raw_data, device_smooth_data);
 	min_sumlen_z = min_sumlen_data(z_raw_data, device_smooth_data);
-	printf("min_sumlen_x:%d\n", min_sumlen_x);
-	printf("min_sumlen_y:%d\n", min_sumlen_y);
-	printf("min_sumlen_z:%d\n", min_sumlen_z);
+	LOGD("min_sumlen_x:%d\n", min_sumlen_x);
+	LOGD("min_sumlen_y:%d\n", min_sumlen_y);
+	LOGD("min_sumlen_z:%d\n", min_sumlen_z);
 	min_number = min_sumlen_x;
 	if (min_sumlen_y < min_number)
 		min_number = min_sumlen_y;
