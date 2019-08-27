@@ -260,6 +260,7 @@ JNIEXPORT jint JNICALL Java_cn_linkfeeling_hankserve_bean_NDKTools_match_1data
         watch_data_temp.data[index].x = x_value;
         watch_data_temp.data[index].y = y_value;
         watch_data_temp.data[index].z = z_value;
+        
 
         LOGD("########## %d,%d,%d",watch_data_temp.data[index].x,watch_data_temp.data[index].y ,watch_data_temp.data[index].z);
     }
