@@ -37,8 +37,6 @@ public class TreadMillProcessor implements IDataAnalysis {
 
     private volatile boolean start = true;
 
-    private Handler handler = new Handler();
-
 
     static {
         map = new ConcurrentHashMap<>();

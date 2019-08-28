@@ -30,7 +30,6 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  * 单车数据解析
  */
 public class BicycleProcessor implements IDataAnalysis {
-    private Handler handler=new Handler();
     public static ConcurrentHashMap<String, BicycleProcessor> map;
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
     private int flag = -1;
