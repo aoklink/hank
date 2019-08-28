@@ -1,19 +1,11 @@
 package cn.linkfeeling.hankserve.subjects;
 
 
-import android.annotation.SuppressLint;
-import android.os.Handler;
-import android.os.Message;
 import android.os.ParcelUuid;
 import android.util.Log;
 
-import com.alibaba.fastjson.JSON;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.bmob.v3.exception.BmobException;
@@ -29,6 +21,7 @@ import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.queue.UwbQueue;
+import cn.linkfeeling.hankserve.queue.MatchQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
@@ -42,6 +35,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
     private static final float SELF_GRAVITY = 2.5f;
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
+    private MatchQueue<Byte> matchQueue = new MatchQueue<>(130);
 
     private int flag = -1;
 
@@ -92,11 +86,11 @@ public class FlyBirdProcessor implements IDataAnalysis {
             if (start) {
                 ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
                 if (spareTire.isEmpty()) {
-                    Log.i("tttttttttt","-5-5-5");
+                    Log.i("tttttttttt", "-5-5-5");
                     start = false;
                     return null;
                 }
-                Log.i("tttttttttt","-6-6-6");
+                Log.i("tttttttttt", "-6-6-6");
                 ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
                 for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
                     String key = next.getKey();
@@ -111,14 +105,14 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 start = false;
             }
 
-             LinkDataManager.getInstance().checkBind(deviceByBleName);
+            LinkDataManager.getInstance().checkBind(deviceByBleName);
         }
 
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
 
 
-        if (serviceData[0] != -1 && serviceData[0] != 0 && serviceData[1] != -1 && serviceData[1] != 0 && bleDeviceInfoNow!=null) {
+        if (serviceData[0] != -1 && serviceData[0] != 0 && serviceData[1] != -1 && serviceData[1] != 0 && bleDeviceInfoNow != null) {
             for (int j = 0; j < 10; j++) {
                 int cuv1 = CalculateUtil.byteToInt(serviceData[j]);
                 bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
@@ -130,7 +124,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
 
-            Log.i("tttttttttt","-1-1-1");
+            Log.i("tttttttttt", "-1-1-1");
 
             start = true;
 
@@ -145,7 +139,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             float actualGravity = SELF_GRAVITY * gravity;
             byte u_time = serviceData[14];
 
-            if(bleDeviceInfoNow!=null){
+            if (bleDeviceInfoNow != null) {
                 bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
                 bleDeviceInfoNow.setGravity(String.valueOf(actualGravity));
                 bleDeviceInfoNow.setTime(String.valueOf(act_time));
@@ -186,8 +180,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 @Override
                 public void done(String s, BmobException e) {
 
-                    Log.i("99999-----",s==null?"null":s);
-                    Log.i("99999eeeee",e==null?"null":e.getMessage());
+                    Log.i("99999-----", s == null ? "null" : s);
+                    Log.i("99999eeeee", e == null ? "null" : e.getMessage());
                 }
             });
             return true;

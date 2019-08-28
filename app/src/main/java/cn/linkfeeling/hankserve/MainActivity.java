@@ -245,12 +245,12 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
      */
     private void onLeScanSelf(String hostString, byte[] scanRecord) {
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
-        WatchScanRecord watchScanRecord = WatchScanRecord.parseFromBytes(scanRecord);
         if (linkScanRecord == null || linkScanRecord.getDeviceName() == null) {
             return;
         }
         String name = linkScanRecord.getDeviceName();
-        if("I7".equals(name)){
+        if ("I7".equals(name)) {
+            WatchScanRecord watchScanRecord = WatchScanRecord.parseFromBytes(scanRecord);
             byte[] bytes = watchScanRecord.getManufacturerSpecificData().valueAt(0);
             byte[] mac = new byte[2];
             mac[0] = bytes[0];
@@ -259,9 +259,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             stringBuilder.append(name);
             stringBuilder.append(HexUtil.encodeHexStr(mac));
             name = stringBuilder.toString();
-            Log.i("777777777777"+name,Arrays.toString(bytes));
+            Log.i("777777777777" + name, Arrays.toString(bytes));
         }
-
 
 
         if ("I7PLUS".equals(name)) {
