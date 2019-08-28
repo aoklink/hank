@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -43,6 +44,7 @@ import cn.linkfeeling.hankserve.ui.UploadPresenter;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.HexUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
+import cn.linkfeeling.hankserve.utils.WatchScanRecord;
 import cn.linkfeeling.link_socketserve.NettyServer;
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
 import cn.linkfeeling.link_socketserve.unpack.SmartCarProtocol;
@@ -243,10 +245,24 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
      */
     private void onLeScanSelf(String hostString, byte[] scanRecord) {
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
+        WatchScanRecord watchScanRecord = WatchScanRecord.parseFromBytes(scanRecord);
         if (linkScanRecord == null || linkScanRecord.getDeviceName() == null) {
             return;
         }
         String name = linkScanRecord.getDeviceName();
+        if("I7".equals(name)){
+            byte[] bytes = watchScanRecord.getManufacturerSpecificData().valueAt(0);
+            byte[] mac = new byte[2];
+            mac[0] = bytes[0];
+            mac[1] = bytes[1];
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(name);
+            stringBuilder.append(HexUtil.encodeHexStr(mac));
+            name = stringBuilder.toString();
+            Log.i("777777777777"+name,Arrays.toString(bytes));
+        }
+
+
 
         if ("I7PLUS".equals(name)) {
             byte[] bytes = linkScanRecord.getManufacturerSpecificData().valueAt(0);
