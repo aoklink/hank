@@ -81,30 +81,28 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (b) {
             return null;
         }
+        if (start) {
+            ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
+            if (spareTire.isEmpty()) {
+                Log.i("tttttttttt", "-5-5-5");
+                start = false;
+                return null;
+            }
+            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+            for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                String key = next.getKey();
+                UWBCoordData uwbCoordData = new UWBCoordData();
+                uwbCoordData.setCode(key);
+                uwbCoordData.setSemaphore(0);
+                uwbCoordData.setDevice(deviceByBleName);
+                queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+            }
+            FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
+            start = false;
+        }
+
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
-            if (start) {
-                ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
-                if (spareTire.isEmpty()) {
-                    Log.i("tttttttttt", "-5-5-5");
-                    start = false;
-                    return null;
-                }
-                Log.i("tttttttttt", "-6-6-6");
-                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
-                for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
-                    String key = next.getKey();
-                    UWBCoordData uwbCoordData = new UWBCoordData();
-                    uwbCoordData.setCode(key);
-                    uwbCoordData.setSemaphore(0);
-                    uwbCoordData.setDevice(deviceByBleName);
-                    queueConcurrentHashMap.put(uwbCoordData, next.getValue());
-
-                }
-                FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-                start = false;
-            }
-
             LinkDataManager.getInstance().checkBind(deviceByBleName);
         }
 
