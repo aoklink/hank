@@ -4,18 +4,24 @@ package cn.linkfeeling.hankserve.subjects;
 import android.os.ParcelUuid;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import cn.linkfeeling.hankserve.BuildConfig;
+import cn.linkfeeling.hankserve.bean.AccelData;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.NDKTools;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.Power;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
+import cn.linkfeeling.hankserve.bean.WatchData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
@@ -24,6 +30,7 @@ import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.queue.MatchQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
+import cn.linkfeeling.hankserve.utils.WatchScanRecord;
 
 
 /**
@@ -34,7 +41,7 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 public class FlyBirdProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
     private static final float SELF_GRAVITY = 2.5f;
-    private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
+    private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
     private MatchQueue<Byte> matchQueue = new MatchQueue<>(130);
 
     private int flag = -1;
@@ -102,20 +109,70 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
 
 
-        if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
+    /*    if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
             LinkDataManager.getInstance().checkBind(deviceByBleName);
-        }
-
+        }*/
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
 
 
-        if (serviceData[0] != -1 && serviceData[0] != 0 && serviceData[1] != -1 && serviceData[1] != 0 && bleDeviceInfoNow != null) {
+        if (serviceData[0] != -1 && serviceData[0] != 0 && serviceData[1] != -1 && serviceData[1] != 0) {
             for (int j = 0; j < 10; j++) {
                 int cuv1 = CalculateUtil.byteToInt(serviceData[j]);
-                bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
-                bleDeviceInfoNow.getCurve().add(cuv1);
-                bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+                if (bleDeviceInfoNow != null) {
+                    bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
+                    bleDeviceInfoNow.getCurve().add(cuv1);
+                    bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+                }
+                if (serviceData[13] != 0) {
+                    matchQueue.offer(serviceData[j]);
+                }
+
+            }
+
+
+            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> alternative = FinalDataManager.getInstance().getAlternative().get(deviceByBleName.getFencePoint().getFenceId());
+            if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId()) && alternative != null && alternative.size() != 0) {
+                if (matchQueue.size() == 130) {
+                    byte[] deviceData = new byte[130];
+                    List<Byte> deviceList = new ArrayList<>(matchQueue);
+                    for (int i = 0; i < deviceList.size(); i++) {
+                        deviceData[i] = deviceList.get(i);
+                    }
+
+                    int minNum = Integer.MAX_VALUE;
+                    UWBCoordData uwbCoordData = null;
+
+                    for (UWBCoordData next : alternative.keySet()) {
+                        WristbandProcessor wristbandProcessor = WristbandProcessor.map.get(LinkDataManager.getInstance().getUwbCode_wristbandName().get(next.getCode()));
+                        if (wristbandProcessor != null) {
+                            MatchQueue<AccelData> matchQueue = wristbandProcessor.getWatchQueue();
+                            WatchData watchData = new WatchData();
+                            AccelData[] accelData = new AccelData[80];
+
+                            List<AccelData> watchList = new ArrayList<>(matchQueue);
+                            for (int i = 0; i < watchList.size(); i++) {
+                                accelData[i] = watchList.get(i);
+                            }
+                            watchData.setData(accelData);
+
+                            int matchNum = NDKTools.match_data(deviceData, watchData);
+
+                            if (matchNum < minNum) {
+
+                                minNum = matchNum;
+                                uwbCoordData = next;
+                            }
+                        }
+                    }
+                    if (uwbCoordData != null && minNum < 15000) {
+                        Log.i("pipeizhi", minNum + "");
+                        alternative.remove(uwbCoordData); //从备选人中移除
+                        FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+
+                    }
+                }
+
             }
         }
 
@@ -123,6 +180,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (serviceData[0] == -1 && serviceData[1] == -1) {
 
             Log.i("tttttttttt", "-1-1-1");
+
+            matchQueue.clear();
 
             start = true;
 

@@ -1,13 +1,9 @@
 package cn.linkfeeling.hankserve.subjects;
 
-import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
