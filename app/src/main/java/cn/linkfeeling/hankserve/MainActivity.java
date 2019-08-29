@@ -80,7 +80,24 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     @Override
     protected void init(@Nullable Bundle savedInstanceState) {
 
-        
+        String stringFromNDK = NDKTools.getStringFromNDK();
+        Log.i("nnnnnnnnnnnnnn", stringFromNDK);
+        Log.i("nnnnnnnnnnnnnn", content.length + "");
+
+        for (int i = 0; i < content.length; i++) {
+            AccelData accel = new AccelData();
+            accel.setX(content[i][0]);
+            accel.setY(content[i][1]);
+            accel.setZ(content[i][2]);
+
+            accelData[i] = accel;
+
+        }
+
+        watchData.setData(accelData);
+
+        int i = NDKTools.match_data(data, watchData);
+        Log.i("nnnnnnnnnnnnnn", i + "");
 
 
         recycleView = findViewById(R.id.recycleView);

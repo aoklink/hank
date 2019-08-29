@@ -4,9 +4,10 @@ package cn.linkfeeling.hankserve.subjects;
 import android.os.ParcelUuid;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,7 +31,6 @@ import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.queue.MatchQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
-import cn.linkfeeling.hankserve.utils.WatchScanRecord;
 
 
 /**
@@ -42,7 +42,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
     private static final float SELF_GRAVITY = 2.5f;
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
-    private MatchQueue<Byte> matchQueue = new MatchQueue<>(130);
+    private MatchQueue<Byte> devicesQueue = new MatchQueue<>(130);
 
     private int flag = -1;
 
@@ -53,7 +53,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     }
 
     @Override
-    public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
+    public  BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
@@ -125,60 +125,66 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
                 }
                 if (serviceData[13] != 0) {
-                    matchQueue.offer(serviceData[j]);
+                    devicesQueue.offer(serviceData[j]);
+                    Log.i("pipeizhishebei", devicesQueue.size()+"");
                 }
 
             }
+                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> alternative = FinalDataManager.getInstance().getAlternative().get(deviceByBleName.getFencePoint().getFenceId());
+                if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId()) && alternative != null && alternative.size() != 0) {
+                    if (devicesQueue.size() == 130) {
+                        Log.i("pipeizhixxx", "130");
+                        Log.i("pipeizhizzz", alternative.size() + "");
+                        byte[] deviceData = new byte[130];
+                        List<Byte> deviceList = new ArrayList<>(devicesQueue);
+                        Log.i("pipeizhimmmm", new Gson().toJson(deviceList));
+
+                        for (int i = 0; i < deviceList.size(); i++) {
+                            deviceData[i] = deviceList.get(i);
+                        }
+
+                        int minNum = Integer.MAX_VALUE;
+                        UWBCoordData uwbCoordData = null;
+
+                        for (UWBCoordData next : alternative.keySet()) {
+                            WristbandProcessor wristbandProcessor = WristbandProcessor.map.get(LinkDataManager.getInstance().getUwbCode_wristbandName().get(next.getCode()));
+                            if (wristbandProcessor != null) {
+                                MatchQueue<AccelData> wristQueue = wristbandProcessor.getWatchQueue();
+                                WatchData watchData = new WatchData();
+                                AccelData[] accelData = new AccelData[40];
+
+                                List<AccelData> watchList = new ArrayList<>(wristQueue);
+
+                                Log.i("pipeizhinnnnn", new Gson().toJson(watchList));
+                                for (int i = 0; i < watchList.size(); i++) {
+                                    accelData[i] = watchList.get(i);
+                                }
+                                watchData.setData(accelData);
+
+                                int matchNum = NDKTools.match_data(deviceData, watchData);
+                                Log.i("pipeizhi-----", matchNum + "");
 
 
-            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> alternative = FinalDataManager.getInstance().getAlternative().get(deviceByBleName.getFencePoint().getFenceId());
-            if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId()) && alternative != null && alternative.size() != 0) {
-                if (matchQueue.size() == 130) {
-                    Log.i("pipeizhixxx","130");
-                    Log.i("pipeizhizzz",alternative.size()+"");
-                    byte[] deviceData = new byte[130];
-                    List<Byte> deviceList = new ArrayList<>(matchQueue);
-                    for (int i = 0; i < deviceList.size(); i++) {
-                        deviceData[i] = deviceList.get(i);
-                    }
+                                if (matchNum < minNum) {
 
-                    int minNum = Integer.MAX_VALUE;
-                    UWBCoordData uwbCoordData = null;
-
-                    for (UWBCoordData next : alternative.keySet()) {
-                        WristbandProcessor wristbandProcessor = WristbandProcessor.map.get(LinkDataManager.getInstance().getUwbCode_wristbandName().get(next.getCode()));
-                        if (wristbandProcessor != null) {
-                            MatchQueue<AccelData> matchQueue = wristbandProcessor.getWatchQueue();
-                            WatchData watchData = new WatchData();
-                            AccelData[] accelData = new AccelData[40];
-
-                            List<AccelData> watchList = new ArrayList<>(matchQueue);
-                            for (int i = 0; i < watchList.size(); i++) {
-                                accelData[i] = watchList.get(i);
-                            }
-                            watchData.setData(accelData);
-
-                            int matchNum = NDKTools.match_data(deviceData, watchData);
-                            Log.i("pipeizhi-----",matchNum+"");
-
-
-                            if (matchNum < minNum) {
-
-                                minNum = matchNum;
-                                uwbCoordData = next;
+                                    minNum = matchNum;
+                                    uwbCoordData = next;
+                                }
                             }
                         }
-                    }
-                    if (uwbCoordData != null && minNum < 15000) {
-                        Log.i("pipeizhi", minNum + "");
-                        alternative.remove(uwbCoordData); //从备选人中移除
-                        FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+                        if (uwbCoordData != null && minNum < 10000) {
+                            Log.i("pipeizhi", minNum + "");
+                           alternative.remove(uwbCoordData); //从备选人中移除
+                            FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
 
+                        }
                     }
+
                 }
-
             }
-        }
+
+
+
 
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
@@ -190,7 +196,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
             flag = CalculateUtil.byteArrayToInt(seqNum);
 
-            matchQueue.clear();
+            devicesQueue.clear();
 
             if (serviceData[10] == 0 || serviceData[13] == 0) {
                 //       deviceByBleName.setAbility(0);
