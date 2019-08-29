@@ -134,6 +134,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
             ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> alternative = FinalDataManager.getInstance().getAlternative().get(deviceByBleName.getFencePoint().getFenceId());
             if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId()) && alternative != null && alternative.size() != 0) {
                 if (matchQueue.size() == 130) {
+                    Log.i("pipeizhixxx","130");
+                    Log.i("pipeizhizzz",alternative.size()+"");
                     byte[] deviceData = new byte[130];
                     List<Byte> deviceList = new ArrayList<>(matchQueue);
                     for (int i = 0; i < deviceList.size(); i++) {
@@ -148,7 +150,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
                         if (wristbandProcessor != null) {
                             MatchQueue<AccelData> matchQueue = wristbandProcessor.getWatchQueue();
                             WatchData watchData = new WatchData();
-                            AccelData[] accelData = new AccelData[80];
+                            AccelData[] accelData = new AccelData[40];
 
                             List<AccelData> watchList = new ArrayList<>(matchQueue);
                             for (int i = 0; i < watchList.size(); i++) {
@@ -157,6 +159,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
                             watchData.setData(accelData);
 
                             int matchNum = NDKTools.match_data(deviceData, watchData);
+                            Log.i("pipeizhi-----",matchNum+"");
+
 
                             if (matchNum < minNum) {
 
@@ -181,11 +185,12 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
             Log.i("tttttttttt", "-1-1-1");
 
-            matchQueue.clear();
 
             start = true;
 
             flag = CalculateUtil.byteArrayToInt(seqNum);
+
+            matchQueue.clear();
 
             if (serviceData[10] == 0 || serviceData[13] == 0) {
                 //       deviceByBleName.setAbility(0);

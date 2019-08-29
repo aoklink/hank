@@ -20,11 +20,11 @@ extern "C" {
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,TAG ,__VA_ARGS__) // 定义LOGD类型
 
 
-#define DEVICE_LEN 50       //传感器中参与距离计算的数据量
-#define MOVE 30      //平移要求量
+#define DEVICE_LEN 25       //传感器中参与距离计算的数据量
+#define MOVE 15      //平移要求量
 #define AMP 100      //归一要求比例
 
-#define  MAX_WATCH_DATA_LEN 80
+#define  MAX_WATCH_DATA_LEN 40
 #define  MAX_DEVICE_DATA_LEN 130
 
 #define MAX_MAC_ADDR_LEN 4
@@ -60,7 +60,7 @@ void same_amp_data(signed char *pdata, unsigned char len, short minu, signed cha
 void filter_data(signed char *in_data, unsigned char in_data_len, signed char *out_data, unsigned char *out_data_len) {
 	unsigned char in_index;
 	unsigned char out_index = 0;
-	for (in_index = 0; in_index < in_data_len; in_index += 2) {
+	for (in_index = 0; in_index < in_data_len; in_index += 4) {
 		out_data[out_index] = in_data[in_index];
 		out_index++;
 	}
@@ -160,8 +160,8 @@ unsigned int match_data(signed char *device_data, WATCH_DATA *watch_data) {
 	//平滑曲线
 	for (index_s = 0; index_s < DEVICE_LEN; index_s++) {
 		device_smooth_data[index_s] =
-				(device_raw_data[index_s + 13] + device_raw_data[index_s + 14] +
-				 device_raw_data[index_s + 15]) / 3;
+				(device_raw_data[index_s + 5] + device_raw_data[index_s + 6] +
+				 device_raw_data[index_s + 7]) / 3;
 	}
 	average_data(x_raw_data, MAX_WATCH_DATA_LEN);
 	average_data(y_raw_data, MAX_WATCH_DATA_LEN);
