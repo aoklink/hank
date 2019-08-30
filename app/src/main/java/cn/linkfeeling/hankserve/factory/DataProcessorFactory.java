@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
+import cn.linkfeeling.hankserve.subjects.AnchProcessor;
 import cn.linkfeeling.hankserve.subjects.BicycleProcessor;
 import cn.linkfeeling.hankserve.subjects.FlyBirdProcessor;
 import cn.linkfeeling.hankserve.subjects.OvalProcessor;
@@ -20,6 +21,20 @@ public class DataProcessorFactory {
 
     public static IDataAnalysis creteProcess(String type, String name) {
         switch (type) {
+
+            case LinkDataManager.ANCH:
+                ConcurrentHashMap<String, AnchProcessor> anchProcessorConcurrentHashMap = AnchProcessor.map;
+                if (anchProcessorConcurrentHashMap != null) {
+                    AnchProcessor anchProcessor = anchProcessorConcurrentHashMap.get(name);
+                    if (anchProcessor != null) {
+                        return anchProcessor;
+                    } else {
+                        AnchProcessor anchProcessor1 = new AnchProcessor();
+                        AnchProcessor.map.put(name, anchProcessor1);
+                        return anchProcessor1;
+                    }
+                }
+                return null;
 
             case LinkDataManager.TYPE_LEAP:
 

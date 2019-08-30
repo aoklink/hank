@@ -33,6 +33,7 @@ import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.bean.WatchData;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
+import cn.linkfeeling.hankserve.interfaces.IAnchDataAnalysis;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
@@ -310,6 +311,16 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
+        if (name.startsWith(LinkDataManager.ANCH)) {
+            try {
+                IAnchDataAnalysis anchDataAnalysis = (IAnchDataAnalysis) DataProcessorFactory.creteProcess(LinkDataManager.ANCH, name);
+                anchDataAnalysis.analysisAnchData(scanRecord, name);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
