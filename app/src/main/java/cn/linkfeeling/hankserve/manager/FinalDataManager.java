@@ -27,6 +27,7 @@ public class FinalDataManager {
     private static final FinalDataManager finalDataManager = new FinalDataManager();
 
 
+    private ConcurrentHashMap<String, String> rssi_wristbands;
     private ConcurrentHashMap<String, BleDeviceInfo> wristbands;
     private ConcurrentHashMap<Integer, UWBCoordData> fenceId_uwbData;
     private ConcurrentHashMap<String, UwbQueue<Point>> code_points;
@@ -39,12 +40,16 @@ public class FinalDataManager {
 
 
     public void initObject() {
+        rssi_wristbands = new ConcurrentHashMap<>();
         wristbands = new ConcurrentHashMap<>();  //手环对应的集合   key为手环名称   value为整合后的数据（最终上传数据）
         fenceId_uwbData = new ConcurrentHashMap<>();//围栏id uwb设备对应关系  key为围栏id  value为uwb对象
         code_points = new ConcurrentHashMap<>();  //
         alternative = new ConcurrentHashMap<>(); //备选池子
     }
 
+    public ConcurrentHashMap<String, String> getRssi_wristbands() {
+        return rssi_wristbands;
+    }
 
     public static FinalDataManager getInstance() {
         return finalDataManager;
@@ -177,6 +182,17 @@ public class FinalDataManager {
     public void removeUwb(int fenceId) {
         if (fenceId_uwbData.containsKey(fenceId)) {
             fenceId_uwbData.remove(fenceId);
+        }
+    }
+
+
+    /**
+     * 移除rssi缓存数据
+     * @param anch
+     */
+    public void removeRssi(String anch){
+        if(rssi_wristbands.containsKey(anch)){
+            rssi_wristbands.remove(anch);
         }
     }
 

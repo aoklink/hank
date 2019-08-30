@@ -47,6 +47,7 @@ public class LinkDataManager {
     public static final String BICYCLE_1 = "单车t2";
     public static final String OVAL_1 = "椭圆机t3";
     public static final String BIRD_1 = "飞鸟左";
+    public static final String ANCH = "ANCH";
 
     private static final LinkDataManager linkDataManager = new LinkDataManager();
     private ConcurrentHashMap<String, String> deviceBleTypeMaps;
@@ -273,6 +274,18 @@ public class LinkDataManager {
 
     public ConcurrentHashMap<String, String> getUwbCode_wristbandName() {
         return uwbCode_wristbandName;
+    }
+
+
+    public String queryUWBCodeByWristband(String wristband) {
+        Iterator<Map.Entry<String, String>> iterator = uwbCode_wristbandName.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> next = iterator.next();
+            if (next.getValue().equals(wristband)) {
+                return next.getKey();
+            }
+        }
+        return null;
     }
 
     public UWBCoordData fenceIdAndUwbHasContact(Map<Integer, UWBCoordData> map01, String bleName) {
