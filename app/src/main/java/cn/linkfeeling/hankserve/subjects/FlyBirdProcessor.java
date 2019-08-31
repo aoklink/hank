@@ -47,6 +47,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     private int flag = -1;
 
     private volatile boolean start = true;
+    private long startTime;
 
     static {
         map = new ConcurrentHashMap<>();

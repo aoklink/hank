@@ -108,20 +108,21 @@ public class TreadMillProcessor implements IDataAnalysis {
             if (System.currentTimeMillis() - startTime > 5 * 1000) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
                 if (s != null) {
-
-                    UWBCoordData uwbCoordData = new UWBCoordData();
-                    uwbCoordData.setDevice(deviceByBleName);
-                    uwbCoordData.setCode(uwbCode);
-                    FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
-
+                    String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
+                    if (uwbCode != null) {
+                        UWBCoordData uwbCoordData = new UWBCoordData();
+                        uwbCoordData.setDevice(deviceByBleName);
+                        uwbCoordData.setCode(uwbCode);
+                        FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+                    }
 
                 } else {
 
+                    LinkDataManager.getInstance().checkBind(deviceByBleName);
                 }
 
             }
 
-            //    LinkDataManager.getInstance().checkBind(deviceByBleName);
         }
 
 
@@ -157,16 +158,8 @@ public class TreadMillProcessor implements IDataAnalysis {
         }
 
         if (speed == 0) {
-
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//
-//                }
-//            }, 1500);
+            FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             start = true;
-//            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
-//            FinalDataManager.getInstance().getAlternative().remove(fenceId);
             //解除绑定
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
