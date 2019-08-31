@@ -48,6 +48,7 @@
     {
       "id": 1,
       "deviceName": "跑步机01",
+      "anchName": "ANCH01",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 1,
@@ -83,6 +84,7 @@
     {
       "id": 2,
       "deviceName": "单车",
+      "anchName": "ANCH02",
       "type": "单车",
       "perimeter": 3.84,
       "slope": 0.226829,
@@ -105,7 +107,6 @@
           "y": 138.0
         }
       },
-
       "centerPoint": {
         "x": 158.5,
         "y": 72.0
@@ -121,6 +122,7 @@
     {
       "id": 3,
       "deviceName": "椭圆机",
+      "anchName": "ANCH03",
       "type": "椭圆机",
       "perimeter": 2.04,
       "slope": 0.129164,
@@ -158,6 +160,7 @@
     {
       "id": 4,
       "deviceName": "飞鸟架01",
+      "anchName": "ANCH04",
       "type": "飞鸟架",
       "fencePoint": {
         "fenceId": 4,
@@ -193,6 +196,7 @@
     {
       "id": 5,
       "deviceName": "飞鸟架02",
+      "anchName": "ANCH05",
       "type": "飞鸟架",
       "fencePoint": {
         "fenceId": 5,

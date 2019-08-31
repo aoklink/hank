@@ -10,6 +10,7 @@ public class LinkSpecificDevice {
 
     private int id;
     private String deviceName;
+    private String anchName;
     private String type; //设备类型
     private float perimeter;
     private float slope;
@@ -39,6 +40,15 @@ public class LinkSpecificDevice {
 //
 //
 //    }
+
+
+    public String getAnchName() {
+        return anchName;
+    }
+
+    public void setAnchName(String anchName) {
+        this.anchName = anchName;
+    }
 
     public int getId() {
         return id;

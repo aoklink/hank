@@ -78,7 +78,7 @@ public class TreadMillProcessor implements IDataAnalysis {
 
 
         if (start) {
-            FinalDataManager.getInstance().removeRssi(deviceByBleName.get);
+            FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             startTime = System.currentTimeMillis();
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire == null || spareTire.isEmpty()) {
@@ -106,10 +106,20 @@ public class TreadMillProcessor implements IDataAnalysis {
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
             if (System.currentTimeMillis() - startTime > 5 * 1000) {
+                String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
+                if (s != null) {
+
+                    UWBCoordData uwbCoordData=new UWBCoordData();
+                    uwbCoordData.setCode();
+
+
+                } else {
+
+                }
 
             }
 
-            LinkDataManager.getInstance().checkBind(deviceByBleName);
+            //    LinkDataManager.getInstance().checkBind(deviceByBleName);
         }
 
 
