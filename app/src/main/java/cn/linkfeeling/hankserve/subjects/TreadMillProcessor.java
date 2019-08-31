@@ -32,6 +32,7 @@ public class TreadMillProcessor implements IDataAnalysis {
     private int flag = -1;
 
     private volatile boolean start = true;
+    private long startTime;
 
 
     static {
@@ -76,36 +77,39 @@ public class TreadMillProcessor implements IDataAnalysis {
         limitQueue.offer(nowPack);
 
 
-        Log.i("ppppppppstart", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
-        if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
-
-            if (start) {
-                ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
-                if (spareTire.isEmpty()) {
-                    Log.i("pppppppp", "-5-5-5");
-                    start = false;
-                    return null;
-                }
-
-                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
-                for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
-                    String key = next.getKey();
-                    UWBCoordData uwbCoordData = new UWBCoordData();
-                    uwbCoordData.setCode(key);
-                    uwbCoordData.setSemaphore(0);
-                    uwbCoordData.setDevice(deviceByBleName);
-                    queueConcurrentHashMap.put(uwbCoordData, next.getValue());
-
-                }
-                Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
-
-                FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
+        if (start) {
+            FinalDataManager.getInstance().removeRssi(deviceByBleName.get);
+            startTime = System.currentTimeMillis();
+            ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
+            if (spareTire == null || spareTire.isEmpty()) {
+                Log.i("pppppppp", "-5-5-5");
                 start = false;
+                return null;
             }
+
+            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+            for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                String key = next.getKey();
+                UWBCoordData uwbCoordData = new UWBCoordData();
+                uwbCoordData.setCode(key);
+                uwbCoordData.setSemaphore(0);
+                uwbCoordData.setDevice(deviceByBleName);
+                queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+
+            }
+            Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
+
+            FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
+            start = false;
+        }
+
+
+        if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
+            if (System.currentTimeMillis() - startTime > 5 * 1000) {
+
+            }
+
             LinkDataManager.getInstance().checkBind(deviceByBleName);
-
-            Log.i("pppppppp", "truetruetrue");
-
         }
 
 
