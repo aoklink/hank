@@ -526,4 +526,22 @@ public class LinkDataManager {
         uwbCoordData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoordData.getCode())));
         return false;
     }
+
+
+    /**
+     * g根据围栏id查找anch
+     *
+     * @param fenceId
+     * @return
+     */
+    public String getAnchName(int fenceId) {
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (devicesDatum.getFencePoint().getFenceId() == fenceId) {
+                return devicesDatum.getAnchName();
+            }
+        }
+
+        return null;
+
+    }
 }

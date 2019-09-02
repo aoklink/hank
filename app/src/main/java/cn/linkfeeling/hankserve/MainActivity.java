@@ -65,7 +65,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
     private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
     private byte[] data = {46, 49, 54, 60, 61, 65, 67, 67, 68, 68, 68, 67, 68, 69, 70, 76, 82, 87, 87, 88, 90, 92, 93, 92, 87, 83, 74, 71, 61, 52, 41, 32, 28, 32, 37, 43, 48, 50, 50, 47, 47, 48, 50, 55, 58, 64, 68, 68, 69, 68, 67, 71, 73, 73, 76, 81, 85, 88, 91, 92, 93, 94, 90, 88, 80, 68, 58, 54, 43, 38, 36, 35, 37, 40, 44, 47, 47, 46, 47, 52, 55, 55, 58, 61, 66, 67, 69, 74, 77, 76, 77, 78, 82, 87, 91, 92, 91, 90, 90, 91, 84, 80, 68, 58, 52, 39, 32, 31, 35, 38, 42, 45, 46, 46, 45, 46, 50, 53, 55, 60, 63, 65, 71, 75, 77, 76, 74, 76, 79, 83};
-    private byte[][] content = {{11, 59, -27},  {14, 58, -9},  {10, 70, -6},  {29, 57, -13},  {48, 64, -20},  {-7, 67, -58},  {-73, 68, -50},  {-66, 69, 20},  {-38, 66, 25},  {-36, 53, -2},  {-30, 57, -39},  {5, 56, -21},  {7, 71, -18}, {45, 59, -7},  {39, 65, -31}, {2, 69, -58},  {-60, 56, -10},  {-56, 66, 27},  {-34, 67, 4},  {-44, 54, -31},  {-11, 68, -41},  {11, 75, -25},  {36, 61, -15},  {42, 56, -14}, {3, 72, -56}, {-71, 72, -33}, {-62, 45, 28}, {-47, 57, 7}, {-31, 34, -25},  {-11, 66, -38},  {17, 70, -12}, {18, 55, -20}, {25, 70, -16},  {8, 62, -46}, {-54, 73, -41}, {-60, 57, 18},  {-44, 62, 15},  {-27, 70, -16}, {-23, 60, -33},  {-9, 69, -34}, };
+    private byte[][] content = {{11, 59, -27}, {14, 58, -9}, {10, 70, -6}, {29, 57, -13}, {48, 64, -20}, {-7, 67, -58}, {-73, 68, -50}, {-66, 69, 20}, {-38, 66, 25}, {-36, 53, -2}, {-30, 57, -39}, {5, 56, -21}, {7, 71, -18}, {45, 59, -7}, {39, 65, -31}, {2, 69, -58}, {-60, 56, -10}, {-56, 66, 27}, {-34, 67, 4}, {-44, 54, -31}, {-11, 68, -41}, {11, 75, -25}, {36, 61, -15}, {42, 56, -14}, {3, 72, -56}, {-71, 72, -33}, {-62, 45, 28}, {-47, 57, 7}, {-31, 34, -25}, {-11, 66, -38}, {17, 70, -12}, {18, 55, -20}, {25, 70, -16}, {8, 62, -46}, {-54, 73, -41}, {-60, 57, 18}, {-44, 62, 15}, {-27, 70, -16}, {-23, 60, -33}, {-9, 69, -34},};
     private WatchData watchData = new WatchData();
 
     private AccelData[] accelData = new AccelData[80];
@@ -225,6 +225,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
                                 if (!"".equals(tempBleInfo.getTime()) && !"".equals(tempBleInfo.getU_time())) {
                                     LinkDataManager.getInstance().cleanFlyBird(value);
+
                                     //解除绑定
                                     int fenceId = LinkDataManager.getInstance().queryFenceIdByDeviceName(tempBleInfo.getDevice_name());
                                     if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
@@ -399,6 +400,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     //6、说明进入的不是之前绑定的区域
                     if (uwbCoordData.getSemaphore() == 50) {
                         //7、需要解除绑定
+
                         FinalDataManager.getInstance().removeUwb(uwbCoordData.getDevice().getFencePoint().getFenceId());
                         uwbCoordData.setSemaphore(0);
 

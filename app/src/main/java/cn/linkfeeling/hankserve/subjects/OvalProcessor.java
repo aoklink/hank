@@ -107,7 +107,7 @@ public class OvalProcessor implements IDataAnalysis {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
                 if (s != null) {
                     String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
-                    if (uwbCode != null) {
+                    if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
                         UWBCoordData uwbCoordData = new UWBCoordData();
                         uwbCoordData.setDevice(deviceByBleName);
                         uwbCoordData.setCode(uwbCode);
@@ -153,7 +153,7 @@ public class OvalProcessor implements IDataAnalysis {
         }
 
         if (speed == 0) {
-            FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
+
             start = true;
             //解除绑定
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);

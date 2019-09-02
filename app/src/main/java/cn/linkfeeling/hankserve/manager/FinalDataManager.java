@@ -180,6 +180,12 @@ public class FinalDataManager {
      * @param fenceId
      */
     public void removeUwb(int fenceId) {
+        String anchName = LinkDataManager.getInstance().getAnchName(fenceId);
+        if (anchName != null) {
+            if (FinalDataManager.getInstance().getRssi_wristbands().containsKey(anchName)) {
+                FinalDataManager.getInstance().getRssi_wristbands().remove(anchName);
+            }
+        }
         if (fenceId_uwbData.containsKey(fenceId)) {
             fenceId_uwbData.remove(fenceId);
         }
@@ -188,10 +194,11 @@ public class FinalDataManager {
 
     /**
      * 移除rssi缓存数据
+     *
      * @param anch
      */
-    public void removeRssi(String anch){
-        if(rssi_wristbands.containsKey(anch)){
+    public void removeRssi(String anch) {
+        if (rssi_wristbands.containsKey(anch)) {
             rssi_wristbands.remove(anch);
         }
     }
@@ -207,6 +214,22 @@ public class FinalDataManager {
         if (fenceId_uwbData.containsKey(fenceId)) {
             return true;
 
+        }
+        return false;
+    }
+
+    /**
+     * 器械是否已经绑定手环
+     *
+     * @param uwbCode
+     * @return
+     */
+    public boolean alreadyBind(String uwbCode) {
+        Collection<UWBCoordData> values = fenceId_uwbData.values();
+        for (UWBCoordData value : values) {
+            if (uwbCode.equals(value.getCode())) {
+                return true;
+            }
         }
         return false;
     }

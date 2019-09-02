@@ -42,7 +42,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
     private static final float SELF_GRAVITY = 2.5f;
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
-    private MatchQueue<Byte> devicesQueue = new MatchQueue<>(130);
 
     private int flag = -1;
 
@@ -54,7 +53,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     }
 
     @Override
-    public  BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
@@ -90,6 +89,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
             return null;
         }
         if (start) {
+            FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
+            startTime = System.currentTimeMillis();
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire.isEmpty()) {
                 Log.i("tttttttttt", "-5-5-5");
@@ -110,9 +111,22 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
 
 
-    /*    if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
-            LinkDataManager.getInstance().checkBind(deviceByBleName);
-        }*/
+        if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
+            if (System.currentTimeMillis() - startTime > 5 * 1000) {
+                String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
+                if (s != null) {
+                    String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
+                    if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
+                        UWBCoordData uwbCoordData = new UWBCoordData();
+                        uwbCoordData.setDevice(deviceByBleName);
+                        uwbCoordData.setCode(uwbCode);
+                        FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+                    }
+                } else {
+                    LinkDataManager.getInstance().checkBind(deviceByBleName);
+                }
+            }
+        }
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
 
@@ -125,79 +139,14 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     bleDeviceInfoNow.getCurve().add(cuv1);
                     bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
                 }
-                if (serviceData[13] != 0) {
-                    devicesQueue.offer(serviceData[j]);
-                    Log.i("pipeizhishebei", devicesQueue.size()+"");
-                }
 
             }
-                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> alternative = FinalDataManager.getInstance().getAlternative().get(deviceByBleName.getFencePoint().getFenceId());
-                if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId()) && alternative != null && alternative.size() != 0) {
-                    if (devicesQueue.size() == 130) {
-                        Log.i("pipeizhixxx", "130");
-                        Log.i("pipeizhizzz", alternative.size() + "");
-                        byte[] deviceData = new byte[130];
-                        List<Byte> deviceList = new ArrayList<>(devicesQueue);
-                        Log.i("pipeizhimmmm", new Gson().toJson(deviceList));
-
-                        for (int i = 0; i < deviceList.size(); i++) {
-                            deviceData[i] = deviceList.get(i);
-                        }
-
-                        int minNum = Integer.MAX_VALUE;
-                        UWBCoordData uwbCoordData = null;
-
-                        for (UWBCoordData next : alternative.keySet()) {
-                            WristbandProcessor wristbandProcessor = WristbandProcessor.map.get(LinkDataManager.getInstance().getUwbCode_wristbandName().get(next.getCode()));
-                            if (wristbandProcessor != null) {
-                                MatchQueue<AccelData> wristQueue = wristbandProcessor.getWatchQueue();
-                                WatchData watchData = new WatchData();
-                                AccelData[] accelData = new AccelData[40];
-
-                                List<AccelData> watchList = new ArrayList<>(wristQueue);
-
-                                Log.i("pipeizhinnnnn", new Gson().toJson(watchList));
-                                for (int i = 0; i < watchList.size(); i++) {
-                                    accelData[i] = watchList.get(i);
-                                }
-                                watchData.setData(accelData);
-
-                                int matchNum = NDKTools.match_data(deviceData, watchData);
-                                Log.i("pipeizhi-----", matchNum + "");
-
-
-                                if (matchNum < minNum) {
-
-                                    minNum = matchNum;
-                                    uwbCoordData = next;
-                                }
-                            }
-                        }
-                        if (uwbCoordData != null && minNum < 10000) {
-                            Log.i("pipeizhi", minNum + "");
-                           alternative.remove(uwbCoordData); //从备选人中移除
-                            FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
-
-                        }
-                    }
-
-                }
-            }
-
-
-
+        }
 
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
-
-            Log.i("tttttttttt", "-1-1-1");
-
-
             start = true;
-
             flag = CalculateUtil.byteArrayToInt(seqNum);
-
-            devicesQueue.clear();
 
             if (serviceData[10] == 0 || serviceData[13] == 0) {
                 //       deviceByBleName.setAbility(0);
