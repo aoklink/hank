@@ -105,19 +105,14 @@ public class TreadMillProcessor implements IDataAnalysis {
 
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
-            if (System.currentTimeMillis() - startTime > 5 * 1000) {
+            if (System.currentTimeMillis() - startTime >= 5 * 1000) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
                 if (s != null) {
                     String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
                     if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
-                        UWBCoordData uwbCoordData = new UWBCoordData();
-                        uwbCoordData.setDevice(deviceByBleName);
-                        uwbCoordData.setCode(uwbCode);
-                        FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+                        LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
                     }
-
                 } else {
-
                     LinkDataManager.getInstance().checkBind(deviceByBleName);
                 }
 

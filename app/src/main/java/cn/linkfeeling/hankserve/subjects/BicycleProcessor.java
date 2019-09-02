@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -62,7 +63,6 @@ public class BicycleProcessor implements IDataAnalysis {
             return null;
         }
 
-
         Log.i("danchedata", Arrays.toString(serviceData));
 
         byte[] seqNum = {serviceData[5], serviceData[4]};
@@ -101,18 +101,16 @@ public class BicycleProcessor implements IDataAnalysis {
         }
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
-            if (System.currentTimeMillis() - startTime > 5 * 1000) {
+            if (System.currentTimeMillis() - startTime >= 5 * 1000) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
                 if (s != null) {
                     String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
                     if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
-                        UWBCoordData uwbCoordData = new UWBCoordData();
-                        uwbCoordData.setDevice(deviceByBleName);
-                        uwbCoordData.setCode(uwbCode);
-                        FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+                        LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
                     }
                 } else {
                     LinkDataManager.getInstance().checkBind(deviceByBleName);
+
                 }
             }
         }

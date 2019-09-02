@@ -448,7 +448,6 @@ public class LinkDataManager {
     }
 
     public void checkBind(LinkSpecificDevice deviceByBleName) {
-
         Log.i("ppppppppsizetop", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
         //围栏设备在运动
         Log.i("pppppppp", "进来了");
@@ -463,9 +462,12 @@ public class LinkDataManager {
         }
 
         //进行二次筛选    在备胎中移除所有已经绑定的标签
-        for (UWBCoordData next : queue.keySet()) {
+
+        Iterator<UWBCoordData> iterator = queue.keySet().iterator();
+        while (iterator.hasNext()){
+            UWBCoordData next = iterator.next();
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsValue(next)) {
-                queue.remove(next);
+                iterator.remove();
             }
         }
 
@@ -488,12 +490,42 @@ public class LinkDataManager {
         }
         queue.remove(uwbCoordData); //从备选人中移除
         FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
-
+        Log.i("binding", "UWB SCAN");
         Log.i("ppppppppsizebottom", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
 
         //找出带匹配手环
         //  ConcurrentHashMap<Integer, List<String>> map = queryWristByFenceId(newUwb.getDevice().getId());
         //      FinalDataManager.getInstance().getCode_points().get
+
+    }
+
+
+    /**
+     * 根据BLE扫描的RSSI 选择手环绑定
+     *
+     * @param uwbCode
+     * @param deviceByBleName
+     */
+    public void bleBindAndRemoveSpareTire(String uwbCode, LinkSpecificDevice deviceByBleName) {
+        UWBCoordData uwbCoordData = new UWBCoordData();
+        uwbCoordData.setDevice(deviceByBleName);
+        uwbCoordData.setSemaphore(0);
+        uwbCoordData.setCode(uwbCode);
+        FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+        Log.i("binding", "BLE RSSI");
+        ConcurrentHashMap<Integer, ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> alternative = FinalDataManager.getInstance().getAlternative();
+        if (alternative != null && !alternative.isEmpty()) {
+            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = alternative.get(deviceByBleName.getFencePoint().getFenceId());
+            if (queueConcurrentHashMap != null && !queueConcurrentHashMap.isEmpty()) {
+                Iterator<Map.Entry<UWBCoordData, UwbQueue<Point>>> iterator = queueConcurrentHashMap.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry<UWBCoordData, UwbQueue<Point>> next = iterator.next();
+                    if (next.getKey().getCode().equals(uwbCode)) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
 
     }
 
