@@ -110,4 +110,7 @@ public class LinkSpecificDevice {
         return receiveDeviceBleTime;
     }
 
+    public void setCenterPoint(UWBCoordData.FencePoint.Point centerPoint) {
+        this.centerPoint = centerPoint;
+    }
 }

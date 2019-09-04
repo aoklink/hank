@@ -29,10 +29,15 @@ public class CalculateUtil {
      * @time 2019/3/25 14:03
      */
     public static BigDecimal floatDivision(float num1, float num2) {
-        BigDecimal bigDecimal1 = new BigDecimal(num1);
-        BigDecimal bigDecimal2 = new BigDecimal(num2);
-        BigDecimal divide = bigDecimal1.divide(bigDecimal2, 7, BigDecimal.ROUND_HALF_UP);
-        return divide;
+        try {
+            BigDecimal bigDecimal1 = new BigDecimal(num1);
+            BigDecimal bigDecimal2 = new BigDecimal(num2);
+            return bigDecimal1.divide(bigDecimal2, 7, BigDecimal.ROUND_HALF_UP);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return BigDecimal.valueOf(0);
 
 
     }
@@ -62,6 +67,7 @@ public class CalculateUtil {
 
     /**
      * byte转int
+     *
      * @param b
      * @return
      */
