@@ -67,7 +67,7 @@ public class OvalProcessor implements IDataAnalysis {
 
         Log.i("vvvvvvv", Arrays.toString(serviceData));
 
-        byte[] seqNum = {serviceData[5], serviceData[4]};
+        byte[] seqNum = { serviceData[4],serviceData[5]};
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
             return null;
         }
