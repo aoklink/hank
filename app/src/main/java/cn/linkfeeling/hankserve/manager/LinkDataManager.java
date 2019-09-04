@@ -351,6 +351,21 @@ public class LinkDataManager {
 
 
     /**
+     * 根据anchName 获取设备
+     * @param anchName
+     * @return
+     */
+    public LinkSpecificDevice getDeviceByanchName(String anchName) {
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (anchName.equals(devicesDatum.getAnchName())) {
+                return devicesDatum;
+            }
+        }
+        return null;
+    }
+
+
+    /**
      * 初始化上传数据结构
      *
      * @param bleDeviceInfo
@@ -464,7 +479,7 @@ public class LinkDataManager {
         //进行二次筛选    在备胎中移除所有已经绑定的标签
 
         Iterator<UWBCoordData> iterator = queue.keySet().iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             UWBCoordData next = iterator.next();
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsValue(next)) {
                 iterator.remove();
