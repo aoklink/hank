@@ -10,29 +10,44 @@ public class LinkSpecificDevice {
 
     private int id;
     private String deviceName;
+    private String anchName;
     private String type; //设备类型
     private float perimeter;
     private float slope;
-    private float ability;  //设备的当前速度，判断是否在运转
+ //   private float ability;  //设备的当前速度，判断是否在运转
     private UWBCoordData.FencePoint fencePoint;
+    private UWBCoordData.FencePoint.Point  centerPoint;
 
     private long receiveDeviceBleTime;  //接收设备ble发出非零数据的时间
 
     private List<LinkBLE> linkBLES;
 
-    public float getAbility() {
-        return ability;
+    public UWBCoordData.FencePoint.Point getCenterPoint() {
+        return centerPoint;
     }
 
-    public void setAbility(float ability) {
-        if (ability == 0) {
-            receiveDeviceBleTime = 0;
-        } else if (this.ability == 0) {
-            receiveDeviceBleTime = System.currentTimeMillis();
-        }
-        this.ability = ability;
+//    public float getAbility() {
+//        return ability;
+//    }
+
+//    public void setAbility(float ability) {
+//        if (ability == 0) {
+//            receiveDeviceBleTime = 0;
+//        } else if (this.ability == 0) {
+//            receiveDeviceBleTime = System.currentTimeMillis();
+//        }
+//        this.ability = ability;
+//
+//
+//    }
 
 
+    public String getAnchName() {
+        return anchName;
+    }
+
+    public void setAnchName(String anchName) {
+        this.anchName = anchName;
     }
 
     public int getId() {

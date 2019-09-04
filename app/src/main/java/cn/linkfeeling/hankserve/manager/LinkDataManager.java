@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,8 +23,11 @@ import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkBLE;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.bean.Wristband;
+import cn.linkfeeling.hankserve.queue.UwbQueue;
+import cn.linkfeeling.hankserve.utils.CalculateUtil;
 
 import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
 
@@ -305,6 +309,20 @@ public class LinkDataManager {
         return null;
     }
 
+    /**
+     * 根据anchName 获取设备
+     * @param anchName
+     * @return
+     */
+    public LinkSpecificDevice getDeviceByanchName(String anchName) {
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (anchName.equals(devicesDatum.getAnchName())) {
+                return devicesDatum;
+            }
+        }
+        return null;
+    }
+
 
     public LinkSpecificDevice queryDeviceByName(String deviceName) {
         List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().devicesData;
@@ -315,4 +333,145 @@ public class LinkDataManager {
         }
         return null;
     }
+
+    /**
+     * g根据围栏id查找anch
+     *
+     * @param fenceId
+     * @return
+     */
+    public String getAnchName(int fenceId) {
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (devicesDatum.getFencePoint().getFenceId() == fenceId) {
+                return devicesDatum.getAnchName();
+            }
+        }
+
+        return null;
+
+    }
+
+
+    public ConcurrentHashMap<String, UwbQueue<Point>> queryQueueByDeviceId(int deviceId) {
+        Point point;
+        ConcurrentHashMap<String, UwbQueue<Point>> newCaculate = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, UwbQueue<Point>> code_points = FinalDataManager.getInstance().getCode_points();
+        for (Map.Entry<String, UwbQueue<Point>> next : code_points.entrySet()) {
+            UwbQueue<Point> value = next.getValue();
+            point = new Point();
+            point.setId(deviceId);
+            String key = next.getKey();
+            if (value.contains(point) && FinalDataManager.getInstance().queryUwb(next.getKey()) == null) {
+                newCaculate.put(key, value);
+            }
+        }
+        return newCaculate;
+    }
+
+
+    public String queryUWBCodeByWristband(String wristband) {
+        Iterator<Map.Entry<String, String>> iterator = uwbCode_wristbandName.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> next = iterator.next();
+            if (next.getValue().equals(wristband)) {
+                return next.getKey();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据BLE扫描的RSSI 选择手环绑定
+     *
+     * @param uwbCode
+     * @param deviceByBleName
+     */
+    public void bleBindAndRemoveSpareTire(String uwbCode, LinkSpecificDevice deviceByBleName) {
+        UWBCoordData uwbCoordData = new UWBCoordData();
+        uwbCoordData.setDevice(deviceByBleName);
+        uwbCoordData.setSemaphore(0);
+        uwbCoordData.setCode(uwbCode);
+        FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+        Log.i("binding", "BLE RSSI");
+        ConcurrentHashMap<Integer, ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> alternative = FinalDataManager.getInstance().getAlternative();
+        if (alternative != null && !alternative.isEmpty()) {
+            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = alternative.get(deviceByBleName.getFencePoint().getFenceId());
+            if (queueConcurrentHashMap != null && !queueConcurrentHashMap.isEmpty()) {
+                Iterator<Map.Entry<UWBCoordData, UwbQueue<Point>>> iterator = queueConcurrentHashMap.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry<UWBCoordData, UwbQueue<Point>> next = iterator.next();
+                    if (next.getKey().getCode().equals(uwbCode)) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    public void checkBind(LinkSpecificDevice deviceByBleName) {
+        Log.i("ppppppppsizetop", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
+        //围栏设备在运动
+        Log.i("pppppppp", "进来了");
+        //获取备选人的集合
+        ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queue = FinalDataManager.getInstance().getAlternative().get(deviceByBleName.getFencePoint().getFenceId());
+
+
+        if (queue == null || queue.isEmpty()) {
+            //可以理解成没有符合条件的人   不进行绑定
+            Log.i("pppppppp", "-3-3-3");
+            return;
+        }
+
+        //进行二次筛选    在备胎中移除所有已经绑定的标签
+
+        Iterator<UWBCoordData> iterator = queue.keySet().iterator();
+        while (iterator.hasNext()) {
+            UWBCoordData next = iterator.next();
+            if (FinalDataManager.getInstance().getFenceId_uwbData().containsValue(next)) {
+                iterator.remove();
+            }
+        }
+
+        Log.i("pppppppp2222", queue.size() + "");
+        UWBCoordData uwbCoordData = null;
+        float min = Integer.MAX_VALUE;
+        for (Map.Entry<UWBCoordData, UwbQueue<Point>> next : queue.entrySet()) {
+
+            int num = 0;
+            UwbQueue<Point> value = next.getValue();
+            UWBCoordData.FencePoint.Point centerPoint = deviceByBleName.getCenterPoint();
+            for (Point point : value) {
+                num += CalculateUtil.pointDistance(point.getX(), point.getY(), centerPoint.getX(), centerPoint.getY());
+            }
+            float v = CalculateUtil.txFloat(num, value.size());
+            if (v < min) {
+                min = v;
+                uwbCoordData = next.getKey();
+            }
+        }
+        queue.remove(uwbCoordData); //从备选人中移除
+        FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+        Log.i("binding", "UWB SCAN");
+        Log.i("ppppppppsizebottom", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
+
+        //找出带匹配手环
+        //  ConcurrentHashMap<Integer, List<String>> map = queryWristByFenceId(newUwb.getDevice().getId());
+        //      FinalDataManager.getInstance().getCode_points().get
+
+    }
+
+    public LinkSpecificDevice queryDeviceNameByFenceId(int fenceId) {
+
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (devicesDatum.getFencePoint().getFenceId() == fenceId) {
+                return devicesDatum;
+
+            }
+        }
+        return null;
+
+    }
+
 }

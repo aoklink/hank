@@ -4,11 +4,16 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
+import cn.linkfeeling.hankserve.bean.AccelData;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
+import cn.linkfeeling.hankserve.queue.LimitQueue;
+import cn.linkfeeling.hankserve.queue.MatchQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
+import cn.linkfeeling.hankserve.utils.WatchScanRecord;
 
 
 /**
@@ -18,8 +23,19 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  */
 public class WristbandProcessor extends IWristbandDataAnalysis {
 
+    public static ConcurrentHashMap<String, WristbandProcessor> map;
+
+    private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
+
+    private MatchQueue<AccelData> watchQueue = new MatchQueue<>(40);
+
+    static {
+        map = new ConcurrentHashMap<>();
+    }
+
+
     public static WristbandProcessor getInstance() {
-        return WristbandProcessor.WristbandProcessorHolder.sWristbandProcessor;
+        return WristbandProcessorHolder.sWristbandProcessor;
     }
 
     private static class WristbandProcessorHolder {
@@ -33,38 +49,73 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
             return null;
         }
 
-        LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(bytes);
-        if (linkScanRecord == null) {
-            return null;
-        }
-
         Log.i("hhhhhhhhhhhhhhhh" + bleName, Arrays.toString(bytes));
 
-        SparseArray<byte[]> manufacturerSpecificData = linkScanRecord.getManufacturerSpecificData();
-        if (manufacturerSpecificData != null && manufacturerSpecificData.size() != 0) {
-            byte[] bytes1 = manufacturerSpecificData.valueAt(0);
-            if (bytes1 == null || bytes1.length == 0) {
+
+        if (bleName.contains("I7PLUS")) {
+            LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(bytes);
+            if (linkScanRecord == null) {
                 return null;
             }
-
-            Log.i("xxxxxxxxxx"+bleName,Arrays.toString(bytes1));
-
-
-
-            byte[] heart = new byte[1];
-            if (bleName.contains("I7PLUS") || "SA".equals(bleName)) {
+            SparseArray<byte[]> manufacturerSpecificData = linkScanRecord.getManufacturerSpecificData();
+            if (manufacturerSpecificData != null && manufacturerSpecificData.size() != 0) {
+                byte[] bytes1 = manufacturerSpecificData.valueAt(0);
+                if (bytes1 == null || bytes1.length == 0) {
+                    return null;
+                }
+                byte[] heart = new byte[1];
                 heart[0] = bytes1[6];
-            } else {
-                heart[0] = bytes1[0];
-            }
-            int heartInt = CalculateUtil.byteArrayToInt(heart);
-            String heatRate = String.valueOf(heartInt);
+                int heartInt = CalculateUtil.byteArrayToInt(heart);
+                String heatRate = String.valueOf(heartInt);
 
-            Log.i("cccccccccccccccc" + bleName, heatRate);
-            bleDeviceInfo.setBracelet_id(bleName);
-            bleDeviceInfo.setHeart_rate(heatRate);
+                Log.i("cccccccccccccccc" + bleName, heatRate);
+                bleDeviceInfo.setBracelet_id(bleName);
+                bleDeviceInfo.setHeart_rate(heatRate);
+            }
+        } else if (bleName.contains("I7")) {
+            WatchScanRecord watchScanRecord = WatchScanRecord.parseFromBytes(bytes);
+            if (watchScanRecord == null) {
+                return null;
+            }
+            SparseArray<byte[]> manufacturerSpecificData = watchScanRecord.getManufacturerSpecificData();
+            if (manufacturerSpecificData != null && manufacturerSpecificData.size() != 0) {
+                byte[] bytes1 = manufacturerSpecificData.valueAt(0);
+                if (bytes1 == null || bytes1.length == 0) {
+                    return null;
+                }
+
+                byte[] seqNum = new byte[2];
+                seqNum[0] = bytes1[3];
+                seqNum[1] = bytes1[4];
+                int seq = CalculateUtil.byteArrayToInt(seqNum);
+                if (limitQueue.contains(seq)) {
+                    return null;
+                }
+                limitQueue.offer(seq);
+
+                for (int j = 5; j < 20; j = j + 3) {
+                    AccelData accelData = new AccelData();
+                    accelData.setX(bytes1[j]);
+                    accelData.setY(bytes1[j + 1]);
+                    accelData.setZ(bytes1[j + 2]);
+                    watchQueue.offer(accelData);
+                }
+
+                byte[] heart = new byte[1];
+                heart[0] = bytes1[2];
+                int heartInt = CalculateUtil.byteArrayToInt(heart);
+                String heatRate = String.valueOf(heartInt);
+
+                Log.i("cccccccccccccccc" + bleName, heatRate);
+                bleDeviceInfo.setBracelet_id(bleName);
+                bleDeviceInfo.setHeart_rate(heatRate);
+            }
         }
 
         return bleDeviceInfo;
+    }
+
+    public MatchQueue<AccelData> getWatchQueue() {
+        return watchQueue;
     }
 }

@@ -5,15 +5,19 @@ import android.util.Log;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
+import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
@@ -26,11 +30,14 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 public class BicycleProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, BicycleProcessor> map;
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
+    private int flag = -1;
+
+    private volatile boolean start = true;
+    private long startTime;
 
     static {
         map = new ConcurrentHashMap<>();
     }
-
 
     public static BicycleProcessor getInstance() {
         return BicycleProcessorHolder.sBicycleProcessor;
@@ -42,26 +49,72 @@ public class BicycleProcessor implements IDataAnalysis {
 
 
     @Override
-    public BleDeviceInfo analysisBLEData(String hostString, byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
+
         if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
             return null;
         }
+
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
         if (serviceData == null) {
             return null;
         }
 
-        Log.i(hostString + "danchedata", Arrays.toString(serviceData));
+        Log.i("danchedata", Arrays.toString(serviceData));
 
+        byte[] seqNum = {serviceData[5], serviceData[4]};
 
-        byte[] seq = {serviceData[5], serviceData[4]};
-        if (limitQueue.contains(CalculateUtil.byteArrayToInt(seq))) {
+        if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
             return null;
         }
-        limitQueue.offer(CalculateUtil.byteArrayToInt(seq));
+
+        if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
+            return null;
+        }
+        Log.i("dancheseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
+        limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
+
+
+        if (start) {
+            FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
+            startTime = System.currentTimeMillis();
+            ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
+            if (spareTire.isEmpty()) {
+                start = false;
+                return null;
+            }
+            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+            for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                String key = next.getKey();
+                UWBCoordData uwbCoordData = new UWBCoordData();
+                uwbCoordData.setCode(key);
+                uwbCoordData.setSemaphore(0);
+                uwbCoordData.setDevice(deviceByBleName);
+                queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+
+            }
+            FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
+            start = false;
+        }
+
+        if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
+            if (System.currentTimeMillis() - startTime >= 5 * 1000) {
+                String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
+                if (s != null) {
+                    String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
+                    if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
+                        LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
+                    }
+                } else {
+                    LinkDataManager.getInstance().checkBind(deviceByBleName);
+
+                }
+            }
+        }
+
 
         byte[] turns = new byte[2];
         turns[0] = serviceData[0];
@@ -74,33 +127,44 @@ public class BicycleProcessor implements IDataAnalysis {
 
         float speed;
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
+            flag = CalculateUtil.byteArrayToInt(seqNum);
             speed = 0;
+
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
-            //  speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
-            speed = bigDecimal.floatValue() * 3600;
+            speed = calculateBicycleSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
         }
         Log.i("ticks", speed + "");
         Log.i("ticks----", (float) CalculateUtil.byteArrayToInt(ticks) + "");
         Log.i("ticks===", Arrays.toString(ticks));
 
+        Log.i("00000000000---", speed + "");
+        //    deviceByBleName.setAbility(speed);
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
-        if (bleDeviceInfoNow == null) {
-            deviceByBleName.setAbility(0);
-            return null;
+        if (bleDeviceInfoNow != null) {
+            Log.i("00000000000", "null");
+            bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
+            bleDeviceInfoNow.setSpeed(String.valueOf(speed));
+            bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
         }
 
-        if (speed != 0) {
-            deviceByBleName.setAbility(speed);
+
+        Log.i("00000000000dddd", speed + "");
+
+        if (speed == 0) {
+            start = true;
+            //解除绑定
+            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+            if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+                FinalDataManager.getInstance().removeUwb(fenceId);
+            }
+            FinalDataManager.getInstance().getAlternative().remove(fenceId);
         }
-
-
-        bleDeviceInfoNow.setSpeed(String.valueOf(speed));
-        bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seq)));
         return bleDeviceInfoNow;
 
     }
+
 
     /**
      * 根据转速换算速度(单车)
@@ -117,9 +181,14 @@ public class BicycleProcessor implements IDataAnalysis {
     }
 
     private float calculateBicycleSpeed(float measureSpeed, float slope) {
+        float v;
         BigDecimal bigDecimal = CalculateUtil.floatDivision(measureSpeed, slope);
-
-        float v = (float) ((bigDecimal.floatValue() * 0.3378) - 7.3649);
+        if (bigDecimal.floatValue() > 90) {
+            v = (float) ((bigDecimal.floatValue() * bigDecimal.floatValue()) * 0.0033 - 0.194 * bigDecimal.floatValue() + 13.33);
+            //  v = (float) ((bigDecimal.floatValue() * 0.666) - 42.15);//向南提供的函数关系
+        } else {
+            v = (float) ((bigDecimal.floatValue() * 0.329) - 7.01);
+        }
         if (v < 0) {
             return (float) 0;
         }

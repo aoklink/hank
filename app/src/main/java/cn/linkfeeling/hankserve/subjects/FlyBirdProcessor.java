@@ -5,7 +5,7 @@ import android.os.ParcelUuid;
 import android.util.Log;
 
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.bmob.v3.exception.BmobException;
@@ -14,11 +14,14 @@ import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkBLE;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.Power;
+import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
+import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 
@@ -30,35 +33,42 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  */
 public class FlyBirdProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
-    private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
+    private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
+
+    private int flag = -1;
+
+    private volatile boolean start = true;
+    private long startTime;
 
     static {
         map = new ConcurrentHashMap<>();
     }
 
-
-    private Vector<Integer> list = new Vector<>();
-
     @Override
-    public BleDeviceInfo analysisBLEData(String hostString, byte[] scanRecord, String bleName) {
+    public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
         if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
             return null;
         }
-        Log.i("ppppppppp" + bleName, Arrays.toString(scanRecord));
-
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
-        Log.i(hostString + "999999999" + bleName, Arrays.toString(serviceData));
+        Log.i("999999999" + bleName + "--" + hostName, Arrays.toString(serviceData));
+
         if (serviceData == null) {
             return null;
         }
 
+
+        //   dealPowerData(serviceData, deviceByBleName, bleName);
 //        if(serviceData[0]!=0 && serviceData[0]!=-1){
 //            deviceByBleName.setAbility(serviceData[0]);
 //        }
         byte[] seqNum = {serviceData[11], serviceData[12]};
+
+        if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
+            return null;
+        }
 
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return null;
@@ -70,37 +80,70 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (b) {
             return null;
         }
-
-
-        bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
-        if (bleDeviceInfoNow == null) {
-            deviceByBleName.setAbility(0);
-            return null;
+        if (start) {
+            FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
+            startTime = System.currentTimeMillis();
+            ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
+            if (spareTire.isEmpty()) {
+                Log.i("tttttttttt", "-5-5-5");
+                start = false;
+                return null;
+            }
+            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+            for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                String key = next.getKey();
+                UWBCoordData uwbCoordData = new UWBCoordData();
+                uwbCoordData.setCode(key);
+                uwbCoordData.setSemaphore(0);
+                uwbCoordData.setDevice(deviceByBleName);
+                queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+            }
+            FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
+            start = false;
         }
 
-        deviceByBleName.setAbility(serviceData[0]);
+
+        if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
+            if (System.currentTimeMillis() - startTime >= 5 * 1000) {
+                String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
+                if (s != null) {
+                    String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
+                    if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
+                        LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
+                    }
+                } else {
+                    LinkDataManager.getInstance().checkBind(deviceByBleName);
+                }
+            }
+        }
+
+        bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
+
 
         if (serviceData[0] != -1 && serviceData[0] != 0 && serviceData[1] != -1 && serviceData[1] != 0) {
             for (int j = 0; j < 10; j++) {
                 int cuv1 = CalculateUtil.byteToInt(serviceData[j]);
-                bleDeviceInfoNow.getCurve().add(cuv1);
-                bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
-                //  list.add(cuv1);
+                if (bleDeviceInfoNow != null) {
+                    bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
+                    bleDeviceInfoNow.getCurve().add(cuv1);
+                    bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+                }
+
             }
         }
 
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
+            start = true;
+            flag = CalculateUtil.byteArrayToInt(seqNum);
 
-//            Log.i("iiiiiiiiiiiii", JSON.toJSONString(list));
-//            list.clear();
-            if (serviceData[13] == 0) {
-                deviceByBleName.setAbility(0);
+            if (serviceData[10] == 0 || serviceData[13] == 0) {
+                //       deviceByBleName.setAbility(0);
                 return null;
             }
-
             byte act_time = serviceData[13];
             byte gravity = serviceData[10];
+
 
             float actualGravity = 0;
             if (gravity > 0) {
@@ -112,13 +155,17 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 Log.i("zhiliang", actualGravity + "");
             }
 
-
             byte u_time = serviceData[14];
 
-            bleDeviceInfoNow.setGravity(String.valueOf(actualGravity));
-            bleDeviceInfoNow.setTime(String.valueOf(CalculateUtil.byteToInt(act_time)));
-            bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
-            bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+            if (bleDeviceInfoNow != null) {
+                bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
+                bleDeviceInfoNow.setGravity(String.valueOf(actualGravity));
+                bleDeviceInfoNow.setTime(String.valueOf(act_time));
+                bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
+                bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+                //    deviceByBleName.setAbility(0);
+            }
+
         }
         return bleDeviceInfoNow;
 
@@ -150,14 +197,13 @@ public class FlyBirdProcessor implements IDataAnalysis {
             power1.save(new SaveListener<String>() {
                 @Override
                 public void done(String s, BmobException e) {
-                    Log.i("99999-----",s);
-                    Log.i("99999eeeee",e.getMessage());
 
+                    Log.i("99999-----", s == null ? "null" : s);
+                    Log.i("99999eeeee", e == null ? "null" : e.getMessage());
                 }
             });
             return true;
         }
         return false;
     }
-
 }
