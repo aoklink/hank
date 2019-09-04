@@ -36,8 +36,8 @@
     <application
         android:name=".App"
         android:allowBackup="true"
-        android:installLocation="internalOnly"
         android:icon="@mipmap/ic_launcher"
+        android:installLocation="internalOnly"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -51,12 +51,12 @@
             </intent-filter>
         </activity>
 
-   <!--     <receiver android:name=".receiver.AlarmReceiver" />-->
+        <receiver android:name=".receiver.AlarmReceiver" />
         <provider
             android:name="cn.bmob.v3.util.BmobContentProvider"
             android:authorities="cn.linkfeeling.hankserve.BmobContentProvider"></provider>
 
-        <receiver
+    <!--    <receiver
             android:name=".RebootBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
@@ -64,7 +64,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
 
     </application>
