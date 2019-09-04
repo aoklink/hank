@@ -47,6 +47,7 @@ public class LinkDataManager {
     public static final String BICYCLE_1 = "单车t2";
     public static final String OVAL_1 = "椭圆机t3";
     public static final String BIRD_1 = "砝码器械t4";
+    public static final String ANCH = "ANCH";
 
 
     private static final LinkDataManager linkDataManager = new LinkDataManager();
@@ -473,5 +474,16 @@ public class LinkDataManager {
         return null;
 
     }
+
+    public int queryFenceIdByDeviceName(String deviceName) {
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (deviceName.equals(devicesDatum.getDeviceName())) {
+                return devicesDatum.getFencePoint().getFenceId();
+
+            }
+        }
+        return -1;
+    }
+
 
 }

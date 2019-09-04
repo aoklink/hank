@@ -17,6 +17,7 @@ import com.link.feeling.framework.utils.data.L;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,18 +26,22 @@ import java.util.concurrent.TimeUnit;
 import cn.linkfeeling.hankserve.adapter.BLEAdapter;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
+import cn.linkfeeling.hankserve.interfaces.IAnchDataAnalysis;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.manager.LinkWSManager;
+import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.ui.IUploadContract;
 import cn.linkfeeling.hankserve.ui.UploadPresenter;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.HexUtil;
 import cn.linkfeeling.hankserve.utils.LinkScanRecord;
+import cn.linkfeeling.hankserve.utils.WatchScanRecord;
 import cn.linkfeeling.link_socketserve.NettyServer;
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
 import cn.linkfeeling.link_socketserve.unpack.SmartCarProtocol;
@@ -169,12 +174,13 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                     getPresenter().uploadBleData(tempBleInfo, value);
                                 }
 
-                                if (!tempBleInfo.getSpeed().equals("") && Float.parseFloat(tempBleInfo.getSpeed()) == 0) {
+                            /*    if (!tempBleInfo.getSpeed().equals("") && Float.parseFloat(tempBleInfo.getSpeed()) == 0) {
                                     LinkSpecificDevice linkSpecificDevice = LinkDataManager.getInstance().queryDeviceByName(tempBleInfo.getDevice_name());
                                     if (linkSpecificDevice != null) {
                                         linkSpecificDevice.setAbility(0);
                                     }
                                 }
+*/
 
                                 if (tempBleInfo.getCurve() != null && !tempBleInfo.getCurve().isEmpty()) {
                                     value.getCurve().removeAll(tempBleInfo.getCurve());
@@ -182,11 +188,12 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
                                 if (!"".equals(tempBleInfo.getTime()) && !"".equals(tempBleInfo.getU_time())) {
                                     LinkDataManager.getInstance().cleanFlyBird(value);
-                                    LinkSpecificDevice linkSpecificDevice = LinkDataManager.getInstance().queryDeviceByName(value.getDevice_name());
-                                    if (linkSpecificDevice != null) {
-                                        linkSpecificDevice.setAbility(0);
-                                    }
 
+                                    //解除绑定
+                                    int fenceId = LinkDataManager.getInstance().queryFenceIdByDeviceName(tempBleInfo.getDevice_name());
+                                    if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+                                        FinalDataManager.getInstance().removeUwb(fenceId);
+                                    }
                                 }
 
                             }
@@ -208,6 +215,19 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             return;
         }
         String name = linkScanRecord.getDeviceName();
+        if ("I7".equals(name)) {
+            WatchScanRecord watchScanRecord = WatchScanRecord.parseFromBytes(scanRecord);
+            byte[] bytes = watchScanRecord.getManufacturerSpecificData().valueAt(0);
+            byte[] mac = new byte[2];
+            mac[0] = bytes[0];
+            mac[1] = bytes[1];
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(name);
+            stringBuilder.append(HexUtil.encodeHexStr(mac));
+            name = stringBuilder.toString();
+            Log.i("777777777777" + name, Arrays.toString(bytes));
+        }
+
 
         if ("I7PLUS".equals(name)) {
             byte[] bytes = linkScanRecord.getManufacturerSpecificData().valueAt(0);
@@ -256,6 +276,16 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 e.printStackTrace();
             }
         }
+
+        if (name.startsWith(LinkDataManager.ANCH)) {
+            try {
+                IAnchDataAnalysis anchDataAnalysis = (IAnchDataAnalysis) DataProcessorFactory.creteProcess(LinkDataManager.ANCH, name);
+                anchDataAnalysis.analysisAnchData(scanRecord, name);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     /**
@@ -264,7 +294,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private void connectWebSocket() {
         LinkWSManager.getInstance().connectWebSocket(text -> {
             UWBCoordData uwbCoordData = gson.fromJson(text, UWBCoordData.class);
-                Log.i("quanji"+uwbCoordData.getCode(),uwbCoordData.getX()+" "+uwbCoordData.getY());
+            Log.i("quanji" + uwbCoordData.getCode(), uwbCoordData.getX() + " " + uwbCoordData.getY());
             dealMessage(text);
         });
     }
@@ -290,48 +320,85 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     }
 
 
+    private UWBCoordData newUwb;
+
     /**
      * 处理uwb设备数据
      *
      * @author zhangyong
      * @time 2019/3/20 14:57
      */
-    private void dealMessage(String text) {
-        UWBCoordData newUwb = gson.fromJson(text, UWBCoordData.class);
+    private synchronized void dealMessage(String text) {
+        newUwb = gson.fromJson(text, UWBCoordData.class);
         if (newUwb == null) {
             return;
         }
+        //写入队列
+
+        Log.i("666666666", "查看长度，，，" + FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
+
         boolean within = LinkDataManager.getInstance().isPointInRect(newUwb);
+//
+//        UwbQueue<Point> limitQueue = FinalDataManager.getInstance().getCode_points().get(newUwb.getCode());
+//        if (limitQueue != null && !limitQueue.isEmpty()) {
+//            Log.i(newUwb.getCode(), new Gson().toJson(limitQueue));
+//        }
+
+        //1、首先查找在哪个围栏内
+        String code = newUwb.getCode();
+        UWBCoordData uwbCoordData = FinalDataManager.getInstance().queryUwb(code);
+
+
         if (within) {
-            int fenceId = newUwb.getDevice().getFencePoint().getFenceId();
-            if (FinalDataManager.getInstance().getFenceId_uwbData().get(fenceId) != null) {
-                return;
-            }
-            //&& System.currentTimeMillis() - newUwb.getDevice().getReceiveDeviceBleTime() > 4000
+            writeQueue(newUwb);
 
-            if (newUwb.getDevice().getAbility() != 0 && System.currentTimeMillis() - newUwb.getDevice().getReceiveDeviceBleTime() > 10000) {
+            if (uwbCoordData != null) {
+                //2.说明已经绑定围栏
+                //4、说明该标签已经绑定设备
+                if (uwbCoordData.getDevice().getId() == newUwb.getDevice().getId()) {
+                    //5、说明是进入了之前绑定的区域
+                    uwbCoordData.setSemaphore(0);
+                } else {
 
-                L.i("mmmmmmmmmmm", System.currentTimeMillis() - newUwb.getDevice().getReceiveDeviceBleTime() + "");
-                return;
-            }
+                    //6、说明进入的不是之前绑定的区域
+                    if (uwbCoordData.getSemaphore() == 50) {
+                        //7、需要解除绑定
 
-            if (FinalDataManager.getInstance().getFenceId_uwbData().containsValue(newUwb)) {
-                Iterator iterator = FinalDataManager.getInstance().getFenceId_uwbData().entrySet().iterator();
-                while (iterator.hasNext()) {
-                    Map.Entry entry = (Map.Entry) iterator.next();
-                    UWBCoordData oldUwbValue = (UWBCoordData) entry.getValue();
-                    if (oldUwbValue.getCode().equals(newUwb.getCode())) {
-                        //运动过程中 uwb偏移了
-                        Log.i("77777", oldUwbValue.getDevice().getAbility() + "");
+                        FinalDataManager.getInstance().removeUwb(uwbCoordData.getDevice().getFencePoint().getFenceId());
+                        uwbCoordData.setSemaphore(0);
 
-                        if (oldUwbValue.getDevice().getAbility() != 0) {
+                        if (newUwb.getWristband().getBracelet_id() == null) {
                             return;
                         }
-                        BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(oldUwbValue.getWristband().getBracelet_id());
+                        BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(newUwb.getWristband().getBracelet_id());
                         if (bleDeviceInfo != null) {
-                            LinkDataManager.getInstance().cleanBleDeviceInfo(bleDeviceInfo);
+                            LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
                         }
-                        iterator.remove();
+
+                    } else {
+                        //8、将信号量+1
+                        uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
+                    }
+                }
+                return;
+            }
+
+
+            List<UWBCoordData> list = FinalDataManager.getInstance().querySpareFireUwb(code);
+            if (!list.isEmpty()) {
+                for (UWBCoordData spareFireUwb : list) {
+                    if (spareFireUwb.getDevice().getId() == newUwb.getDevice().getId()) {
+                        spareFireUwb.setSemaphore(0);
+                    } else {
+                        if (spareFireUwb.getSemaphore() == 50) {
+                            //7、需要解除绑定
+                            FinalDataManager.getInstance().removeSpareFireUwb(spareFireUwb);
+                            spareFireUwb.setSemaphore(0);
+
+                        } else {
+                            //8、将信号量+1
+                            spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
+                        }
                     }
                 }
             }
@@ -341,53 +408,90 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             }
             BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(newUwb.getWristband().getBracelet_id());
             if (bleDeviceInfo != null) {
-                //如果是HIIT区域
-                if (newUwb.getDevice().getDeviceName().equals("HIIT")) {
-                    if (!list.contains(newUwb)) {
-                        list.add(newUwb);
-                    }
-                } else {
-                    FinalDataManager.getInstance().getFenceId_uwbData().put(newUwb.getDevice().getFencePoint().getFenceId(), newUwb);
-                }
                 bleDeviceInfo.setDevice_name(newUwb.getDevice().getDeviceName());
             }
         }
-
-
         if (!within) {
-            if (FinalDataManager.getInstance().getFenceId_uwbData().containsValue(newUwb)) {
-                Iterator iterator = FinalDataManager.getInstance().getFenceId_uwbData().entrySet().iterator();
-                while (iterator.hasNext()) {
-                    Map.Entry entry = (Map.Entry) iterator.next();
-                    UWBCoordData oldUwbValue = (UWBCoordData) entry.getValue();
+            writeQueue(newUwb);
+            if (uwbCoordData != null) {
 
-                    if (oldUwbValue.getCode().equals(newUwb.getCode())) {
+                Log.i("666666666", "空位值，，，" + uwbCoordData.getCode());
+                Log.i("666666666", "空位值，，，" + FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
+                //    int fenceId = newUwb.getDevice().getFencePoint().getFenceId();
+                if (uwbCoordData.getSemaphore() == 50) {
+                    //7、需要解除绑定
+                    FinalDataManager.getInstance().removeUwb(uwbCoordData.getDevice().getFencePoint().getFenceId());
+                    uwbCoordData.setSemaphore(0);
 
-                        L.i("777777", oldUwbValue.getDevice().getDeviceName() + "---" + oldUwbValue.getDevice().getAbility());
-                        if (oldUwbValue.getDevice().getAbility() != 0) {
-                            return;
-                        }
-                        BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(oldUwbValue.getWristband().getBracelet_id());
-                        if (bleDeviceInfo != null) {
-                            LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
-                        }
-                        iterator.remove();
+                    if (newUwb.getWristband().getBracelet_id() == null) {
+                        return;
                     }
+                    BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(newUwb.getWristband().getBracelet_id());
+                    if (bleDeviceInfo != null) {
+                        LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
+                    }
+
+                } else {
+
+                    //8、将信号量+1
+                    uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
                 }
                 return;
             }
 
-            Iterator<UWBCoordData> iterator = list.iterator();
-            while (iterator.hasNext()) {
-                UWBCoordData coordData = iterator.next();
-                if (newUwb.getCode().equals(coordData.getCode())) {
-                    BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(coordData.getWristband().getBracelet_id());
-                    if (bleDeviceInfo != null) {
-                        LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
-                        iterator.remove();
+            List<UWBCoordData> list = FinalDataManager.getInstance().querySpareFireUwb(code);
+            if (!list.isEmpty()) {
+                for (UWBCoordData spareFireUwb : list) {
+                    if (spareFireUwb.getSemaphore() == 50) {
+                        //7、需要解除绑定
+                        FinalDataManager.getInstance().removeSpareFireUwb(spareFireUwb);
+                        spareFireUwb.setSemaphore(0);
+
+                    } else {
+                        //8、将信号量+1
+                        spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
                     }
+
                 }
             }
+
+            if (newUwb.getWristband().getBracelet_id() == null) {
+                return;
+            }
+            BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(newUwb.getWristband().getBracelet_id());
+            if (bleDeviceInfo != null) {
+
+                Log.i("666666666", bleDeviceInfo.getBracelet_id() + "清空数据了");
+                LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
+            }
+        }
+    }
+
+
+    private void writeQueue(UWBCoordData uwbCoordData) {
+        UwbQueue<Point> points = FinalDataManager.getInstance().getCode_points().get(uwbCoordData.getCode());
+        if (points == null) {
+            UwbQueue<Point> uwbQueue = new UwbQueue<>(25);
+            Point point = new Point();
+            if (uwbCoordData.getDevice() == null) {
+                point.setId(-1);
+            } else {
+                point.setId(uwbCoordData.getDevice().getId());
+            }
+            point.setX(uwbCoordData.getX());
+            point.setY(uwbCoordData.getY());
+            uwbQueue.offer(point);
+            FinalDataManager.getInstance().getCode_points().put(uwbCoordData.getCode(), uwbQueue);
+        } else {
+            Point point = new Point();
+            if (uwbCoordData.getDevice() == null) {
+                point.setId(-1);
+            } else {
+                point.setId(uwbCoordData.getDevice().getId());
+            }
+            point.setX(uwbCoordData.getX());
+            point.setY(uwbCoordData.getY());
+            points.offer(point);
         }
     }
 

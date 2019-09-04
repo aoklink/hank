@@ -135,7 +135,7 @@ public class OvalProcessor implements IDataAnalysis {
             speed = 0;
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
-            speed = calculateEllipticalSpeed(bigDecimal.floatValue() * 3600, deviceByBleName.getSlope());
+            speed = bigDecimal.floatValue() * 3600;
 
         }
         Log.i("ticks", speed + "");
