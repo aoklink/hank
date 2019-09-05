@@ -9,9 +9,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
+import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Point;
+import cn.linkfeeling.hankserve.bean.Power;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
@@ -77,7 +81,6 @@ public class BicycleProcessor implements IDataAnalysis {
         Log.i("dancheseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
 
-
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             startTime = System.currentTimeMillis();
@@ -122,8 +125,8 @@ public class BicycleProcessor implements IDataAnalysis {
 
 
         byte[] ticks = new byte[2];
-        ticks[0] = serviceData[3];
-        ticks[1] = serviceData[2];
+        ticks[0] = serviceData[2];
+        ticks[1] = serviceData[3];
 
         float speed;
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
@@ -193,6 +196,35 @@ public class BicycleProcessor implements IDataAnalysis {
             return (float) 0;
         }
         return v;
+    }
+
+    //[0, 0, 0, 0, 1, 117, 3, 5]
+
+    private boolean dealPowerData(byte[] serviceData, LinkSpecificDevice deviceByBleName, String bleName) {
+        //  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+        if (serviceData[0] == 0 &&
+                serviceData[1] == 0 &&
+                serviceData[2] == 0 &&
+                serviceData[3] == 0) {
+
+            Power power1 = new Power();
+            power1.setDeviceName(deviceByBleName.getDeviceName());
+            power1.setBleNme(bleName);
+            power1.setPowerLevel(CalculateUtil.byteToInt(serviceData[6]));
+            power1.setGymName(BuildConfig.PROJECT_NAME);
+
+
+            power1.save(new SaveListener<String>() {
+                @Override
+                public void done(String s, BmobException e) {
+
+                    Log.i("99999-----", s == null ? "null" : s);
+                    Log.i("99999eeeee", e == null ? "null" : e.getMessage());
+                }
+            });
+            return true;
+        }
+        return false;
     }
 
 }

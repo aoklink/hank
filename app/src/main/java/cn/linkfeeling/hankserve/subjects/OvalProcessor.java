@@ -126,8 +126,8 @@ public class OvalProcessor implements IDataAnalysis {
 
 
         byte[] ticks = new byte[2];
-        ticks[0] = serviceData[3];
-        ticks[1] = serviceData[2];
+        ticks[0] = serviceData[2];
+        ticks[1] = serviceData[3];
 
         float speed;
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
