@@ -288,9 +288,9 @@ public class LinkDataManager {
                 return true;
             }
         }
+        uwbCoordData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoordData.getCode())));
         return false;
     }
-
 
     /**
      * 根据蓝牙名字查询对象
