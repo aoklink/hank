@@ -68,6 +68,11 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
                 int heartInt = CalculateUtil.byteArrayToInt(heart);
                 String heatRate = String.valueOf(heartInt);
 
+
+                byte power=bytes1[9];
+
+                Log.i(bleName+"power",CalculateUtil.byteToInt(power)+"");
+
                 Log.i("cccccccccccccccc" + bleName, heatRate);
                 bleDeviceInfo.setBracelet_id(bleName);
                 bleDeviceInfo.setHeart_rate(heatRate);
