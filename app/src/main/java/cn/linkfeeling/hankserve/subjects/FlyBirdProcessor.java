@@ -104,7 +104,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
-            if (System.currentTimeMillis() - startTime >= 5 * 1000) {
+            //System.currentTimeMillis() - startTime >= 5 * 1000
+            if (serviceData[13] > 0) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
                 if (s != null) {
                     String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
