@@ -361,7 +361,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 } else {
 
                     //6、说明进入的不是之前绑定的区域
-                    if (uwbCoordData.getSemaphore() == 50) {
+                    if (uwbCoordData.getSemaphore() == 75) {
                         //7、需要解除绑定
 
                         FinalDataManager.getInstance().removeUwb(uwbCoordData.getDevice().getFencePoint().getFenceId());
@@ -390,7 +390,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     if (spareFireUwb.getDevice().getId() == newUwb.getDevice().getId()) {
                         spareFireUwb.setSemaphore(0);
                     } else {
-                        if (spareFireUwb.getSemaphore() == 50) {
+                        if (spareFireUwb.getSemaphore() == 75) {
                             //7、需要解除绑定
                             FinalDataManager.getInstance().removeSpareFireUwb(spareFireUwb);
                             spareFireUwb.setSemaphore(0);
@@ -418,7 +418,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 Log.i("666666666", "空位值，，，" + uwbCoordData.getCode());
                 Log.i("666666666", "空位值，，，" + FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
                 //    int fenceId = newUwb.getDevice().getFencePoint().getFenceId();
-                if (uwbCoordData.getSemaphore() == 50) {
+                if (uwbCoordData.getSemaphore() == 75) {
                     //7、需要解除绑定
                     FinalDataManager.getInstance().removeUwb(uwbCoordData.getDevice().getFencePoint().getFenceId());
                     uwbCoordData.setSemaphore(0);
@@ -442,7 +442,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             List<UWBCoordData> list = FinalDataManager.getInstance().querySpareFireUwb(code);
             if (!list.isEmpty()) {
                 for (UWBCoordData spareFireUwb : list) {
-                    if (spareFireUwb.getSemaphore() == 50) {
+                    if (spareFireUwb.getSemaphore() == 75) {
                         //7、需要解除绑定
                         FinalDataManager.getInstance().removeSpareFireUwb(spareFireUwb);
                         spareFireUwb.setSemaphore(0);
