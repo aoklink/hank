@@ -16,6 +16,7 @@
     {
       "id": 0,
       "deviceName": "HIIT",
+      "anchName": "000000",
       "type": "HIIT",
       "fencePoint": {
         "fenceId": 0,
@@ -40,6 +41,7 @@
     {
       "id": 1,
       "deviceName": "跑步机01",
+      "anchName": "000001",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 1,
@@ -75,6 +77,7 @@
     {
       "id": 2,
       "deviceName": "跑步机02",
+      "anchName": "000002",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 2,
@@ -110,6 +113,7 @@
     {
       "id": 3,
       "deviceName": "跑步机03",
+      "anchName": "000003",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 3,
@@ -145,6 +149,7 @@
     {
       "id": 4,
       "deviceName": "跑步机04",
+      "anchName": "000004",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 4,
@@ -180,6 +185,7 @@
     {
       "id": 5,
       "deviceName": "跑步机05",
+      "anchName": "000005",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 5,
@@ -215,6 +221,7 @@
     {
       "id": 6,
       "deviceName": "跑步机06",
+      "anchName": "000006",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 6,
@@ -250,6 +257,7 @@
     {
       "id": 7,
       "deviceName": "跑步机07",
+      "anchName": "000007",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 7,
@@ -285,6 +293,7 @@
     {
       "id": 8,
       "deviceName": "跑步机08",
+      "anchName": "000008",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 8,
@@ -320,6 +329,7 @@
     {
       "id": 9,
       "deviceName": "跑步机09",
+      "anchName": "000009",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 9,
@@ -355,6 +365,7 @@
     {
       "id": 10,
       "deviceName": "跑步机10",
+      "anchName": "000010",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 10,
@@ -390,6 +401,7 @@
     {
       "id": 11,
       "deviceName": "立式磁力车01",
+      "anchName": "000011",
       "type": "磁力车",
       "perimeter": 6.25,
       "slope": 0.226829,
@@ -427,6 +439,7 @@
     {
       "id": 12,
       "deviceName": "坐式磁力车01",
+      "anchName": "000012",
       "type": "磁力车",
       "perimeter": 6.25,
       "slope": 0.226829,
@@ -614,6 +627,7 @@
     {
       "id": 16,
       "deviceName": "坐姿卷腹器01",
+      "anchName": "000016",
       "type": "坐姿卷腹器",
       "fencePoint": {
         "fenceId": 16,
@@ -723,6 +737,7 @@
     {
       "id": 18,
       "deviceName": "坐姿肩上举训练器01",
+      "anchName": "000018",
       "type": "坐姿肩上举训练器",
       "fencePoint": {
         "fenceId": 18,
@@ -1041,6 +1056,7 @@
     {
       "id": 24,
       "deviceName": "俯身腿弯举器01",
+      "anchName": "000024",
       "type": "俯身腿弯举器",
       "fencePoint": {
         "fenceId": 24,
@@ -1098,6 +1114,7 @@
     {
       "id": 25,
       "deviceName": "坐姿推胸训练器01",
+      "anchName": "000025",
       "type": "坐姿推胸训练器",
       "fencePoint": {
         "fenceId": 25,
@@ -1155,6 +1172,7 @@
     {
       "id": 26,
       "deviceName": "站姿提踵01",
+      "anchName": "000026",
       "type": "站姿提踵",
       "fencePoint": {
         "fenceId": 26,
@@ -1225,6 +1243,7 @@
     {
       "id": 27,
       "deviceName": "多功能髋部练习器01",
+      "anchName": "000027",
       "type": "多功能髋部练习器",
       "fencePoint": {
         "fenceId": 27,
@@ -1282,6 +1301,7 @@
     {
       "id": 28,
       "deviceName": "坐姿侧平举训练器01",
+      "anchName": "000028",
       "type": "坐姿侧平举训练器",
       "fencePoint": {
         "fenceId": 28,

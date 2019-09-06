@@ -82,13 +82,16 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
+            Log.i("ppppp", "-777777");
             startTime = System.currentTimeMillis();
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire.isEmpty()) {
-                Log.i("tttttttttt", "-5-5-5");
+                Log.i("ppppp", "-5-5-5");
                 start = false;
                 return null;
             }
+
+            Log.i("ppppp", "-6-6-6");
             ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
             for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
                 String key = next.getKey();
@@ -102,8 +105,9 @@ public class FlyBirdProcessor implements IDataAnalysis {
             start = false;
         }
 
-
+        Log.i("ppppppp1111", CalculateUtil.byteToInt(serviceData[13]) + "");
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
+            Log.i("ppppppp", CalculateUtil.byteToInt(serviceData[13]) + "");
             if (CalculateUtil.byteToInt(serviceData[13]) > 0) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
                 if (s != null) {
@@ -112,6 +116,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
                         LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
                     }
                 } else {
+
+                    Log.i("ppppp", "daozhele");
                     LinkDataManager.getInstance().checkBind(deviceByBleName);
                 }
             }

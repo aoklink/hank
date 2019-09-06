@@ -32,6 +32,7 @@ public class TreadMillProcessor implements IDataAnalysis {
     private int flag = -1;
 
     private volatile boolean start = true;
+    private volatile boolean select = true;
     private long startTime;
 
 
@@ -80,10 +81,15 @@ public class TreadMillProcessor implements IDataAnalysis {
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             startTime = System.currentTimeMillis();
+            start = false;
+
+        }
+
+        if (select && System.currentTimeMillis() - startTime > 5 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire == null || spareTire.isEmpty()) {
                 Log.i("pppppppp", "-5-5-5");
-                start = false;
+                select = false;
                 return null;
             }
 
@@ -100,7 +106,9 @@ public class TreadMillProcessor implements IDataAnalysis {
             Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
 
             FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-            start = false;
+            select = false;
+
+
         }
 
 
@@ -157,6 +165,7 @@ public class TreadMillProcessor implements IDataAnalysis {
 
         if (speed == 0) {
             start = true;
+            select = true;
             //解除绑定
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
