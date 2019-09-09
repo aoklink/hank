@@ -365,7 +365,7 @@
     {
       "id": 10,
       "deviceName": "跑步机10",
-      "anchName": "000010",
+      "anchName": "ANCH13",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 10,
