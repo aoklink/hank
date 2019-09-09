@@ -33,6 +33,7 @@ public class OvalProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, OvalProcessor> map;
     private int flag = -1;
     private volatile boolean start = true;
+    private volatile boolean select = true;
     private long startTime;
 
     static {
@@ -67,7 +68,7 @@ public class OvalProcessor implements IDataAnalysis {
 
         Log.i("vvvvvvv", Arrays.toString(serviceData));
 
-        byte[] seqNum = { serviceData[4],serviceData[5]};
+        byte[] seqNum = {serviceData[4], serviceData[5]};
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
             return null;
         }
@@ -79,15 +80,20 @@ public class OvalProcessor implements IDataAnalysis {
         Log.i("tuoyuanjiseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
 
-
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             startTime = System.currentTimeMillis();
+            start = false;
+        }
+
+        if (select && System.currentTimeMillis() - startTime >= 5 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire == null || spareTire.isEmpty()) {
-                start = false;
+                Log.i("pppppppp", "-5-5-5");
+                select = false;
                 return null;
             }
+
             ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
             for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
                 String key = next.getKey();
@@ -98,10 +104,11 @@ public class OvalProcessor implements IDataAnalysis {
                 queueConcurrentHashMap.put(uwbCoordData, next.getValue());
 
             }
-            FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-            start = false;
-        }
+            Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
 
+            FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
+            select = false;
+        }
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
             if (System.currentTimeMillis() - startTime >= 5 * 1000) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
@@ -141,7 +148,6 @@ public class OvalProcessor implements IDataAnalysis {
         Log.i("ticks", speed + "");
 
 
-
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
         if (bleDeviceInfoNow != null) {
             bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
@@ -152,6 +158,7 @@ public class OvalProcessor implements IDataAnalysis {
         if (speed == 0) {
 
             start = true;
+            select = true;
             //解除绑定
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
