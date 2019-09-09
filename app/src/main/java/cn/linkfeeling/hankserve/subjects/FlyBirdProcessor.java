@@ -86,7 +86,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             startTime = System.currentTimeMillis();
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire.isEmpty()) {
-                Log.i("ppppp", "-5-5-5");
+                Log.i("ppppp"+bleName, "-5-5-5");
                 start = false;
                 return null;
             }
