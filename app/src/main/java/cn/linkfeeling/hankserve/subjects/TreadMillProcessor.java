@@ -113,6 +113,7 @@ public class TreadMillProcessor implements IDataAnalysis {
                         LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
                     }
                 } else {
+                    Log.i("binding--","kaishi");
                     LinkDataManager.getInstance().checkBind(deviceByBleName);
                 }
 
