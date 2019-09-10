@@ -32,13 +32,31 @@ import cn.linkfeeling.hankserve.utils.WatchScanRecord;
  * 手环数据解析
  */
 public class AnchProcessor extends IAnchDataAnalysis {
+    private final static String I7 = "I7";
+    private final static String I7PLUS = "I7PLUS";
+
 
     public static ConcurrentHashMap<String, AnchProcessor> map;
+    public static ConcurrentHashMap<String, String> mac_label;
 
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
 
     static {
         map = new ConcurrentHashMap<>();
+        mac_label = new ConcurrentHashMap<>();
+        mac_label.put("DD1C", I7PLUS);
+        mac_label.put("F888", I7PLUS);
+        mac_label.put("C14A", I7PLUS);
+        mac_label.put("D661", I7PLUS);
+        mac_label.put("E6EB", I7PLUS);
+        mac_label.put("D46F", I7PLUS);
+        mac_label.put("DA51", I7PLUS);
+        mac_label.put("E9FC", I7PLUS);
+        mac_label.put("C9B5", I7PLUS);
+        mac_label.put("F8F7", I7PLUS);
+        mac_label.put("DA98", I7);
+        mac_label.put("D712", I7);
+        mac_label.put("E5BE", I7);
     }
 
 
@@ -83,11 +101,15 @@ public class AnchProcessor extends IAnchDataAnalysis {
             byte[] mac = new byte[2];
             mac[0] = serviceData[1];
             mac[1] = serviceData[2];
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("I7PLUS");
-            stringBuilder.append(HexUtil.encodeHexStr(mac));
-            Log.i("21212121", stringBuilder.toString());
-            FinalDataManager.getInstance().getRssi_wristbands().put(bleName, stringBuilder.toString());
+            String macName = HexUtil.encodeHexStr(mac);
+            String label = mac_label.get(macName);
+            if (label != null) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(label);
+                stringBuilder.append(macName);
+                Log.i("21212121", stringBuilder.toString() + "---" + serviceData[3]);
+                FinalDataManager.getInstance().getRssi_wristbands().put(bleName, stringBuilder.toString());
+            }
         }
 
     }

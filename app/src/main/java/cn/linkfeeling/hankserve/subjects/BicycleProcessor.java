@@ -180,7 +180,7 @@ public class BicycleProcessor implements IDataAnalysis {
     }
 
 
-    /**
+    /**b
      * 根据转速换算速度(单车)
      *
      * @author zhangyong
