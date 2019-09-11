@@ -104,10 +104,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                             @Override
                             public void run() {
                                 App.getApplication().setChannelsNum(channelsNum);
-//                                tv_ipTip.append(ip + "连接成功");
-//                                tv_ipTip.append("\n");
-//                                tv_ipTip.append(simpleDateFormat.format(System.currentTimeMillis()));
-//                                tv_ipTip.append("\n\n");
+                                tv_ipTip.append(ip + "连接成功");
+                                tv_ipTip.append("\n");
+                                tv_ipTip.append(simpleDateFormat.format(System.currentTimeMillis()));
+                                tv_ipTip.append("\n\n");
                             }
                         });
                     }
@@ -118,10 +118,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                             @Override
                             public void run() {
                                 App.getApplication().setChannelsNum(channelsNum);
-//                                tv_ipTipRemove.append(ip + "断开连接");
-//                                tv_ipTipRemove.append("\n");
-//                                tv_ipTipRemove.append(simpleDateFormat.format(System.currentTimeMillis()));
-//                                tv_ipTipRemove.append("\n\n");
+                                tv_ipTipRemove.append(ip + "断开连接");
+                                tv_ipTipRemove.append("\n");
+                                tv_ipTipRemove.append(simpleDateFormat.format(System.currentTimeMillis()));
+                                tv_ipTipRemove.append("\n\n");
                             }
                         });
                     }

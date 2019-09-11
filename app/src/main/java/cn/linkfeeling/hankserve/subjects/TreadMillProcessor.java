@@ -61,6 +61,8 @@ public class TreadMillProcessor implements IDataAnalysis {
             return null;
         }
 
+        Log.i("87878787"+bleName,Arrays.toString(serviceData));
+
 
         byte[] pages = new byte[2];
         pages[0] = serviceData[2];
@@ -148,7 +150,7 @@ public class TreadMillProcessor implements IDataAnalysis {
             Log.i("67676", numbers + "");
             float v = CalculateUtil.txFloat(numbers, 100);
 
-            speed = v * 0.4237288f;
+            speed = v * 0.2873563f;
             //0.256410
         }
 
