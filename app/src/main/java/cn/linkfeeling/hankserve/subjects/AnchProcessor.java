@@ -84,11 +84,15 @@ public class AnchProcessor extends IAnchDataAnalysis {
             byte[] mac = new byte[2];
             mac[0] = serviceData[1];
             mac[1] = serviceData[2];
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("I7PLUS");
-            stringBuilder.append(HexUtil.encodeHexStr(mac));
-            Log.i("21212121", stringBuilder.toString());
-            FinalDataManager.getInstance().getRssi_wristbands().put(bleName, stringBuilder.toString());
+            String macName = HexUtil.encodeHexStr(mac);
+            String label = mac_label.get(macName);
+            if (label != null) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(label);
+                stringBuilder.append(macName);
+                Log.i("21212121", stringBuilder.toString() + "---" + serviceData[3]);
+                FinalDataManager.getInstance().getRssi_wristbands().put(bleName, stringBuilder.toString());
+            }
         }
 
     }

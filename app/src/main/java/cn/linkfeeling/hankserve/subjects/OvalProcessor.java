@@ -68,7 +68,7 @@ public class OvalProcessor implements IDataAnalysis {
 
         Log.i("vvvvvvv", Arrays.toString(serviceData));
 
-        byte[] seqNum = {serviceData[5], serviceData[4]};
+        byte[] seqNum = {serviceData[4], serviceData[5]};
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
             return null;
         }
@@ -135,8 +135,8 @@ public class OvalProcessor implements IDataAnalysis {
 
 
         byte[] ticks = new byte[2];
-        ticks[0] = serviceData[3];
-        ticks[1] = serviceData[2];
+        ticks[0] = serviceData[2];
+        ticks[1] = serviceData[3];
 
         float speed;
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
@@ -144,6 +144,7 @@ public class OvalProcessor implements IDataAnalysis {
             speed = 0;
         } else {
             BigDecimal bigDecimal = CalculateUtil.floatDivision(deviceByBleName.getPerimeter(), (float) CalculateUtil.byteArrayToInt(ticks));
+            Log.i("lllllll"+bleName,CalculateUtil.byteArrayToInt(ticks)+"");
             speed = bigDecimal.floatValue() * 3600;
 
         }
