@@ -28,11 +28,18 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 public class AnchProcessor extends IAnchDataAnalysis {
 
     public static ConcurrentHashMap<String, AnchProcessor> map;
+    public static ConcurrentHashMap<String, String> mac_label;
+    private final static String I7 = "I7";
+    private final static String I7PLUS = "I7PLUS";
+
 
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
 
     static {
         map = new ConcurrentHashMap<>();
+        mac_label = new ConcurrentHashMap<>();
+        mac_label.put("DA98",I7);
+        mac_label.put("D712",I7);
     }
 
 
