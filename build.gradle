@@ -23,6 +23,8 @@ allprojects {
         google()
         jcenter()
         maven { url "https://raw.github.com/bmob/bmob-android-sdk/master" }
+    //    maven { url "https://mvnrepository.com/artifact/org.jctools/jctools-core" }
+
     }
 }
 
