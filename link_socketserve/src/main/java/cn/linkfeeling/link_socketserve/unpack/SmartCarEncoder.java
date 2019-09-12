@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
 public class SmartCarEncoder extends MessageToByteEncoder<SmartCarProtocol> {
- 
+
 	@Override
 	protected void encode(ChannelHandlerContext tcx, SmartCarProtocol msg,
 						  ByteBuf out) throws Exception {

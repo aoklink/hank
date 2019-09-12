@@ -48,7 +48,9 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 import cn.linkfeeling.hankserve.utils.WatchScanRecord;
 import cn.linkfeeling.link_socketserve.NettyServer;
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
+import cn.linkfeeling.link_socketserve.netty.Global;
 import cn.linkfeeling.link_socketserve.unpack.SmartCarProtocol;
+import io.netty.channel.Channel;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -122,6 +124,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         //connectLinkWS();
         startIntervalListener();
 
+
+
     }
 
 
@@ -141,6 +145,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 tv_ipTip.append("\n");
                                 tv_ipTip.append(simpleDateFormat.format(System.currentTimeMillis()));
                                 tv_ipTip.append("\n\n");
+
+                                byte [] ss={12,13};
+                                Global.group.writeAndFlush(new SmartCarProtocol((byte) 1,ss));
                             }
                         });
                     }
@@ -161,6 +168,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
                     @Override
                     public void getBLEStream(String hostString, SmartCarProtocol smartCarProtocol) {
+
+                        Log.i("idle----",hostString+"++++++"+Arrays.toString(smartCarProtocol.getContent()));
 
                         onLeScanSelf(hostString, smartCarProtocol.getContent());
 //                        ThreadPoolManager.getInstance().execute(new Runnable() {
