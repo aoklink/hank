@@ -125,7 +125,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
 
-
         if (serviceData[0] != -1 && serviceData[0] != 0 && serviceData[1] != -1 && serviceData[1] != 0) {
             for (int j = 0; j < 10; j++) {
                 int cuv1 = CalculateUtil.byteToInt(serviceData[j]);
