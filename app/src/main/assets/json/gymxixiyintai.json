@@ -191,7 +191,7 @@
     {
       "id": 5,
       "deviceName": "飞鸟架01",
-      "anchName": "ANCH05",
+      "anchName": "ANCH32",
       "type": "飞鸟架",
       "fencePoint": {
         "fenceId": 5,
@@ -249,7 +249,7 @@
     {
       "id": 6,
       "deviceName": "飞鸟架02",
-      "anchName": "ANCH06",
+      "anchName": "ANCH37",
       "type": "飞鸟架",
       "fencePoint": {
         "fenceId": 6,
@@ -258,7 +258,7 @@
           "y": 414.0
         },
         "right_top": {
-          "x": 1910.0,
+          "x": 1962.0,
           "y": 364.0
         },
         "left_bottom": {
@@ -266,12 +266,12 @@
           "y": 539.0
         },
         "right_bottom": {
-          "x": 1954.0,
+          "x": 2010.0,
           "y": 506.0
         }
       },
       "centerPoint": {
-        "x": 1864.0,
+        "x": 1892.0,
         "y": 451.5
       },
       "linkBLES": [
