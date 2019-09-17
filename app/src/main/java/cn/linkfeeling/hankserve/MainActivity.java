@@ -18,6 +18,9 @@ import com.link.feeling.framework.executor.ThreadPoolManager;
 import com.link.feeling.framework.utils.data.L;
 import com.link.feeling.framework.utils.data.ToastUtils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
@@ -29,8 +32,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import cn.linkfeeling.hankserve.adapter.BLEAdapter;
+import cn.linkfeeling.hankserve.adapter.MatchAdapter;
 import cn.linkfeeling.hankserve.bean.AccelData;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.MatchResult;
 import cn.linkfeeling.hankserve.bean.NDKTools;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
@@ -65,8 +70,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private Gson gson = new Gson();
     private SimpleDateFormat simpleDateFormat;
     private Disposable disposable;
-    private RecyclerView recycleView,match_recycleView;
+    private RecyclerView recycleView, match_recycleView;
     private BLEAdapter bleAdapter;
+    private MatchAdapter matchAdapter;
 
     private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
     private byte[] data = {46, 49, 54, 60, 61, 65, 67, 67, 68, 68, 68, 67, 68, 69, 70, 76, 82, 87, 87, 88, 90, 92, 93, 92, 87, 83, 74, 71, 61, 52, 41, 32, 28, 32, 37, 43, 48, 50, 50, 47, 47, 48, 50, 55, 58, 64, 68, 68, 69, 68, 67, 71, 73, 73, 76, 81, 85, 88, 91, 92, 93, 94, 90, 88, 80, 68, 58, 54, 43, 38, 36, 35, 37, 40, 44, 47, 47, 46, 47, 52, 55, 55, 58, 61, 66, 67, 69, 74, 77, 76, 77, 78, 82, 87, 91, 92, 91, 90, 90, 91, 84, 80, 68, 58, 52, 39, 32, 31, 35, 38, 42, 45, 46, 46, 45, 46, 50, 53, 55, 60, 63, 65, 71, 75, 77, 76, 74, 76, 79, 83};
@@ -74,6 +80,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private WatchData watchData = new WatchData();
 
     private AccelData[] accelData = new AccelData[80];
+    private List<MatchResult> matchResultList = new ArrayList<>();
 
 
     @Override
@@ -85,6 +92,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
     @Override
     protected void init(@Nullable Bundle savedInstanceState) {
+        EventBus.getDefault().register(this);
 
         String stringFromNDK = NDKTools.getStringFromNDK();
         Log.i("nnnnnnnnnnnnnn", stringFromNDK);
@@ -120,6 +128,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         match_recycleView.setLayoutManager(new LinearLayoutManager(this));
         bleAdapter = new BLEAdapter(this, bleDeviceInfos);
         recycleView.setAdapter(bleAdapter);
+
+        matchAdapter = new MatchAdapter(this, matchResultList);
+        match_recycleView.setAdapter(matchAdapter);
 
         if (!App.getApplication().isStart()) {
             startServer();
@@ -607,15 +618,25 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
         if (itemId == R.id.action_settings) {
             ToastUtils.showToast("清空匹配数据");
+            matchResultList.clear();
+            matchAdapter.notifyDataSetChanged();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void receiveMatchData(MatchResult matchResult) {
+        matchResultList.add(matchResult);
+        matchAdapter.notifyDataSetChanged();
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
             disposable = null;

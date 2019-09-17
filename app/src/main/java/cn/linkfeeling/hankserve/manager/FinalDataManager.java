@@ -32,6 +32,7 @@ public class FinalDataManager {
     private ConcurrentHashMap<Integer, UWBCoordData> fenceId_uwbData;
     private ConcurrentHashMap<String, UwbQueue<Point>> code_points;
     private ConcurrentHashMap<Integer, ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> alternative;
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> matchTemp;
 
 
     private FinalDataManager() {
@@ -45,6 +46,11 @@ public class FinalDataManager {
         fenceId_uwbData = new ConcurrentHashMap<>();//围栏id uwb设备对应关系  key为围栏id  value为uwb对象
         code_points = new ConcurrentHashMap<>();  //
         alternative = new ConcurrentHashMap<>(); //备选池子
+        matchTemp = new ConcurrentHashMap<>(); //临时的  可被删除
+    }
+
+    public ConcurrentHashMap<Integer, ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> getMatchTemp() {
+        return matchTemp;
     }
 
     public ConcurrentHashMap<String, String> getRssi_wristbands() {

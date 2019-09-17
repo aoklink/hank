@@ -60,22 +60,16 @@ dependencies {
     api project(':framework')
     implementation project(':link_websocket')
     implementation project(':link_socketserve')
-
     implementation 'com.android.support:multidex:1.0.0'
-
     debugImplementation('com.simple:spiderman:1.1.0') {
         exclude group: "com.android.support"
     }
-
     releaseImplementation('com.simple:spiderman-no-op:1.1.0') {
         exclude group: "com.android.support"
     }
-
     implementation 'com.google.code.gson:gson:2.8.5'
-
-
     implementation 'cn.bmob.android:bmob-sdk:3.7.3-rc1'
     implementation 'com.squareup.okio:okio:2.1.0'
     implementation 'cn.bmob.android:http-legacy:1.0'
-
+    implementation 'org.greenrobot:eventbus:3.1.1'
 }
