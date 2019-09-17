@@ -34,8 +34,6 @@ import cn.linkfeeling.hankserve.utils.WatchScanRecord;
 public class AnchProcessor extends IAnchDataAnalysis {
     private final static String I7 = "I7";
     private final static String I7PLUS = "I7PLUS";
-
-
     public static ConcurrentHashMap<String, AnchProcessor> map;
     public static ConcurrentHashMap<String, String> mac_label;
 
@@ -44,6 +42,24 @@ public class AnchProcessor extends IAnchDataAnalysis {
     static {
         map = new ConcurrentHashMap<>();
         mac_label = new ConcurrentHashMap<>();
+        mac_label.put("DD1C",I7PLUS);
+        mac_label.put("C9AF",I7PLUS);
+        mac_label.put("E5BE",I7PLUS);
+        mac_label.put("C12D",I7PLUS);
+        mac_label.put("DA51",I7PLUS);
+        mac_label.put("C1B3",I7PLUS);
+        mac_label.put("E9FC",I7PLUS);
+        mac_label.put("D30D",I7PLUS);
+        mac_label.put("EA29",I7PLUS);
+        mac_label.put("CFA3",I7PLUS);
+        mac_label.put("CF78",I7PLUS);
+        mac_label.put("CE9D",I7PLUS);
+        mac_label.put("EBF1",I7PLUS);
+        mac_label.put("E280",I7PLUS);
+        mac_label.put("CD28",I7PLUS);
+        mac_label.put("F8F7",I7PLUS);
+        mac_label.put("D08D",I7PLUS);
+        mac_label.put("F4A6",I7PLUS);
 
     }
 

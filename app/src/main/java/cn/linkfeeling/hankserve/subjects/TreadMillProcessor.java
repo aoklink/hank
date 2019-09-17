@@ -109,8 +109,7 @@ public class TreadMillProcessor implements IDataAnalysis {
         gradient[1] = scanRecord[14];
 
 
-        int gradientInt = Integer.parseInt(String.valueOf(gradient[0]));
-
+        int gradientInt = CalculateUtil.byteToInt(gradient[0]);
 
         Log.i("ooooooooooo", speedInt + "");
 

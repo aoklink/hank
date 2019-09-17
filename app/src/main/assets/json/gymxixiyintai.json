@@ -47,6 +47,7 @@
     {
       "id": 1,
       "deviceName": "跑步机001",
+      "anchName": "ANCH38",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 1,
@@ -67,6 +68,10 @@
           "y": 320.0
         }
       },
+      "centerPoint": {
+        "x": 750.5,
+        "y": 160.0
+      },
       "linkBLES": [
         {
           "bleId": 0,
@@ -78,6 +83,7 @@
     {
       "id": 2,
       "deviceName": "跑步机002",
+      "anchName": "ANCH02",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 2,
@@ -98,6 +104,10 @@
           "y": 320.0
         }
       },
+      "centerPoint": {
+        "x": 978.5,
+        "y": 160.0
+      },
       "linkBLES": [
         {
           "bleId": 0,
@@ -109,6 +119,7 @@
     {
       "id": 3,
       "deviceName": "跑步机003",
+      "anchName": "ANCH39",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 3,
@@ -129,6 +140,10 @@
           "y": 320.0
         }
       },
+      "centerPoint": {
+        "x": 1172.5,
+        "y": 160.0
+      },
       "linkBLES": [
         {
           "bleId": 0,
@@ -139,7 +154,8 @@
     },
     {
       "id": 4,
-      "deviceName": "椭圆机",
+      "deviceName": "椭圆机001",
+      "anchName": "ANCH04",
       "type": "椭圆机",
       "fencePoint": {
         "fenceId": 4,
@@ -160,6 +176,10 @@
           "y": 279.0
         }
       },
+      "centerPoint": {
+        "x": 1662.5,
+        "y": 139.5
+      },
       "linkBLES": [
         {
           "bleId": 0,
@@ -171,123 +191,35 @@
     {
       "id": 5,
       "deviceName": "飞鸟架01",
+      "anchName": "ANCH05",
       "type": "飞鸟架",
       "fencePoint": {
         "fenceId": 5,
         "left_top": {
-          "x": 1398.0,
-          "y": 443.0
+          "x": 1634.0,
+          "y": 543.0
         },
         "right_top": {
-          "x": 1968.0,
-          "y": 245.0
+          "x": 1806.0,
+          "y": 489.0
         },
         "left_bottom": {
-          "x": 1784.0,
-          "y": 1180.0
+          "x": 1687.0,
+          "y": 696.0
         },
         "right_bottom": {
-          "x": 2191.0,
-          "y": 1020.0
+          "x": 1864.0,
+          "y": 639.0
         }
+      },
+      "centerPoint": {
+        "x": 1749.0,
+        "y": 592.5
       },
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "GYM06",
-          "type": "力量器械t4",
-          "weight": [
-            5.0,
-            12.5,
-            20,
-            27.5,
-            35,
-            42.5,
-            50,
-            60,
-            70,
-            80,
-            90,
-            100,
-            110,
-            120,
-            130
-          ]
-        },
-        {
-          "bleId": 1,
-          "bleName": "GYM07",
-          "type": "力量器械t4",
-          "weight": [
-            1.25,
-            3.75,
-            6.25,
-            8.75,
-            11.25,
-            13.75,
-            16.25,
-            18.75,
-            21.25,
-            23.75,
-            26.25,
-            28.75,
-            31.25,
-            33.75,
-            36.25,
-            38.75,
-            41.25,
-            43.75,
-            46.25,
-            48.75
-          ]
-        },
-        {
-          "bleId": 2,
-          "bleName": "GYM08",
-          "type": "力量器械t4",
-          "weight": [
-            2.5,
-            6.25,
-            10.00,
-            13.75,
-            17.50,
-            21.25,
-            25,
-            30,
-            35,
-            40,
-            45,
-            50,
-            55,
-            60,
-            65
-          ]
-        },
-        {
-          "bleId": 3,
-          "bleName": "GYM09",
-          "type": "力量器械t4",
-          "weight": [
-            2.5,
-            6.25,
-            10.00,
-            13.75,
-            17.50,
-            21.25,
-            25,
-            30,
-            35,
-            40,
-            45,
-            50,
-            55,
-            60,
-            65
-          ]
-        },
-        {
-          "bleId": 4,
-          "bleName": "GYM012",
+          "bleName": "GYM007",
           "type": "力量器械t4",
           "weight": [
             1.25,
@@ -316,10 +248,64 @@
     },
     {
       "id": 6,
-      "deviceName": "蝴蝶机01",
-      "type": "蝴蝶机",
+      "deviceName": "飞鸟架02",
+      "anchName": "ANCH06",
+      "type": "飞鸟架",
       "fencePoint": {
         "fenceId": 6,
+        "left_top": {
+          "x": 1774.0,
+          "y": 414.0
+        },
+        "right_top": {
+          "x": 1910.0,
+          "y": 364.0
+        },
+        "left_bottom": {
+          "x": 1835.0,
+          "y": 539.0
+        },
+        "right_bottom": {
+          "x": 1954.0,
+          "y": 506.0
+        }
+      },
+      "centerPoint": {
+        "x": 1864.0,
+        "y": 451.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "GYM009",
+          "type": "力量器械t4",
+          "weight": [
+            5.0,
+            12.5,
+            20,
+            27.5,
+            35,
+            42.5,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100,
+            110,
+            120,
+            130
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "deviceName": "蝴蝶机01",
+      "anchName": "ANCH3A",
+      "type": "蝴蝶机",
+      "fencePoint": {
+        "fenceId": 7,
         "left_top": {
           "x": 2020.0,
           "y": 419.0
@@ -336,6 +322,10 @@
           "x": 2298.0,
           "y": 606.0
         }
+      },
+      "centerPoint": {
+        "x": 2159.0,
+        "y": 514.5
       },
       "linkBLES": [
         {
@@ -365,11 +355,12 @@
       ]
     },
     {
-      "id": 7,
+      "id": 8,
       "deviceName": "坐姿抬腿训练器01",
+      "anchName": "ANCH3B",
       "type": "坐姿抬腿",
       "fencePoint": {
-        "fenceId": 7,
+        "fenceId": 8,
         "left_top": {
           "x": 2093.0,
           "y": 676.0
@@ -386,6 +377,10 @@
           "x": 2396.0,
           "y": 846.0
         }
+      },
+      "centerPoint": {
+        "x": 2244.5,
+        "y": 762.5
       },
       "linkBLES": [
         {

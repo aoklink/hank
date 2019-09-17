@@ -105,8 +105,8 @@ public class OvalProcessor implements IDataAnalysis {
         gradient[0] = scanRecord[13];
         gradient[1] = scanRecord[14];
 
-        int speedInt = Integer.parseInt(String.valueOf(CalculateUtil.byteArrayToInt(speed)));
-        int gradientInt = Integer.parseInt(String.valueOf(gradient[0]));
+        int speedInt = CalculateUtil.byteArrayToInt(speed);
+        int gradientInt = CalculateUtil.byteToInt(gradient[0]);
 
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
