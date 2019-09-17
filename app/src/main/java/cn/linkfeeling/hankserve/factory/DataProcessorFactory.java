@@ -5,11 +5,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
-import cn.linkfeeling.hankserve.subjects.BicycleProcessor;
-import cn.linkfeeling.hankserve.subjects.ButterFlyProcessor;
+import cn.linkfeeling.hankserve.subjects.AnchProcessor;
 import cn.linkfeeling.hankserve.subjects.FlyBirdProcessor;
 import cn.linkfeeling.hankserve.subjects.OvalProcessor;
-import cn.linkfeeling.hankserve.subjects.SitPostureProcessor;
 import cn.linkfeeling.hankserve.subjects.TreadMillProcessor;
 import cn.linkfeeling.hankserve.subjects.WristbandProcessor;
 
@@ -23,8 +21,34 @@ public class DataProcessorFactory {
     public static IDataAnalysis creteProcess(String type, String name) {
         switch (type) {
 
+            case LinkDataManager.ANCH:
+                ConcurrentHashMap<String, AnchProcessor> anchProcessorConcurrentHashMap = AnchProcessor.map;
+                if (anchProcessorConcurrentHashMap != null) {
+                    AnchProcessor anchProcessor = anchProcessorConcurrentHashMap.get(name);
+                    if (anchProcessor != null) {
+                        return anchProcessor;
+                    } else {
+                        AnchProcessor anchProcessor1 = new AnchProcessor();
+                        AnchProcessor.map.put(name, anchProcessor1);
+                        return anchProcessor1;
+                    }
+                }
+                return null;
+
             case LinkDataManager.TYPE_LEAP:
-                return WristbandProcessor.getInstance();
+
+                ConcurrentHashMap<String, WristbandProcessor> wristbandProcessorMap = WristbandProcessor.map;
+                if (wristbandProcessorMap != null) {
+                    WristbandProcessor wristbandProcessor = wristbandProcessorMap.get(name);
+                    if (wristbandProcessor != null) {
+                        return wristbandProcessor;
+                    } else {
+                        WristbandProcessor wristbandProcessor1 = new WristbandProcessor();
+                        WristbandProcessor.map.put(name, wristbandProcessor1);
+                        return wristbandProcessor1;
+                    }
+                }
+                return null;
 
             case LinkDataManager.TREADMILL_1:
                 ConcurrentHashMap<String, TreadMillProcessor> treadMillMap = TreadMillProcessor.map;
@@ -40,19 +64,6 @@ public class DataProcessorFactory {
                 }
                 return null;
 
-            case LinkDataManager.BICYCLE_1:
-                ConcurrentHashMap<String, BicycleProcessor> bicycleMap = BicycleProcessor.map;
-                if (bicycleMap != null) {
-                    BicycleProcessor bicycleProcessor = bicycleMap.get(name);
-                    if (bicycleProcessor != null) {
-                        return bicycleProcessor;
-                    } else {
-                        BicycleProcessor bicycleProcessor1 = new BicycleProcessor();
-                        BicycleProcessor.map.put(name, bicycleProcessor1);
-                        return bicycleProcessor1;
-                    }
-                }
-                return null;
 
             case LinkDataManager.OVAL_1:
                 ConcurrentHashMap<String, OvalProcessor> ovalMap = OvalProcessor.map;
@@ -82,35 +93,6 @@ public class DataProcessorFactory {
                 }
                 return null;
 
-
-            case LinkDataManager.BUTTER_1:
-                ConcurrentHashMap<String, ButterFlyProcessor> butterMap = ButterFlyProcessor.map;
-                if (butterMap != null) {
-                    ButterFlyProcessor butterFlyProcessor = butterMap.get(name);
-                    if (butterFlyProcessor != null) {
-                        return butterFlyProcessor;
-                    } else {
-                        ButterFlyProcessor butterFlyProcessor1 = new ButterFlyProcessor();
-                        ButterFlyProcessor.map.put(name, butterFlyProcessor1);
-                        return butterFlyProcessor1;
-                    }
-                }
-                return null;
-
-
-            case LinkDataManager.SIT_POSTURE_1:
-                ConcurrentHashMap<String, SitPostureProcessor> sitPostureMap = SitPostureProcessor.map;
-                if (sitPostureMap != null) {
-                    SitPostureProcessor sitPostureProcessor = sitPostureMap.get(name);
-                    if (sitPostureProcessor != null) {
-                        return sitPostureProcessor;
-                    } else {
-                        SitPostureProcessor sitPostureProcessor1 = new SitPostureProcessor();
-                        SitPostureProcessor.map.put(name, sitPostureProcessor1);
-                        return sitPostureProcessor1;
-                    }
-                }
-                return null;
             default:
                 return null;
         }

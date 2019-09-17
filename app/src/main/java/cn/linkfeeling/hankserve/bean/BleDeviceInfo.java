@@ -1,10 +1,14 @@
 package cn.linkfeeling.hankserve.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 /**
  * @author create by zhangyong
  * @time 2019/3/13
  */
-public class BleDeviceInfo {
+public class BleDeviceInfo implements Cloneable {
     /**
      * bracelet_id : 00000943
      * heart_rate : 98
@@ -30,6 +34,16 @@ public class BleDeviceInfo {
     private String exercise_time;
     private String u_time; //飞鸟单组运动时长
     private boolean report;
+    private List<Integer> curve;
+    private String seq_num;
+
+    public String getSeq_num() {
+        return seq_num;
+    }
+
+    public void setSeq_num(String seq_num) {
+        this.seq_num = seq_num;
+    }
 
     public boolean isReport() {
         return report;
@@ -127,6 +141,14 @@ public class BleDeviceInfo {
         this.u_time = u_time;
     }
 
+    public List<Integer> getCurve() {
+        return curve;
+    }
+
+    public void setCurve(List<Integer> curve) {
+        this.curve = curve;
+    }
+
     @Override
     public int hashCode() {
         return super.hashCode();
@@ -151,5 +173,22 @@ public class BleDeviceInfo {
         }
 
         return false;
+    }
+
+    @Override
+    public Object clone() {
+        BleDeviceInfo bleDeviceInfo = null;
+        try {
+            bleDeviceInfo = (BleDeviceInfo) super.clone();
+
+            List<Integer> curve = bleDeviceInfo.getCurve();
+            List<Integer> integers = new ArrayList<>(curve);
+            bleDeviceInfo.setCurve(integers);
+
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return bleDeviceInfo;
+
     }
 }

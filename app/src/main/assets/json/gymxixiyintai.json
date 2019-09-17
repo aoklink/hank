@@ -1,11 +1,5 @@
 {
   "uwb_wristband": {
-    "00001e26": "LEAP 84ED",
-    "00001e28": "LEAP B0C3",
-    "00001e2a": "LEAP 48CE",
-    "00001e24": "LEAP F6D1",
-    "00001e13": "LEAP 6AEB",
-    "00001e14": "LEAP 70E9",
     "00001e1a": "I7PLUSDD1C",
     "00001e2c": "I7PLUSC9AF",
     "0000209b": "I7PLUSE5BE",
@@ -201,7 +195,7 @@
         {
           "bleId": 0,
           "bleName": "GYM06",
-          "type": "飞鸟左",
+          "type": "力量器械t4",
           "weight": [
             5.0,
             12.5,
@@ -223,7 +217,7 @@
         {
           "bleId": 1,
           "bleName": "GYM07",
-          "type": "飞鸟左",
+          "type": "力量器械t4",
           "weight": [
             1.25,
             3.75,
@@ -250,7 +244,7 @@
         {
           "bleId": 2,
           "bleName": "GYM08",
-          "type": "飞鸟左",
+          "type": "力量器械t4",
           "weight": [
             2.5,
             6.25,
@@ -272,7 +266,7 @@
         {
           "bleId": 3,
           "bleName": "GYM09",
-          "type": "飞鸟左",
+          "type": "力量器械t4",
           "weight": [
             2.5,
             6.25,
@@ -294,7 +288,7 @@
         {
           "bleId": 4,
           "bleName": "GYM012",
-          "type": "飞鸟左",
+          "type": "力量器械t4",
           "weight": [
             1.25,
             3.75,
@@ -347,7 +341,7 @@
         {
           "bleId": 0,
           "bleName": "GYM010",
-          "type": "蝴蝶机t4",
+          "type": "力量器械t4",
           "weight": [
             5.0,
             12.5,
@@ -397,7 +391,7 @@
         {
           "bleId": 0,
           "bleName": "GYM011",
-          "type": "坐姿抬腿t5",
+          "type": "力量器械t4",
           "weight": [
             5.0,
             12.5,

@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,8 +22,11 @@ import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.LinkBLE;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
+import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.bean.Wristband;
+import cn.linkfeeling.hankserve.queue.UwbQueue;
+import cn.linkfeeling.hankserve.utils.CalculateUtil;
 
 import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
 
@@ -39,11 +43,9 @@ public class LinkDataManager {
 
     public static final String TYPE_LEAP = "LEAP";
     public static final String TREADMILL_1 = "跑步机t1";
-    public static final String BICYCLE_1 = "单车t2";
     public static final String OVAL_1 = "椭圆机t3";
-    public static final String BUTTER_1 = "蝴蝶机t4";
-    public static final String SIT_POSTURE_1 = "坐姿抬腿t5";
-    public static final String BIRD_1 = "飞鸟左";
+    public static final String BIRD_1 = "力量器械t4";
+    public static final String ANCH = "ANCH";
 
     private static final LinkDataManager linkDataManager = new LinkDataManager();
     private ConcurrentHashMap<String, String> deviceBleTypeMaps;
@@ -109,148 +111,6 @@ public class LinkDataManager {
                 e.printStackTrace();
             }
         }
-
-
-//        LinkSpecificDevice linkSpecificDevice00 = new LinkSpecificDevice();
-//        linkSpecificDevice00.setId(0x1100);
-//        linkSpecificDevice00.setDeviceName("HIIT");
-//        linkSpecificDevice00.setType("HIIT");
-//
-//        UWBCoordData.FencePoint fencePoint00 = new UWBCoordData.FencePoint();
-//        fencePoint00.setFenceId(0x100);
-//        fencePoint00.setLeft_top(new UWBCoordData.FencePoint.Point(870, 7));
-//        fencePoint00.setRight_top(new UWBCoordData.FencePoint.Point(1476, 7));
-//        fencePoint00.setLeft_bottom(new UWBCoordData.FencePoint.Point(870, 512));
-//        fencePoint00.setRight_bottom(new UWBCoordData.FencePoint.Point(1476, 512));
-//        linkSpecificDevice00.setFencePoint(fencePoint00);
-
-//------------------------------------------------------------------------------------------------------------------------------
-
-//        LinkSpecificDevice linkSpecificDevice01 = new LinkSpecificDevice();
-//        linkSpecificDevice01.setId(0x1101);
-//        linkSpecificDevice01.setDeviceName("跑步机01");
-//        linkSpecificDevice01.setType("跑步机");
-//
-//        UWBCoordData.FencePoint fencePoint01 = new UWBCoordData.FencePoint();
-//        fencePoint01.setFenceId(0x101);
-//        fencePoint01.setLeft_top(new UWBCoordData.FencePoint.Point(0, 281));
-//        fencePoint01.setRight_top(new UWBCoordData.FencePoint.Point(312, 281));
-//        fencePoint01.setLeft_bottom(new UWBCoordData.FencePoint.Point(0, 417));
-//        fencePoint01.setRight_bottom(new UWBCoordData.FencePoint.Point(312, 417));
-//        linkSpecificDevice01.setFencePoint(fencePoint01);
-//
-//        LinkBLE linkBLE01 = new LinkBLE();
-//        linkBLE01.setBleId(0x11101);
-//        linkBLE01.setBleName("LKFL02");
-//        linkBLE01.setType(TREADMILL_1);
-//        deviceBleTypeMaps.put(linkBLE01.getBleName(), linkBLE01.getType());
-//
-//        List<LinkBLE> list01 = new ArrayList<>();
-//        list01.add(linkBLE01);
-//        linkSpecificDevice01.setLinkBLES(list01);
-
-
-//--------------------------------------------------------------------------------------------------------------//
-//        LinkSpecificDevice linkSpecificDevice02 = new LinkSpecificDevice();
-//        linkSpecificDevice02.setId(0x1102);
-//        linkSpecificDevice02.setDeviceName("单车");
-//        linkSpecificDevice02.setType("单车");
-//
-//        UWBCoordData.FencePoint fencePoint02 = new UWBCoordData.FencePoint();
-//        fencePoint02.setFenceId(0x102);
-//        fencePoint02.setLeft_top(new UWBCoordData.FencePoint.Point(1, 6));
-//        fencePoint02.setRight_top(new UWBCoordData.FencePoint.Point(316, 6));
-//        fencePoint02.setLeft_bottom(new UWBCoordData.FencePoint.Point(1, 147));
-//        fencePoint02.setRight_bottom(new UWBCoordData.FencePoint.Point(316, 147));
-//        linkSpecificDevice02.setFencePoint(fencePoint02);
-//
-//        LinkBLE linkBLE02 = new LinkBLE();
-//        linkBLE02.setBleId(0x11102);
-//        linkBLE02.setBleName("LKFL03");
-//        linkBLE02.setType(BICYCLE_1);
-//        deviceBleTypeMaps.put(linkBLE02.getBleName(), linkBLE02.getType());
-//
-//        List<LinkBLE> list02 = new ArrayList<>();
-//        list02.add(linkBLE02);
-//        linkSpecificDevice02.setLinkBLES(list02);
-
-        //----------------------------------------------------------------------------------------------------//
-
-//        LinkSpecificDevice linkSpecificDevice03 = new LinkSpecificDevice();
-//        linkSpecificDevice03.setId(0x1103);
-//        linkSpecificDevice03.setDeviceName("椭圆机");
-//        linkSpecificDevice03.setType("椭圆机");
-//
-//        UWBCoordData.FencePoint fencePoint03 = new UWBCoordData.FencePoint();
-//        fencePoint03.setFenceId(0x103);
-//        fencePoint03.setLeft_top(new UWBCoordData.FencePoint.Point(0, 158));
-//        fencePoint03.setRight_top(new UWBCoordData.FencePoint.Point(357, 158));
-//        fencePoint03.setLeft_bottom(new UWBCoordData.FencePoint.Point(0, 275));
-//        fencePoint03.setRight_bottom(new UWBCoordData.FencePoint.Point(357, 275));
-//        linkSpecificDevice03.setFencePoint(fencePoint03);
-//
-//        LinkBLE linkBLE03 = new LinkBLE();
-//        linkBLE03.setBleId(0x11103);
-//        linkBLE03.setBleName("LKFL05");
-//        linkBLE03.setType(OVAL_1);
-//
-//        deviceBleTypeMaps.put(linkBLE03.getBleName(), linkBLE03.getType());
-//
-//        List<LinkBLE> list03 = new ArrayList<>();
-//        list03.add(linkBLE03);
-//        linkSpecificDevice03.setLinkBLES(list03);
-
-        //--------------------------------------------------------------------------------------------------------------------
-
-//        LinkSpecificDevice linkSpecificDevice04 = new LinkSpecificDevice();
-//        linkSpecificDevice04.setId(0x1104);
-//        linkSpecificDevice04.setDeviceName("飞鸟架01");
-//        linkSpecificDevice04.setType("飞鸟架01");
-//
-//        UWBCoordData.FencePoint fencePoint04 = new UWBCoordData.FencePoint();
-//        fencePoint04.setFenceId(0x104);
-//        fencePoint04.setLeft_top(new UWBCoordData.FencePoint.Point(578, 9));
-//        fencePoint04.setRight_top(new UWBCoordData.FencePoint.Point(860, 9));
-//        fencePoint04.setLeft_bottom(new UWBCoordData.FencePoint.Point(578, 417));
-//        fencePoint04.setRight_bottom(new UWBCoordData.FencePoint.Point(860, 417));
-//        linkSpecificDevice04.setFencePoint(fencePoint04);
-//
-//        LinkBLE linkBLE04 = new LinkBLE();
-//        linkBLE04.setBleId(0x11104);
-//        linkBLE04.setBleName("LKFL06");
-//        linkBLE04.setType(BIRD_1);
-//
-//        deviceBleTypeMaps.put(linkBLE04.getBleName(), linkBLE04.getType());
-//
-//        List<LinkBLE> list04 = new ArrayList<>();
-//        list04.add(linkBLE04);
-//        linkSpecificDevice04.setLinkBLES(list04);
-
-
-        //------------------------------------------------------------------------------------------------------
-        /*以下为测试区域*/
-
-//        LinkSpecificDevice linkSpecificDevice05 = new LinkSpecificDevice();
-//        linkSpecificDevice05.setId(0x1105);
-//        linkSpecificDevice05.setDeviceName("飞鸟架02");
-//        linkSpecificDevice05.setType("飞鸟架02");
-//
-//        UWBCoordData.FencePoint fencePoint05 = new UWBCoordData.FencePoint();
-//        fencePoint05.setFenceId(0x105);
-//        fencePoint05.setLeft_top(new UWBCoordData.FencePoint.Point(0, 1041));
-//        fencePoint05.setRight_top(new UWBCoordData.FencePoint.Point(550, 1041));
-//        fencePoint05.setLeft_bottom(new UWBCoordData.FencePoint.Point(0, 1781));
-//        fencePoint05.setRight_bottom(new UWBCoordData.FencePoint.Point(550, 1781));
-//        linkSpecificDevice05.setFencePoint(fencePoint05);
-
-
-//=====================================================================================================
-//        devicesData.add(linkSpecificDevice00);
-//        devicesData.add(linkSpecificDevice01);
-//        devicesData.add(linkSpecificDevice02);
-//        devicesData.add(linkSpecificDevice03);
-//        devicesData.add(linkSpecificDevice04);
-//        devicesData.add(linkSpecificDevice05);
 
         return this;
     }
@@ -398,17 +258,15 @@ public class LinkDataManager {
         }
         return false;
     }
-
-
     /**
      * 判断一个点是否在凸四边形内
      *
-     * @param uwbCoorData
+     * @param uwbCoordData
      * @return
      */
-    public boolean isPointInRect(UWBCoordData uwbCoorData) {
-        double x = uwbCoorData.getX();
-        double y = uwbCoorData.getY();
+    public boolean isPointInRect(UWBCoordData uwbCoordData) {
+        double x = uwbCoordData.getX();
+        double y = uwbCoordData.getY();
         List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().getDevicesData();
         for (LinkSpecificDevice devicesDatum : devicesData) {
             UWBCoordData.FencePoint fencePoint = devicesDatum.getFencePoint();
@@ -421,11 +279,12 @@ public class LinkDataManager {
             final double c = (D.x - C.x) * (y - C.y) - (D.y - C.y) * (x - C.x);
             final double d = (A.x - D.x) * (y - D.y) - (A.y - D.y) * (x - D.x);
             if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
-                uwbCoorData.setDevice(devicesDatum);
-                uwbCoorData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoorData.getCode())));
+                uwbCoordData.setDevice(devicesDatum);
+                uwbCoordData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoordData.getCode())));
                 return true;
             }
         }
+        uwbCoordData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoordData.getCode())));
         return false;
     }
 
@@ -446,4 +305,156 @@ public class LinkDataManager {
         }
         return null;
     }
+
+    /**
+     * 根据anchName 获取设备
+     * @param anchName
+     * @return
+     */
+    public LinkSpecificDevice getDeviceByanchName(String anchName) {
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (anchName.equals(devicesDatum.getAnchName())) {
+                return devicesDatum;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * g根据围栏id查找anch
+     *
+     * @param fenceId
+     * @return
+     */
+    public String getAnchName(int fenceId) {
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (devicesDatum.getFencePoint().getFenceId() == fenceId) {
+                return devicesDatum.getAnchName();
+            }
+        }
+
+        return null;
+
+    }
+
+
+    public int queryFenceIdByDeviceName(String deviceName) {
+        for (LinkSpecificDevice devicesDatum : devicesData) {
+            if (deviceName.equals(devicesDatum.getDeviceName())) {
+                return devicesDatum.getFencePoint().getFenceId();
+
+            }
+        }
+        return -1;
+    }
+    public ConcurrentHashMap<String, UwbQueue<Point>> queryQueueByDeviceId(int deviceId) {
+        Point point;
+        ConcurrentHashMap<String, UwbQueue<Point>> newCaculate = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, UwbQueue<Point>> code_points = FinalDataManager.getInstance().getCode_points();
+        for (Map.Entry<String, UwbQueue<Point>> next : code_points.entrySet()) {
+            UwbQueue<Point> value = next.getValue();
+            point = new Point();
+            point.setId(deviceId);
+            String key = next.getKey();
+            if (value.contains(point) && FinalDataManager.getInstance().queryUwb(next.getKey()) == null) {
+                newCaculate.put(key, value);
+            }
+        }
+        return newCaculate;
+    }
+
+    public String queryUWBCodeByWristband(String wristband) {
+        Iterator<Map.Entry<String, String>> iterator = uwbCode_wristbandName.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> next = iterator.next();
+            if (next.getValue().equals(wristband)) {
+                return next.getKey();
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * 根据BLE扫描的RSSI 选择手环绑定
+     *
+     * @param uwbCode
+     * @param deviceByBleName
+     */
+    public void bleBindAndRemoveSpareTire(String uwbCode, LinkSpecificDevice deviceByBleName) {
+        UWBCoordData uwbCoordData = new UWBCoordData();
+        uwbCoordData.setDevice(deviceByBleName);
+        uwbCoordData.setSemaphore(0);
+        uwbCoordData.setCode(uwbCode);
+        FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+        Log.i("binding", "BLE RSSI");
+        ConcurrentHashMap<Integer, ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> alternative = FinalDataManager.getInstance().getAlternative();
+        if (alternative != null && !alternative.isEmpty()) {
+            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = alternative.get(deviceByBleName.getFencePoint().getFenceId());
+            if (queueConcurrentHashMap != null && !queueConcurrentHashMap.isEmpty()) {
+                Iterator<Map.Entry<UWBCoordData, UwbQueue<Point>>> iterator = queueConcurrentHashMap.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry<UWBCoordData, UwbQueue<Point>> next = iterator.next();
+                    if (next.getKey().getCode().equals(uwbCode)) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+
+    }
+
+    public void checkBind(LinkSpecificDevice deviceByBleName) {
+        Log.i("ppppppppsizetop", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
+        //围栏设备在运动
+        Log.i("pppppppp", "进来了");
+        //获取备选人的集合
+        ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queue = FinalDataManager.getInstance().getAlternative().get(deviceByBleName.getFencePoint().getFenceId());
+
+
+        if (queue == null || queue.isEmpty()) {
+            //可以理解成没有符合条件的人   不进行绑定
+            Log.i("pppppppp", "-3-3-3");
+            return;
+        }
+
+        //进行二次筛选    在备胎中移除所有已经绑定的标签
+
+        Iterator<UWBCoordData> iterator = queue.keySet().iterator();
+        while (iterator.hasNext()) {
+            UWBCoordData next = iterator.next();
+            if (FinalDataManager.getInstance().getFenceId_uwbData().containsValue(next)) {
+                iterator.remove();
+            }
+        }
+
+        Log.i("pppppppp2222", queue.size() + "");
+        UWBCoordData uwbCoordData = null;
+        float min = Integer.MAX_VALUE;
+        for (Map.Entry<UWBCoordData, UwbQueue<Point>> next : queue.entrySet()) {
+
+            int num = 0;
+            UwbQueue<Point> value = next.getValue();
+            UWBCoordData.FencePoint.Point centerPoint = deviceByBleName.getCenterPoint();
+            for (Point point : value) {
+                num += CalculateUtil.pointDistance(point.getX(), point.getY(), centerPoint.getX(), centerPoint.getY());
+            }
+            float v = CalculateUtil.txFloat(num, value.size());
+            if (v < min) {
+                min = v;
+                uwbCoordData = next.getKey();
+            }
+        }
+        queue.remove(uwbCoordData); //从备选人中移除
+        FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+        Log.i("binding", "UWB SCAN");
+        Log.i("ppppppppsizebottom", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
+
+        //找出带匹配手环
+        //  ConcurrentHashMap<Integer, List<String>> map = queryWristByFenceId(newUwb.getDevice().getId());
+        //      FinalDataManager.getInstance().getCode_points().get
+
+    }
+
+
 }

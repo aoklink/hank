@@ -29,14 +29,16 @@ public class CalculateUtil {
      * @time 2019/3/25 14:03
      */
     public static BigDecimal floatDivision(float num1, float num2) {
-        BigDecimal bigDecimal1 = new BigDecimal(num1);
-        BigDecimal bigDecimal2 = new BigDecimal(num2);
-        BigDecimal divide = bigDecimal1.divide(bigDecimal2, 7, BigDecimal.ROUND_HALF_UP);
-        return divide;
-
-
+        try {
+            BigDecimal bigDecimal1 = new BigDecimal(num1);
+            BigDecimal bigDecimal2 = new BigDecimal(num2);
+            BigDecimal divide = bigDecimal1.divide(bigDecimal2, 7, BigDecimal.ROUND_HALF_UP);
+            return divide;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return BigDecimal.valueOf(0);
     }
-
 
 
     /**
@@ -61,9 +63,20 @@ public class CalculateUtil {
         return v0 + v1 + v2 + v3;
     }
 
+    /**
+     * byte转int
+     *
+     * @param b
+     * @return
+     */
+    public static int byteToInt(byte b) {
+        return b & 0xff;
+    }
+
 
     /**
      * int to byte
+     *
      * @param number
      * @return
      */
@@ -72,10 +85,10 @@ public class CalculateUtil {
         if ((tmp & 0x80) == 0x80) {
             int bit = 1;
             int mask = 0;
-            for(;;) {
+            for (; ; ) {
                 mask |= bit;
                 if ((tmp & bit) == 0) {
-                    bit <<=1;
+                    bit <<= 1;
                     continue;
                 }
                 int left = tmp & (~mask);
@@ -90,4 +103,8 @@ public class CalculateUtil {
         return tmp;
     }
 
+
+    public static double pointDistance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.abs((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+    }
 }
