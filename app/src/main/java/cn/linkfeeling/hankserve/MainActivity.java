@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -14,6 +16,7 @@ import com.google.gson.Gson;
 import com.link.feeling.framework.base.FrameworkBaseActivity;
 import com.link.feeling.framework.executor.ThreadPoolManager;
 import com.link.feeling.framework.utils.data.L;
+import com.link.feeling.framework.utils.data.ToastUtils;
 
 import org.json.JSONObject;
 
@@ -62,7 +65,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private Gson gson = new Gson();
     private SimpleDateFormat simpleDateFormat;
     private Disposable disposable;
-    private RecyclerView recycleView;
+    private RecyclerView recycleView,match_recycleView;
     private BLEAdapter bleAdapter;
 
     private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
@@ -104,6 +107,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
 
         recycleView = findViewById(R.id.recycleView);
+        match_recycleView = findViewById(R.id.match_recycleView);
         tv_ipTip = findViewById(R.id.tv_ipTip);
         tv_ipTipRemove = findViewById(R.id.tv_ipTipRemove);
         tv_ipTip.setMovementMethod(ScrollingMovementMethod.getInstance());
@@ -113,6 +117,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
 
         recycleView.setLayoutManager(new LinearLayoutManager(this));
+        match_recycleView.setLayoutManager(new LinearLayoutManager(this));
         bleAdapter = new BLEAdapter(this, bleDeviceInfos);
         recycleView.setAdapter(bleAdapter);
 
@@ -123,7 +128,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         connectWebSocket();
         //connectLinkWS();
         startIntervalListener();
-
 
 
     }
@@ -146,8 +150,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 tv_ipTip.append(simpleDateFormat.format(System.currentTimeMillis()));
                                 tv_ipTip.append("\n\n");
 
-                                byte [] ss={12,13};
-                                Global.group.writeAndFlush(new SmartCarProtocol((byte) 1,ss));
+                                byte[] ss = {12, 13};
+                                Global.group.writeAndFlush(new SmartCarProtocol((byte) 1, ss));
                             }
                         });
                     }
@@ -169,7 +173,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     @Override
                     public void getBLEStream(String hostString, SmartCarProtocol smartCarProtocol) {
 
-                        Log.i("idle----",hostString+"++++++"+Arrays.toString(smartCarProtocol.getContent()));
+                        Log.i("idle----", hostString + "++++++" + Arrays.toString(smartCarProtocol.getContent()));
 
                         onLeScanSelf(hostString, smartCarProtocol.getContent());
 //                        ThreadPoolManager.getInstance().execute(new Runnable() {
@@ -588,6 +592,26 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     public void onBackPressed() {
     }
 */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+
+
+        if (itemId == R.id.action_settings) {
+            ToastUtils.showToast("清空匹配数据");
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onDestroy() {
