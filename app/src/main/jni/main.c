@@ -129,12 +129,16 @@ unsigned int match_data(signed char *device_data, WATCH_DATA *watch_data) {
 	int min_sumlen_x;
 	int min_sumlen_y;
 	int min_sumlen_z;
+	int min_sumlen_fx;
+	int min_sumlen_fy;
+	int min_sumlen_fz;
 	unsigned int min_number;
 
 	short average_x;
 	short average_y;
 	short average_z;
 	short average_s;
+	short average_fs;
 	unsigned char index;
 	unsigned char index_s;
 	signed char x_raw_data[MAX_WATCH_DATA_LEN];
@@ -144,6 +148,7 @@ unsigned int match_data(signed char *device_data, WATCH_DATA *watch_data) {
 	signed char device_raw_data[MAX_DEVICE_DATA_LEN] = {0};
 	signed char device_smooth_data[DEVICE_LEN] = {0};
 	unsigned char device_real_data_len;
+	signed char flip_device_data[DEVICE_LEN];
 
 	/* trans data to buffer */
 	for (index = 0; index < MAX_WATCH_DATA_LEN; index++) {
@@ -163,6 +168,10 @@ unsigned int match_data(signed char *device_data, WATCH_DATA *watch_data) {
 				(device_raw_data[index_s + 5] + device_raw_data[index_s + 6] +
 				 device_raw_data[index_s + 7]) / 3;
 	}
+	for(index_s=0; index_s<DEVICE_LEN; index_s++)
+	{
+		flip_device_data[index_s] = 0 - device_smooth_data[index_s];
+	}
 	average_data(x_raw_data, MAX_WATCH_DATA_LEN);
 	average_data(y_raw_data, MAX_WATCH_DATA_LEN);
 	average_data(z_raw_data, MAX_WATCH_DATA_LEN);
@@ -172,6 +181,7 @@ unsigned int match_data(signed char *device_data, WATCH_DATA *watch_data) {
 	average_y = average_data_one(y_raw_data, MAX_WATCH_DATA_LEN);
 	average_z = average_data_one(z_raw_data, MAX_WATCH_DATA_LEN);
 	average_s = average_data_one(device_smooth_data, DEVICE_LEN);
+	average_fs = average_data_one(flip_device_data, DEVICE_LEN);
 
 	LOGD("pingjunzhi %d,%d,%d,%d",average_x,average_y,average_z,average_s);
 
@@ -190,12 +200,17 @@ unsigned int match_data(signed char *device_data, WATCH_DATA *watch_data) {
 	same_amp_data(y_raw_data, MAX_WATCH_DATA_LEN, minu_y, average_y);
 	same_amp_data(z_raw_data, MAX_WATCH_DATA_LEN, minu_z, average_z);
 	same_amp_data(device_smooth_data, DEVICE_LEN, minu_s, average_s);
+	same_amp_data(flip_device_data, DEVICE_LEN, minu_s, average_fs);
 
 
 	//求距离
 	min_sumlen_x = min_sumlen_data(x_raw_data, device_smooth_data);
 	min_sumlen_y = min_sumlen_data(y_raw_data, device_smooth_data);
 	min_sumlen_z = min_sumlen_data(z_raw_data, device_smooth_data);
+	min_sumlen_fx = min_sumlen_data(x_raw_data, flip_device_data);
+	min_sumlen_fy = min_sumlen_data(y_raw_data, flip_device_data);
+	min_sumlen_fz = min_sumlen_data(z_raw_data, flip_device_data);
+
 	LOGD("min_sumlen_x:%d\n", min_sumlen_x);
 	LOGD("min_sumlen_y:%d\n", min_sumlen_y);
 	LOGD("min_sumlen_z:%d\n", min_sumlen_z);
@@ -204,6 +219,13 @@ unsigned int match_data(signed char *device_data, WATCH_DATA *watch_data) {
 		min_number = min_sumlen_y;
 	if (min_sumlen_z < min_number)
 		min_number = min_sumlen_z;
+	if (min_sumlen_fx < min_number)
+		min_number = min_sumlen_fx;
+	if (min_sumlen_fy < min_number)
+		min_number = min_sumlen_fy;
+	if (min_sumlen_fz < min_number)
+		min_number = min_sumlen_fz;
+
 
 	return min_number;
 
