@@ -28,6 +28,7 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
 
     private MatchQueue<AccelData> watchQueue = new MatchQueue<>(40);
+    private LimitQueue<Integer> watchSeq = new LimitQueue<>(40);
 
     static {
         map = new ConcurrentHashMap<>();
@@ -69,15 +70,16 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
                 String heatRate = String.valueOf(heartInt);
 
 
-                byte power=bytes1[9];
+                byte power = bytes1[9];
 
-                Log.i(bleName+"power",CalculateUtil.byteToInt(power)+"");
+                Log.i(bleName + "power", CalculateUtil.byteToInt(power) + "");
 
                 Log.i("cccccccccccccccc" + bleName, heatRate);
                 bleDeviceInfo.setBracelet_id(bleName);
                 bleDeviceInfo.setHeart_rate(heatRate);
             }
         } else if (bleName.contains("I7")) {
+
             WatchScanRecord watchScanRecord = WatchScanRecord.parseFromBytes(bytes);
             if (watchScanRecord == null) {
                 return null;
@@ -85,18 +87,21 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
             SparseArray<byte[]> manufacturerSpecificData = watchScanRecord.getManufacturerSpecificData();
             if (manufacturerSpecificData != null && manufacturerSpecificData.size() != 0) {
                 byte[] bytes1 = manufacturerSpecificData.valueAt(0);
+                Log.i("shshshsh"+bleName,Arrays.toString(bytes1));
                 if (bytes1 == null || bytes1.length == 0) {
                     return null;
                 }
 
                 byte[] seqNum = new byte[2];
-                seqNum[0] = bytes1[3];
-                seqNum[1] = bytes1[4];
+                seqNum[0] = bytes1[4];
+                seqNum[1] = bytes1[3];
                 int seq = CalculateUtil.byteArrayToInt(seqNum);
                 if (limitQueue.contains(seq)) {
                     return null;
                 }
                 limitQueue.offer(seq);
+                Log.i("bvbvbv"+bleName,seq+"");
+                watchSeq.offer(seq);
 
                 for (int j = 5; j < 20; j = j + 3) {
                     AccelData accelData = new AccelData();
@@ -105,6 +110,7 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
                     accelData.setZ(bytes1[j + 2]);
                     watchQueue.offer(accelData);
                 }
+
 
                 byte[] heart = new byte[1];
                 heart[0] = bytes1[2];
@@ -122,5 +128,10 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
 
     public MatchQueue<AccelData> getWatchQueue() {
         return watchQueue;
+    }
+
+
+    public LimitQueue<Integer> getWatchSeq() {
+        return watchSeq;
     }
 }

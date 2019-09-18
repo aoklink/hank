@@ -46,6 +46,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     private static final float SELF_GRAVITY = 2.5f;
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
     private MatchQueue<Byte> devicesQueue = new MatchQueue<>(130);
+    private LimitQueue<Integer> seqQueue = new LimitQueue<>(130);
 
     private int flag = -1;
 
@@ -101,7 +102,9 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
             byte[] deviceData = new byte[130];
             List<Byte> deviceList = new ArrayList<>(devicesQueue);
+            List<Integer> seqList = new ArrayList<>(seqQueue);
             Log.i("pipeizhimmmm", new Gson().toJson(deviceList));
+            Log.i("pipeizhissss", new Gson().toJson(seqList));
             Log.i("pipeizhizzzz", map.size() + "");
 
 
@@ -116,9 +119,13 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     WatchData watchData = new WatchData();
                     AccelData[] accelData = new AccelData[40];
 
+                    LimitQueue<Integer> watchSeq = wristbandProcessor.getWatchSeq();
+
                     List<AccelData> watchList = new ArrayList<>(wristQueue);
+                    List<Integer> watchSeqList = new ArrayList<>(watchSeq);
 
                     Log.i("pipeizhinnnnn", new Gson().toJson(watchList));
+                    Log.i("pipeizhiwwwww", new Gson().toJson(watchSeqList));
                     for (int i = 0; i < watchList.size(); i++) {
                         accelData[i] = watchList.get(i);
                     }
@@ -181,6 +188,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
 
         if (serviceData[0] != -1 && serviceData[0] != 0 && serviceData[1] != -1 && serviceData[1] != 0) {
+
             for (int j = 0; j < 10; j++) {
                 int cuv1 = CalculateUtil.byteToInt(serviceData[j]);
                 if (bleDeviceInfoNow != null) {
@@ -194,6 +202,11 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 }
 
             }
+
+            if (serviceData[13] != 0) {
+                seqQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
+            }
+
         }
 
 
@@ -201,6 +214,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             start = true;
             select = true;
             devicesQueue.clear();
+            seqQueue.clear();
             FinalDataManager.getInstance().getMatchTemp().clear();
             flag = CalculateUtil.byteArrayToInt(seqNum);
 
@@ -262,4 +276,5 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
         return false;
     }
+
 }
