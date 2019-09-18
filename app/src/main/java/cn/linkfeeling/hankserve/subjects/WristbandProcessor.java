@@ -85,8 +85,8 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
                 }
 
                 byte[] seqNum = new byte[2];
-                seqNum[0] = bytes1[3];
-                seqNum[1] = bytes1[4];
+                seqNum[0] = bytes1[4];
+                seqNum[1] = bytes1[3];
                 int seq = CalculateUtil.byteArrayToInt(seqNum);
                 if (limitQueue.contains(seq)) {
                     return null;
