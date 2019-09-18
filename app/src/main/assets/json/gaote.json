@@ -542,7 +542,7 @@
     {
       "id": 14,
       "deviceName": "坐式推胸01",
-      "anchName": "000014",
+      "anchName": "ANCH36 ",
       "type": "坐式推胸",
       "fencePoint": {
         "fenceId": 14,
