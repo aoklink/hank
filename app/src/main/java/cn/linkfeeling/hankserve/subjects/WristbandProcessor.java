@@ -28,7 +28,7 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
 
     private MatchQueue<AccelData> watchQueue = new MatchQueue<>(40);
-    private LimitQueue<Integer> watchSeq = new LimitQueue<>(40);
+    private LimitQueue<Integer> watchSeq = new LimitQueue<>(8);
 
     static {
         map = new ConcurrentHashMap<>();

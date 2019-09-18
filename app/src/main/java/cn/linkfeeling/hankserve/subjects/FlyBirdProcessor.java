@@ -53,13 +53,14 @@ public class FlyBirdProcessor implements IDataAnalysis {
     private volatile boolean start = true;
     private volatile boolean select = true;
     private long startTime;
+    private Gson gson = new Gson();
 
     static {
         map = new ConcurrentHashMap<>();
     }
 
     @Override
-    public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
+    public synchronized BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
@@ -103,8 +104,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
             byte[] deviceData = new byte[130];
             List<Byte> deviceList = new ArrayList<>(devicesQueue);
             List<Integer> seqList = new ArrayList<>(seqQueue);
-            Log.i("pipeizhimmmm", new Gson().toJson(deviceList));
-            Log.i("pipeizhissss", new Gson().toJson(seqList));
+            Log.i("pipeizhimmmm", gson.toJson(deviceList));
+            Log.i("pipeizhissss", gson.toJson(seqList));
             Log.i("pipeizhizzzz", map.size() + "");
 
 
@@ -124,8 +125,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     List<AccelData> watchList = new ArrayList<>(wristQueue);
                     List<Integer> watchSeqList = new ArrayList<>(watchSeq);
 
-                    Log.i("pipeizhinnnnn", new Gson().toJson(watchList));
-                    Log.i("pipeizhiwwwww", new Gson().toJson(watchSeqList));
+                    Log.i("pipeizhinnnnn", gson.toJson(watchList));
+                    Log.i("pipeizhiwwwww", gson.toJson(watchSeqList));
                     for (int i = 0; i < watchList.size(); i++) {
                         accelData[i] = watchList.get(i);
                     }
@@ -138,6 +139,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     String name = LinkDataManager.getInstance().getUwbCode_wristbandName().get(next.getCode());
                     matchResult.setWristband(name == null ? "" : name);
                     matchResult.setMatchResult(matchNum);
+                    matchResult.setDeviceSeq(gson.toJson(seqList));
+                    matchResult.setWatchSeq(gson.toJson(watchSeqList));
                     EventBus.getDefault().post(matchResult);
                 }
             }

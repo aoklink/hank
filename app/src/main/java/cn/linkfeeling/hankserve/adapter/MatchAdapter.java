@@ -39,6 +39,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.BLEViewHolde
         holder.tv_bracelet_id.setText(matchResult.getDeviceName());
         holder.tv_deviceName.setText(matchResult.getWristband());
         holder.tv_heat.setText(String.valueOf(matchResult.getMatchResult()));
+        holder.tv_deviceSeq.setText(matchResult.getDeviceSeq());
+        holder.tv_watchSeq.setText(matchResult.getWatchSeq());
 
     }
 
@@ -52,6 +54,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.BLEViewHolde
         private TextView tv_bracelet_id;
         private TextView tv_deviceName;
         private TextView tv_heat;
+        private TextView tv_deviceSeq;
+        private TextView tv_watchSeq;
 
 
         BLEViewHolder(View itemView) {
@@ -61,6 +65,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.BLEViewHolde
             tv_bracelet_id = itemView.findViewById(R.id.tv_bracelet_id);
             tv_deviceName = itemView.findViewById(R.id.tv_deviceName);
             tv_heat = itemView.findViewById(R.id.tv_heat);
+            tv_deviceSeq = itemView.findViewById(R.id.tv_deviceSeq);
+            tv_watchSeq = itemView.findViewById(R.id.tv_watchSeq);
 
         }
     }

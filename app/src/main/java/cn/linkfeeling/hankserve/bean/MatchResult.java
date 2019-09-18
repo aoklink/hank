@@ -9,6 +9,8 @@ public class MatchResult {
     private String deviceName;
     private String wristband;
     private int matchResult;
+    private String deviceSeq;
+    private String watchSeq;
 
     public String getDeviceName() {
         return deviceName;
@@ -32,5 +34,21 @@ public class MatchResult {
 
     public void setMatchResult(int matchResult) {
         this.matchResult = matchResult;
+    }
+
+    public String getDeviceSeq() {
+        return deviceSeq;
+    }
+
+    public void setDeviceSeq(String deviceSeq) {
+        this.deviceSeq = deviceSeq;
+    }
+
+    public String getWatchSeq() {
+        return watchSeq;
+    }
+
+    public void setWatchSeq(String watchSeq) {
+        this.watchSeq = watchSeq;
     }
 }

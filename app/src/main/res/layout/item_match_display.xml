@@ -1,55 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="wrap_content"
     android:minHeight="60dp"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:background="@android:color/white"
 
     >
 
 
-    <TextView
-        android:id="@+id/tv_bracelet_id"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="BFF4"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+
+        >
+        <TextView
+            android:id="@+id/tv_bracelet_id"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="BFF4"
+            android:textColor="@android:color/black"
+
+
+            />
+
+
+        <TextView
+            android:id="@+id/tv_deviceName"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="跑步机"
+            android:textColor="@android:color/black"
+
+            />
+
+        <TextView
+            android:id="@+id/tv_heat"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="100"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            />
+
+        <TextView
+            android:id="@+id/tv_report"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_deviceSeq"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textColor="@android:color/black"
-
-
+        android:background="@android:color/white"
         />
 
-
     <TextView
-        android:id="@+id/tv_deviceName"
+        android:id="@+id/tv_watchSeq"
         android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="跑步机"
+        android:layout_height="wrap_content"
         android:textColor="@android:color/black"
-
-        />
-
-    <TextView
-        android:id="@+id/tv_heat"
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:text="100"
-        android:gravity="center"
-        android:textColor="@android:color/black"
-        />
-
-    <TextView
-        android:id="@+id/tv_report"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textColor="@android:color/black"
+        android:background="@android:color/white"
         />
 
 
