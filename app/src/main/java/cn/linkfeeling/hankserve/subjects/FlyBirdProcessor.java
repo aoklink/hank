@@ -68,7 +68,9 @@ public class FlyBirdProcessor implements IDataAnalysis {
             return null;
         }
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
-        Log.i("999999999" + bleName + "--" + hostName, Arrays.toString(serviceData));
+        Log.i(bleName+"999999999"+ hostName, Arrays.toString(serviceData));
+
+        Log.i(bleName+"999999999----", flag + "");
 
         if (serviceData == null) {
             return null;
