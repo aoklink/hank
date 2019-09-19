@@ -120,10 +120,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             startServer();
         }
         // UDPBroadcast.udpBroadcast(this);
-        connectWebSocket();
+        // connectWebSocket();
         //connectLinkWS();
         startIntervalListener();
-
 
 
     }
@@ -146,8 +145,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 tv_ipTip.append(simpleDateFormat.format(System.currentTimeMillis()));
                                 tv_ipTip.append("\n\n");
 
-                                byte [] ss={12,13};
-                                Global.group.writeAndFlush(new SmartCarProtocol((byte) 1,ss));
+                                byte[] ss = {12, 13};
+                                Global.group.writeAndFlush(new SmartCarProtocol((byte) 1, ss));
                             }
                         });
                     }
@@ -169,7 +168,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     @Override
                     public void getBLEStream(String hostString, SmartCarProtocol smartCarProtocol) {
 
-                        Log.i("idle----",hostString+"++++++"+Arrays.toString(smartCarProtocol.getContent()));
+                        Log.i("idle----", hostString + "++++++" + Arrays.toString(smartCarProtocol.getContent()));
 
                         onLeScanSelf(hostString, smartCarProtocol.getContent());
 //                        ThreadPoolManager.getInstance().execute(new Runnable() {

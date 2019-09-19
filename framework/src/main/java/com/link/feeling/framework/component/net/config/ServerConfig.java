@@ -18,7 +18,7 @@ public final class ServerConfig {
      * 拓展类...
      */
     public static void initEnv() {
-        HOST = "https://116.62.124.200/api/";
+        HOST = "https://47.98.195.210/api/";
     }
 
 
