@@ -63,6 +63,7 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
                 if (bytes1 == null || bytes1.length == 0) {
                     return null;
                 }
+                Log.i("shshsh"+bleName,Arrays.toString(bytes1));
                 byte[] heart = new byte[1];
                 heart[0] = bytes1[6];
                 int heartInt = CalculateUtil.byteArrayToInt(heart);
@@ -88,6 +89,7 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
                 if (bytes1 == null || bytes1.length == 0) {
                     return null;
                 }
+                Log.i("shshsh"+bleName,Arrays.toString(bytes1));
 
                 byte[] seqNum = new byte[2];
                 seqNum[0] = bytes1[3];

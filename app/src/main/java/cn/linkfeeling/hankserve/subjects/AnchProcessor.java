@@ -39,24 +39,17 @@ public class AnchProcessor extends IAnchDataAnalysis {
     public static ConcurrentHashMap<String, AnchProcessor> map;
     public static ConcurrentHashMap<String, String> mac_label;
 
-    private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
+    //private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
 
     static {
         map = new ConcurrentHashMap<>();
         mac_label = new ConcurrentHashMap<>();
-        mac_label.put("DD1C", I7PLUS);
-        mac_label.put("F888", I7PLUS);
-        mac_label.put("C14A", I7PLUS);
-        mac_label.put("D661", I7PLUS);
-        mac_label.put("E6EB", I7PLUS);
-        mac_label.put("D46F", I7PLUS);
-        mac_label.put("DA51", I7PLUS);
-        mac_label.put("E9FC", I7PLUS);
-        mac_label.put("C9B5", I7PLUS);
-        mac_label.put("F8F7", I7PLUS);
-        mac_label.put("DA98", I7);
-        mac_label.put("D712", I7);
+        mac_label.put("C12D", I7PLUS);
+        mac_label.put("C254", I7);
+        mac_label.put("C3AD", I7PLUS);
         mac_label.put("E5BE", I7);
+        mac_label.put("FDA1", I7);
+
     }
 
 
@@ -87,10 +80,12 @@ public class AnchProcessor extends IAnchDataAnalysis {
 
         byte[] seqNum = {serviceData[13], serviceData[14]};
 
+/*
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return;
         }
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
+*/
 
         boolean b = dealPowerData(serviceData, deviceByanchName, bleName);
         if (b) {
