@@ -51,8 +51,6 @@ public class AnchProcessor extends IAnchDataAnalysis {
         mac_label.put("FDA1", I7);
 
 
-
-
     }
 
 
@@ -105,7 +103,8 @@ public class AnchProcessor extends IAnchDataAnalysis {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append(label);
                 stringBuilder.append(macName);
-                Log.i("21212121", stringBuilder.toString() + "---" + serviceData[3]);
+                Log.i("21212121" + bleName, stringBuilder.toString() + "---" + serviceData[3]);
+                Log.i("21212121", Arrays.toString(serviceData));
                 FinalDataManager.getInstance().getRssi_wristbands().put(bleName, stringBuilder.toString());
             }
         }

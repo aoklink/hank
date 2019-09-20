@@ -39,13 +39,7 @@ public class ExampleUnitTest {
         limitQueue.offer(9);
         limitQueue.offer(10);
 
-        int[] nn = new int[10];
-        List<Integer> list = new ArrayList<>(limitQueue);
-
-        for (int i = 0; i < list.size(); i++) {
-            nn[i]=list.get(i);
-            System.out.println(nn[i]);
-        }
+   System.out.println(limitQueue.contains(11));
 
 
 

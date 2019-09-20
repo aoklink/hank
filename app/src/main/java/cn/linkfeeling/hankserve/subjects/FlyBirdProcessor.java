@@ -116,7 +116,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 }
             }
         }
-
+g
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
 
 
