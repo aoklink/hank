@@ -39,7 +39,7 @@ public class AnchProcessor extends IAnchDataAnalysis {
     public static ConcurrentHashMap<String, AnchProcessor> map;
     public static ConcurrentHashMap<String, String> mac_label;
 
-    private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
+  //  private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
 
     static {
         map = new ConcurrentHashMap<>();
@@ -87,10 +87,12 @@ public class AnchProcessor extends IAnchDataAnalysis {
 
         byte[] seqNum = {serviceData[13], serviceData[14]};
 
+/*
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return;
         }
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
+*/
 
         boolean b = dealPowerData(serviceData, deviceByanchName, bleName);
         if (b) {
