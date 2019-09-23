@@ -591,4 +591,23 @@ public class LinkDataManager {
         return null;
 
     }
+
+
+    /**
+     * 根据蓝牙名字查询对象
+     *
+     * @param bleName
+     * @return
+     */
+    public LinkBLE queryLinkBle(LinkSpecificDevice specificDevice, String bleName) {
+        List<LinkBLE> linkBLES = specificDevice.getLinkBLES();
+        if (linkBLES != null && !linkBLES.isEmpty()) {
+            for (LinkBLE linkBLE : linkBLES) {
+                if (linkBLE.getBleName().equals(bleName)) {
+                    return linkBLE;
+                }
+            }
+        }
+        return null;
+    }
 }
