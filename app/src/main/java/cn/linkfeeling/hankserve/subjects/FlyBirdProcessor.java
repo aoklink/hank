@@ -12,6 +12,7 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.LinkBLE;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.Power;
@@ -143,7 +144,17 @@ public class FlyBirdProcessor implements IDataAnalysis {
             }
             byte act_time = serviceData[13];
             byte gravity = serviceData[10];
-            float actualGravity = SELF_GRAVITY * gravity;
+
+            float actualGravity = 0;
+            if (gravity > 0) {
+                LinkBLE linkBLE = LinkDataManager.getInstance().queryLinkBle(deviceByBleName, bleName);
+                if (linkBLE != null) {
+                    float[] weight = linkBLE.getWeight();
+                    actualGravity = weight[gravity - 1];
+                }
+                Log.i("zhiliang", actualGravity + "");
+            }
+
             byte u_time = serviceData[14];
 
             if (bleDeviceInfoNow != null) {
