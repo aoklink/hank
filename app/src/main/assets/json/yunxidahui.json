@@ -35,7 +35,7 @@
     {
       "id": 1,
       "deviceName": "跑步机01",
-      "anchName": "ANCH01",
+      "anchName": "ANCH11",
       "type": "跑步机",
       "fencePoint": {
         "fenceId": 1,
@@ -62,95 +62,55 @@
       },
       "linkBLES": [
         {
-          "bleId": 1,
-          "bleName": "LKFL14",
+          "bleId": 0,
+          "bleName": "LKFL01",
           "type": "跑步机t1"
         }
       ]
     },
     {
       "id": 2,
-      "deviceName": "单车",
-      "anchName": "ANCH02",
-      "type": "单车",
-      "perimeter": 3.84,
-      "slope": 0.226829,
+      "deviceName": "跑步机02",
+      "anchName": "ANCH22",
+      "type": "跑步机",
       "fencePoint": {
         "fenceId": 2,
         "left_top": {
-          "x": 1.0,
-          "y": 6.0
+          "x": 0.0,
+          "y": 275.0
         },
         "right_top": {
-          "x": 316.0,
-          "y": 6.0
+          "x": 312.0,
+          "y": 275.0
         },
         "left_bottom": {
-          "x": 1.0,
-          "y": 138.0
+          "x": 0.0,
+          "y": 417.0
         },
         "right_bottom": {
-          "x": 316.0,
-          "y": 138.0
+          "x": 312.0,
+          "y": 417.0
         }
       },
       "centerPoint": {
-        "x": 158.5,
-        "y": 72.0
+        "x": 156.0,
+        "y": 349.0
       },
       "linkBLES": [
         {
-          "bleId": 2,
-          "bleName": "LKFLT2",
-          "type": "单车t2"
+          "bleId": 0,
+          "bleName": "LKFL02",
+          "type": "跑步机t1"
         }
       ]
     },
     {
       "id": 3,
-      "deviceName": "椭圆机",
-      "anchName": "ANCH03",
-      "type": "椭圆机",
-      "perimeter": 2.04,
-      "slope": 0.129164,
+      "deviceName": "坐式推胸训练器",
+      "anchName": "ANCH33",
+      "type": "坐式推胸训练器",
       "fencePoint": {
         "fenceId": 3,
-        "left_top": {
-          "x": 0.0,
-          "y": 138.0
-        },
-        "right_top": {
-          "x": 357.0,
-          "y": 138.0
-        },
-        "left_bottom": {
-          "x": 0.0,
-          "y": 275.0
-        },
-        "right_bottom": {
-          "x": 357.0,
-          "y": 275.0
-        }
-      },
-      "centerPoint": {
-        "x": 178.5,
-        "y": 206.5
-      },
-      "linkBLES": [
-        {
-          "bleId": 3,
-          "bleName": "LKFLT1",
-          "type": "椭圆机t3"
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "deviceName": "飞鸟架01",
-      "anchName": "ANCH04",
-      "type": "飞鸟架",
-      "fencePoint": {
-        "fenceId": 4,
         "left_top": {
           "x": 547.0,
           "y": 230.0
@@ -174,44 +134,8 @@
       },
       "linkBLES": [
         {
-          "bleId": 4,
+          "bleId": 0,
           "bleName": "LKFL13",
-          "type": "飞鸟左"
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "deviceName": "飞鸟架02",
-      "anchName": "ANCH05",
-      "type": "飞鸟架",
-      "fencePoint": {
-        "fenceId": 5,
-        "left_top": {
-          "x": 547.0,
-          "y": 9.0
-        },
-        "right_top": {
-          "x": 860.0,
-          "y": 9.0
-        },
-        "left_bottom": {
-          "x": 547.0,
-          "y": 230.0
-        },
-        "right_bottom": {
-          "x": 860.0,
-          "y": 230.0
-        }
-      },
-      "centerPoint": {
-        "x": 703.5,
-        "y": 119.5
-      },
-      "linkBLES": [
-        {
-          "bleId": 5,
-          "bleName": "LKFL12",
           "type": "飞鸟左"
         }
       ]
