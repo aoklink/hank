@@ -33,13 +33,11 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
  */
 public class FlyBirdProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
-    private static final float SELF_GRAVITY = 2.5f;
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
 
     private int flag = -1;
 
     private volatile boolean start = true;
-    private long startTime;
 
     static {
         map = new ConcurrentHashMap<>();
@@ -83,7 +81,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
-            startTime = System.currentTimeMillis();
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire.isEmpty()) {
                 start = false;

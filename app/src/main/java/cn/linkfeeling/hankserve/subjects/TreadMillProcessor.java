@@ -83,7 +83,7 @@ public class TreadMillProcessor implements IDataAnalysis {
             start = false;
         }
 
-        if (select && System.currentTimeMillis() - startTime >= 5 * 1000) {
+        if (select && System.currentTimeMillis() - startTime >= 2 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire == null || spareTire.isEmpty()) {
                 Log.i("pppppppp", "-5-5-5");
@@ -109,7 +109,7 @@ public class TreadMillProcessor implements IDataAnalysis {
 
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
-            if (System.currentTimeMillis() - startTime >= 5 * 1000) {
+            if (System.currentTimeMillis() - startTime >= 2 * 1000) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
                 if (s != null) {
                     String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
@@ -126,7 +126,7 @@ public class TreadMillProcessor implements IDataAnalysis {
         }
 
 
-        Log.i("6767676", Arrays.toString(serviceData));
+        Log.i("6767676"+bleName, Arrays.toString(serviceData));
         //检查是否有可绑定的手环  如果有则根据算法匹配
 
 
@@ -139,14 +139,14 @@ public class TreadMillProcessor implements IDataAnalysis {
             serviceDatum[0] = serviceData[11];
             serviceDatum[1] = serviceData[12];
             int numbers = CalculateUtil.byteArrayToInt(serviceDatum);
-            Log.i("67676", numbers + "");
+            Log.i("67676"+bleName, numbers + "");
             float v = CalculateUtil.txFloat(numbers, 100);
 
-            speed = v * 0.25641026f;
+            speed = v * 0.3378378f;
             //0.256410
         }
 
-        Log.i("6767676", speed + "");
+        Log.i("6767676"+bleName, speed + "");
 
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
