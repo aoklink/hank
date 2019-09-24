@@ -84,6 +84,8 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
                     return null;
                 }
 
+                Log.i("ppppppppppp",Arrays.toString(bytes1));
+
                 byte[] seqNum = new byte[2];
                 seqNum[0] = bytes1[4];
                 seqNum[1] = bytes1[3];
@@ -92,6 +94,9 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
                     return null;
                 }
                 limitQueue.offer(seq);
+
+                Log.i("power"+bleName,CalculateUtil.byteToInt(bytes1[21])+"");
+                //[-36, 39, 0, 108, 51, -9, 0, -62, -9, 0, -62, -9, -1, -62, -8, 0, -62, -9, 0, -61, 0, 100]
 
                 for (int j = 5; j < 20; j = j + 3) {
                     AccelData accelData = new AccelData();
