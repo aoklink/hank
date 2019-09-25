@@ -10,6 +10,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
     private volatile boolean start = true;
     private volatile boolean select = true;
+    private volatile boolean bind;
     private long startTime;
     private Gson gson = new Gson();
 
@@ -76,12 +78,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (serviceData == null) {
             return null;
         }
-
-
-        //   dealPowerData(serviceData, deviceByBleName, bleName);
-//        if(serviceData[0]!=0 && serviceData[0]!=-1){
-//            deviceByBleName.setAbility(serviceData[0]);
-//        }
         byte[] seqNum = {serviceData[11], serviceData[12]};
 
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
@@ -178,14 +174,42 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
 
         long diffTime = System.currentTimeMillis() - startTime;
-        if (diffTime > 0 && diffTime % 5000 == 0 && diffTime <= 60 * 1000) {
+        if (!bind && diffTime > 0 && diffTime % 5000 == 0 && diffTime <= 60 * 1000) {
+            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> map = FinalDataManager.getInstance().getMatchTemp().get(deviceByBleName.getFencePoint().getFenceId());
             byte[] deviceData = new byte[devicesList.size()];
             for (int i = 0; i < devicesList.size(); i++) {
                 deviceData[i] = devicesList.get(i);
             }
 
-            long second = diffTime / 1000;
-            long watchDataNum = 5 * second;
+            int second = (int) (diffTime / 1000);
+            int watchDataNum = 5 * second;
+
+            if (map != null) {
+                for (UWBCoordData next : map.keySet()) {
+                    WristbandProcessor wristbandProcessor = WristbandProcessor.map.get(LinkDataManager.getInstance().getUwbCode_wristbandName().get(next.getCode()));
+                    if (wristbandProcessor != null) {
+                        WatchData watchData = new WatchData();
+                        AccelData[] accelData = new AccelData[watchDataNum];
+
+                        MatchQueue<AccelData> wristQueue = wristbandProcessor.getWatchQueue();
+                        List<AccelData> watchList = new ArrayList<>(wristQueue);
+                        if (watchList.size() > watchDataNum) {
+                            Log.i("pipeizhinnnnn", gson.toJson(watchList));
+                            Collections.reverse(watchList);
+                            for (int i = 0; i < watchDataNum; i++) {
+                                accelData[i] = watchList.get(i);
+                            }
+                            watchData.setData(accelData);
+                            int matchNum = NDKTools.match_data(deviceData, watchData);
+
+                            byte[] bytes = CalculateUtil.intToByteArray(matchNum);
+                            Log.i("pipeixxxxx", String.valueOf(CalculateUtil.byteToInt(bytes[2])));
+                            Log.i("pipeixxxxx", String.valueOf(CalculateUtil.byteToInt(bytes[3])));
+                            Log.i("pipeizhi-----", matchNum + "");
+                        }
+                    }
+                }
+            }
         }
 
 
@@ -224,6 +248,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (serviceData[0] == -1 && serviceData[1] == -1) {
             start = true;
             select = true;
+            bind = false;
             devicesList.clear();
             FinalDataManager.getInstance().getMatchTemp().clear();
             flag = CalculateUtil.byteArrayToInt(seqNum);

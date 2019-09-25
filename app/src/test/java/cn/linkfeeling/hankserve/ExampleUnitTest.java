@@ -3,6 +3,7 @@ package cn.linkfeeling.hankserve;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cn.linkfeeling.hankserve.bean.NDKTools;
@@ -27,8 +28,10 @@ public class ExampleUnitTest {
     @Test
     public void testTime() {
 
-        int eee=1000%5000;
-        System.out.println(eee);
+        short fff= (short) 65530;
+
+        System.out.println(fff);
+
 
     }
 }
