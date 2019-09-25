@@ -27,28 +27,8 @@ public class ExampleUnitTest {
     @Test
     public void testTime() {
 
-        LimitQueue<Integer> limitQueue = new LimitQueue<>(10);
-        limitQueue.offer(1);
-        limitQueue.offer(2);
-        limitQueue.offer(3);
-        limitQueue.offer(4);
-        limitQueue.offer(5);
-        limitQueue.offer(6);
-        limitQueue.offer(7);
-        limitQueue.offer(8);
-        limitQueue.offer(9);
-        limitQueue.offer(10);
-
-        int[] nn = new int[10];
-        List<Integer> list = new ArrayList<>(limitQueue);
-
-        for (int i = 0; i < list.size(); i++) {
-            nn[i]=list.get(i);
-            System.out.println(nn[i]);
-        }
-
-
-
+        int eee=1000%5000;
+        System.out.println(eee);
 
     }
 }

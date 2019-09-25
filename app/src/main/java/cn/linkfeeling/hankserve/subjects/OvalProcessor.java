@@ -51,7 +51,7 @@ public class OvalProcessor implements IDataAnalysis {
     }
 
     @Override
-    public BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
+    public synchronized BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);

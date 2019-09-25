@@ -27,8 +27,7 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
 
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
 
-    private MatchQueue<AccelData> watchQueue = new MatchQueue<>(40);
-    private LimitQueue<Integer> watchSeq = new LimitQueue<>(8);
+    private MatchQueue<AccelData> watchQueue = new MatchQueue<>(360);
 
     static {
         map = new ConcurrentHashMap<>();
@@ -46,7 +45,7 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
 
 
     @Override
-    public BleDeviceInfo analysisWristbandData(BleDeviceInfo bleDeviceInfo, byte[] bytes, String bleName) {
+    public synchronized BleDeviceInfo analysisWristbandData(BleDeviceInfo bleDeviceInfo, byte[] bytes, String bleName) {
         if (bytes == null) {
             return null;
         }
@@ -102,7 +101,6 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
                 }
                 limitQueue.offer(seq);
                 Log.i("bvbvbv"+bleName,seq+"");
-                watchSeq.offer(seq);
 
                 for (int j = 5; j < 20; j = j + 3) {
                     AccelData accelData = new AccelData();
@@ -131,8 +129,4 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
         return watchQueue;
     }
 
-
-    public LimitQueue<Integer> getWatchSeq() {
-        return watchSeq;
-    }
 }

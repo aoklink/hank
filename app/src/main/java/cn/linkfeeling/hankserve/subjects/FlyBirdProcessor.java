@@ -10,6 +10,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,6 +20,7 @@ import cn.bmob.v3.listener.SaveListener;
 import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.AccelData;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.DeviceData;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.MatchResult;
 import cn.linkfeeling.hankserve.bean.NDKTools;
@@ -45,8 +47,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
     private static final float SELF_GRAVITY = 2.5f;
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
-    private MatchQueue<Byte> devicesQueue = new MatchQueue<>(130);
-    private LimitQueue<Integer> seqQueue = new LimitQueue<>(130);
+    private List<Byte> devicesList = new ArrayList<>();
 
     private int flag = -1;
 
@@ -68,9 +69,9 @@ public class FlyBirdProcessor implements IDataAnalysis {
             return null;
         }
         byte[] serviceData = linkScanRecord.getServiceData(ParcelUuid.fromString("0000180a-0000-1000-8000-00805f9b34fb"));
-        Log.i(bleName+"999999999"+ hostName, Arrays.toString(serviceData));
+        Log.i(bleName + "999999999" + hostName, Arrays.toString(serviceData));
 
-        Log.i(bleName+"999999999----", flag + "");
+        Log.i(bleName + "999999999----", flag + "");
 
         if (serviceData == null) {
             return null;
@@ -99,7 +100,10 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
 
 
-        if (select && devicesQueue.size() == 130) {
+
+
+
+/*        if (select && devicesQueue.size() == 130) {
             select = false;
             ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> map = FinalDataManager.getInstance().getMatchTemp().get(deviceByBleName.getFencePoint().getFenceId());
 
@@ -146,7 +150,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     EventBus.getDefault().post(matchResult);
                 }
             }
-        }
+        }*/
 
 
         if (start) {
@@ -171,6 +175,17 @@ public class FlyBirdProcessor implements IDataAnalysis {
             FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
             FinalDataManager.getInstance().getMatchTemp().put(deviceByBleName.getFencePoint().getFenceId(), tempHashMap);
             start = false;
+        }
+
+        long diffTime = System.currentTimeMillis() - startTime;
+        if (diffTime > 0 && diffTime % 5000 == 0 && diffTime <= 60 * 1000) {
+            byte[] deviceData = new byte[devicesList.size()];
+            for (int i = 0; i < devicesList.size(); i++) {
+                deviceData[i] = devicesList.get(i);
+            }
+
+            long second = diffTime / 1000;
+            long watchDataNum = 5 * second;
         }
 
 
@@ -201,25 +216,15 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     bleDeviceInfoNow.getCurve().add(cuv1);
                     bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
                 }
-
-                if (serviceData[13] != 0) {
-                    devicesQueue.offer(serviceData[j]);
-                }
-
+                devicesList.add(serviceData[j]);
             }
-
-            if (serviceData[13] != 0) {
-                seqQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
-            }
-
         }
 
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
             start = true;
             select = true;
-            devicesQueue.clear();
-            seqQueue.clear();
+            devicesList.clear();
             FinalDataManager.getInstance().getMatchTemp().clear();
             flag = CalculateUtil.byteArrayToInt(seqNum);
 
@@ -281,5 +286,14 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
         return false;
     }
+
+ /*   //定义一个类，实现Comparator接口，并重写compare()方法，
+    class CompareByLength implements Comparator<DeviceData> {
+        @Override
+        public int compare(DeviceData o1, DeviceData o2) {
+            return 0;
+        }
+    }*/
+
 
 }
