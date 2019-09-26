@@ -79,7 +79,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private byte[][] content = {{11, 59, -27}, {14, 58, -9}, {10, 70, -6}, {29, 57, -13}, {48, 64, -20}, {-7, 67, -58}, {-73, 68, -50}, {-66, 69, 20}, {-38, 66, 25}, {-36, 53, -2}, {-30, 57, -39}, {5, 56, -21}, {7, 71, -18}, {45, 59, -7}, {39, 65, -31}, {2, 69, -58}, {-60, 56, -10}, {-56, 66, 27}, {-34, 67, 4}, {-44, 54, -31}, {-11, 68, -41}, {11, 75, -25}, {36, 61, -15}, {42, 56, -14}, {3, 72, -56}, {-71, 72, -33}, {-62, 45, 28}, {-47, 57, 7}, {-31, 34, -25}, {-11, 66, -38}, {17, 70, -12}, {18, 55, -20}, {25, 70, -16}, {8, 62, -46}, {-54, 73, -41}, {-60, 57, 18}, {-44, 62, 15}, {-27, 70, -16}, {-23, 60, -33}, {-9, 69, -34},};
     private WatchData watchData = new WatchData();
 
-    private AccelData[] accelData = new AccelData[80];
+    private AccelData[] accelData = new AccelData[40];
     private List<MatchResult> matchResultList = new ArrayList<>();
 
 
@@ -110,8 +110,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
         watchData.setData(accelData);
 
-        int i = NDKTools.match_data(data, watchData);
-        Log.i("nnnnnnnnnnnnnn", i + "");
+        int i = NDKTools.match_data(data,(short) data.length, watchData,(short) watchData.getData().length);
+       Log.i("nnnnnnnnnnnnnn", i + "");
 
 
         recycleView = findViewById(R.id.recycleView);

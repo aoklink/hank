@@ -174,7 +174,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
         }
 
         long diffTime = System.currentTimeMillis() - startTime;
-        if (!bind && diffTime > 0 && diffTime % 5000 == 0 && diffTime <= 60 * 1000) {
+        if (!bind && diffTime > 0 && (diffTime / 1000) >= 5 && (diffTime / 1000) % 5 == 0 && diffTime <= 60 * 1000) {
+            Log.i("fly_match_time", diffTime + "");
             ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> map = FinalDataManager.getInstance().getMatchTemp().get(deviceByBleName.getFencePoint().getFenceId());
             byte[] deviceData = new byte[devicesList.size()];
             for (int i = 0; i < devicesList.size(); i++) {
@@ -194,18 +195,19 @@ public class FlyBirdProcessor implements IDataAnalysis {
                         MatchQueue<AccelData> wristQueue = wristbandProcessor.getWatchQueue();
                         List<AccelData> watchList = new ArrayList<>(wristQueue);
                         if (watchList.size() > watchDataNum) {
-                            Log.i("pipeizhinnnnn", gson.toJson(watchList));
+                            Log.i("fly_match_watch", gson.toJson(watchList));
+                            Log.i("fly_match_device", gson.toJson(devicesList));
                             Collections.reverse(watchList);
                             for (int i = 0; i < watchDataNum; i++) {
                                 accelData[i] = watchList.get(i);
                             }
                             watchData.setData(accelData);
-                            int matchNum = NDKTools.match_data(deviceData, watchData);
+                            int matchNum = NDKTools.match_data(deviceData, (short) deviceData.length, watchData, (short) watchDataNum);
 
                             byte[] bytes = CalculateUtil.intToByteArray(matchNum);
-                            Log.i("pipeixxxxx", String.valueOf(CalculateUtil.byteToInt(bytes[2])));
-                            Log.i("pipeixxxxx", String.valueOf(CalculateUtil.byteToInt(bytes[3])));
-                            Log.i("pipeizhi-----", matchNum + "");
+                            Log.i("fly_match_two", String.valueOf(CalculateUtil.byteToInt(bytes[2])));
+                            Log.i("fly_match_three", String.valueOf(CalculateUtil.byteToInt(bytes[3])));
+                            Log.i("fly_match_result", matchNum + "");
                         }
                     }
                 }
