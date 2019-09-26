@@ -8,7 +8,7 @@ public class NDKTools {
 
     public static native String getStringFromNDK();
 
-    public static native int match_data(byte[] device_data,short de_data_len, WatchData watchdata,short );
+    public static native int match_data(byte[] device_data,short de_data_len, WatchData watchdata,short wa_data_len);
 
 
 }

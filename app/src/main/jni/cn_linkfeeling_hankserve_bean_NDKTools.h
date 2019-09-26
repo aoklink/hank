@@ -19,10 +19,10 @@ JNIEXPORT jstring JNICALL Java_cn_linkfeeling_hankserve_bean_NDKTools_getStringF
 /*
  * Class:     cn_linkfeeling_hankserve_bean_NDKTools
  * Method:    match_data
- * Signature: ([BLcn/linkfeeling/hankserve/bean/NDKTools/WatchData;)I
+ * Signature: ([BSLcn/linkfeeling/hankserve/bean/WatchData;S)I
  */
 JNIEXPORT jint JNICALL Java_cn_linkfeeling_hankserve_bean_NDKTools_match_1data
-  (JNIEnv *, jclass, jbyteArray, jobject);
+  (JNIEnv *, jclass, jbyteArray, jshort, jobject, jshort);
 
 #ifdef __cplusplus
 }
