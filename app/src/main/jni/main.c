@@ -13,6 +13,8 @@ extern "C" {
 #endif
 //#include <NDKTool.h>
 #include <stdio.h>
+#include<math.h>
+#include<stdlib.h>
 #include <android/log.h>
 
 #define TAG "NativeJni"
@@ -20,215 +22,326 @@ extern "C" {
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,TAG ,__VA_ARGS__) // 定义LOGD类型
 
 
-#define DEVICE_LEN 25       //传感器中参与距离计算的数据量
-#define MOVE 15      //平移要求量
-#define AMP 100      //归一要求比例
+#define DEVICE_LEN 25       // 传感器中参与距离计算的数据量
+#define MOVE 15      		// 平移要求量
+#define AMP 100      		// 归一要求比例
 
 #define  MAX_WATCH_DATA_LEN 40
 #define  MAX_DEVICE_DATA_LEN 130
 
 #define MAX_MAC_ADDR_LEN 4
 #define MAX_DEVICE_NAME_LEN 6
+#define THR_TIME 30    		// 动态门限更改周期
+#define HIGH_THR_P 0.6 		// 门限比例
 
-typedef struct tag_raw_data {
-    signed char  x;
-	signed char  y;
-    signed char  z;
-} ACCEL_DATA;
+typedef struct tag_raw_data
+{
+	signed char x;
+	signed char y;
+	signed char z;
+}ACCEL_DATA;
 
 typedef struct tag_watch_data {
-	ACCEL_DATA data[MAX_WATCH_DATA_LEN];
-} WATCH_DATA;
+	ACCEL_DATA*  pData;
+}WATCH_DATA;
+
 
 //滑窗
-void average_data(signed char *pdata, unsigned char len) {
+void average_data(signed char *pdata, short len) 
+{
 	unsigned char index;
-	for (index = 0; index < (len - 2); index++) {
+	for (index = 0; index < (len - 2); index++) 
+	{
 		pdata[index] = (pdata[index] + pdata[index + 1] + pdata[index + 2]) / 3;
 	}
 }
 
-//数据归一化（同步化）函数
-void same_amp_data(signed char *pdata, unsigned char len, short minu, signed char average) {
-	unsigned char index;
-	for (index = 0; index < len; index++) {
-		pdata[index] = (pdata[index] - average) * AMP / minu;
-	}
-}
 
 //过滤一半数据
-void filter_data(signed char *in_data, unsigned char in_data_len, signed char *out_data, unsigned char *out_data_len) {
-	unsigned char in_index;
-	unsigned char out_index = 0;
-	for (in_index = 0; in_index < in_data_len; in_index += 4) {
+void filter_data(signed char *in_data, short in_data_len, signed char *out_data, short *out_data_len) {
+	short in_index;
+	short out_index = 0;
+	for (in_index = 0; in_index < in_data_len; in_index += 4)
+	{
 		out_data[out_index] = in_data[in_index];
 		out_index++;
 	}
 	*out_data_len = out_index;
 }
 
-//计算数组的最大值与最小值之差
-short minu_data(signed char *in_data, unsigned char in_data_len) {
-	unsigned char index;
-	signed char max;
-	signed char min;
-	short minu;
-	max = in_data[0];
-	min = in_data[0];
-	for (index = 0; index < in_data_len; index++) {
-		if (in_data[index] < min)
-			min = in_data[index];
-		else if (in_data[index] > max)
-			max = in_data[index];
+
+
+
+//计算活跃度
+int extent(signed char* in_data_wa, short in_data_len)
+{
+	int total_extent = 0;
+	short index;
+	for (index = 0; index < in_data_len - 1; index++)
+	{
+		total_extent = total_extent + abs(in_data_wa[index + 1] - in_data_wa[index]);
 	}
-	minu = max - min + 1;
-	return minu;
+	return total_extent;
 }
 
-//计算数组的平均值
-short average_data_one(signed char *in_data, unsigned char in_data_len) {
-	short sum = 0;
-	unsigned char index;
-	short average;
-	for (index = 0; index < in_data_len; index++) {
-		sum = sum + in_data[index];
+//确定活跃轴
+void active_axis(char* active_data, char* axis_data_wa, short in_data_len)
+{
+	short index;
+	for (index = 0; index < in_data_len; index++)
+	{
+		active_data[index] = axis_data_wa[index];
 	}
-	average = sum / in_data_len;
-	return average;
 }
 
-// 计算平移最小距离函数
-int min_sumlen_data(signed char *in_data_wa, signed char *in_data_s) {
-	unsigned char index_i;
-	unsigned char index_j;
-	int sumlen;
-	int sumlen_time;
-	int min_sumlen = 200000;
-	for (index_i = 0; index_i < MOVE; index_i++) {
-		sumlen = 0;
-		for (index_j = 0; index_j < DEVICE_LEN; index_j++) {
-			sumlen_time = (in_data_s[index_j] - in_data_wa[index_j + index_i]) *
-						  (in_data_s[index_j] - in_data_wa[index_j + index_i]);
-			sumlen = sumlen + sumlen_time;
+// 计次函数
+short times(char* active_data, short in_data_len)
+{
+	short count_times = 0;
+	short high_thr;
+	short index_h;
+	char max;
+	char min;
+	char max_final;
+	char min_final;
+	short index_s;
+	short index_sj;
+
+	char count_max1;
+	char count_min;
+	char count_max2;
+	//max = active_data[0];
+	//min = active_data[0];
+	count_max1 = active_data[0];
+	count_min = active_data[0];
+
+	max_final = active_data[0];
+	min_final = active_data[0];
+	index_s = 0;
+	high_thr = 10;
+	while (index_s < in_data_len - 1)
+	{
+		//printf("in_data_len:%d\n", in_data_len);
+		if (index_s % THR_TIME == 0)
+		{
+			max = active_data[index_s];
+			min = active_data[index_s];
+			//max_final = active_data[index_s];
+			//min_final = active_data[index_s];
+			for (index_h = 0; index_h < THR_TIME; index_h++)
+			{
+				if (active_data[index_s + index_h] > max)
+					max = active_data[index_s + index_h];
+				if (active_data[index_s + index_h] < min)
+					min = active_data[index_s + index_h];
+				if (index_s + index_h > in_data_len - 2)
+				{
+					max = max_final;
+					min = min_final;
+					break;	
+				}
+
+			}
+			max_final = max;
+			min_final = min;
+			high_thr = (max_final - min_final) * HIGH_THR_P;
+
+			//printf("high_thr:%d\n", high_thr);
 		}
-		if (sumlen < min_sumlen) {
-			min_sumlen = sumlen;
+		if (active_data[index_s + 1] > active_data[index_s] && active_data[index_s + 1] > count_max1)
+		{
+			count_max1 = active_data[index_s + 1];
+			count_min = active_data[index_s + 1];
 		}
+		else if (active_data[index_s + 1] < active_data[index_s] && active_data[index_s + 1] < count_min)
+		{
+			count_min = active_data[index_s + 1];
+		}
+	    index_s = index_s + 1;
+		//printf("index_s:%d\n", index_s);
+		if (count_max1 - count_min > high_thr)
+		{
+			count_max2 = count_min;
+			index_sj = index_s;
+			while (index_sj < in_data_len - 1)
+			{
+				if (index_s % THR_TIME == 0)
+				{
+					max = active_data[index_s];
+					min = active_data[index_s];
+					//max_final = active_data[index_s];
+					//min_final = active_data[index_s];
+					for (index_h = 0; index_h < THR_TIME; index_h++)
+					{
+						if (active_data[index_s + index_h] > max)
+							max = active_data[index_s + index_h];
+						if (active_data[index_s + index_h] < min)
+							min = active_data[index_s + index_h];
+						if (index_s + index_h > in_data_len - 2)
+						{
+							max = max_final;
+							min = min_final;
+							break;
+						}
+
+					}
+					max_final = max;
+					min_final = min;
+					high_thr = (max_final - min_final) * HIGH_THR_P;
+					//printf("max:%d\n", max);
+					//printf("min:%d\n", min);
+					//printf("high_thr:%d\n", high_thr);
+				}
+				if (active_data[index_sj + 1] < active_data[index_sj] && active_data[index_sj + 1] < count_min)
+				{
+					count_min = active_data[index_sj + 1];
+					count_max2 = active_data[index_sj + 1];
+
+				}
+				else if (active_data[index_sj + 1] > active_data[index_sj] && active_data[index_sj + 1] > count_max2)
+				{
+					count_max2 = active_data[index_sj + 1];
+				}
+				if (count_max2 - count_min > high_thr)
+				{
+					count_times = count_times + 1;
+					count_max1 = count_max2;
+					count_min = count_max2;
+					//printf("index_sj:%d\n", index_sj);
+					break;
+				}
+				index_sj++;
+				index_s++;
+			}
+		}		
 	}
-	return min_sumlen;
+	return count_times;
 }
 
 
 //主要代码部分
-unsigned int match_data(signed char *device_data, WATCH_DATA *watch_data) {
-	short minu_x;
-	short minu_y;
-	short minu_z;
-	short minu_s;
+unsigned int  match_data(unsigned char* device_data, short de_data_len, WATCH_DATA* watch_data, short wa_data_len)
+{
+	
+	int extent_x;
+	int extent_y;
+	int extent_z;
+	int extent_value;
 
-	int min_sumlen_x;
-	int min_sumlen_y;
-	int min_sumlen_z;
-	int min_sumlen_fx;
-	int min_sumlen_fy;
-	int min_sumlen_fz;
-	unsigned int min_number;
+	short device_data_len;
+	short watch_data_len;
+	short device_filtlen;
 
-	short average_x;
-	short average_y;
-	short average_z;
-	short average_s;
-	short average_fs;
-	unsigned char index;
-	unsigned char index_s;
-	signed char x_raw_data[MAX_WATCH_DATA_LEN];
-	signed char y_raw_data[MAX_WATCH_DATA_LEN];
-	signed char z_raw_data[MAX_WATCH_DATA_LEN];
+	int out_data = 0;
+	
 
-	signed char device_raw_data[MAX_DEVICE_DATA_LEN] = {0};
-	signed char device_smooth_data[DEVICE_LEN] = {0};
-	unsigned char device_real_data_len;
-	signed char flip_device_data[DEVICE_LEN];
+	device_data_len = de_data_len;
+	watch_data_len = wa_data_len;
+
+	device_filtlen = (device_data_len - 1) / 4 + 1;
+
+	unsigned char wa_times;
+	unsigned char device_times;
+	//short match_rate;
+
+	short index;
+	short index_s;
+	signed char* x_raw_data = NULL;
+	signed char* y_raw_data = NULL;
+	signed char* z_raw_data = NULL;
+	signed char* extent_raw_data = NULL;
+
+	x_raw_data = (char*)malloc(sizeof(char) * (watch_data_len));  
+	y_raw_data = (char*)malloc(sizeof(char) * (watch_data_len));
+	z_raw_data = (char*)malloc(sizeof(char) * (watch_data_len));
+	extent_raw_data = (char*)malloc(sizeof(char) * (watch_data_len));
+	if (x_raw_data == NULL || y_raw_data == NULL || z_raw_data == NULL)
+	{
+		printf("error1 \r\n");
+		return -1;
+	}
+	char* device_raw_data = NULL;
+	char* device_smooth_data_raw = NULL;
+	char* device_smooth_data = NULL;
+	char* flip_device_data = NULL;
+
+	device_raw_data = (char*)malloc(sizeof(char) * device_filtlen);
+	device_smooth_data_raw = (char*)malloc(sizeof(char) * device_filtlen);
+	device_smooth_data = (char*)malloc(sizeof(char) * (device_filtlen - MOVE));
+	flip_device_data = (char*)malloc(sizeof(char) * (device_filtlen - MOVE));
+	if (device_raw_data == NULL || device_smooth_data_raw == NULL || device_smooth_data == NULL || flip_device_data == NULL)
+	{
+		printf("error1 \r\n");
+		return -1;
+	}
+	short device_real_data_len;
+
 
 	/* trans data to buffer */
-	for (index = 0; index < MAX_WATCH_DATA_LEN; index++) {
-		x_raw_data[index] = watch_data->data[index].x;
-		y_raw_data[index] = watch_data->data[index].y;
-		z_raw_data[index] = watch_data->data[index].z;
-        LOGD("xxxxxxxx %d,%d,%d",x_raw_data[index],y_raw_data[index],z_raw_data[index]);
-	}
-
-	LOGD("ppppppppp %d,%d,%d,%d",device_data[0],device_data[1],device_data[128],device_data[129]);
-	filter_data(device_data, MAX_DEVICE_DATA_LEN, &device_raw_data[0], &device_real_data_len);
-	//结构体里的带到函数里要用&符号，单个数据，带出来的数组不用带&符号，因为本身就带指针，带出来的数据需要用&符号带出
-
-	//平滑曲线
-	for (index_s = 0; index_s < DEVICE_LEN; index_s++) {
-		device_smooth_data[index_s] =
-				(device_raw_data[index_s + 5] + device_raw_data[index_s + 6] +
-				 device_raw_data[index_s + 7]) / 3;
-	}
-	for(index_s=0; index_s<DEVICE_LEN; index_s++)
+	for (index = 0; index < watch_data_len; index++)
 	{
-		flip_device_data[index_s] = 0 - device_smooth_data[index_s];
+		x_raw_data[index] = watch_data->pData[index].x;
+		y_raw_data[index] = watch_data->pData[index].y;
+		z_raw_data[index] = watch_data->pData[index].z;
 	}
-	average_data(x_raw_data, MAX_WATCH_DATA_LEN);
-	average_data(y_raw_data, MAX_WATCH_DATA_LEN);
-	average_data(z_raw_data, MAX_WATCH_DATA_LEN);
-
-	//求数组的平均值
-	average_x = average_data_one(x_raw_data, MAX_WATCH_DATA_LEN);
-	average_y = average_data_one(y_raw_data, MAX_WATCH_DATA_LEN);
-	average_z = average_data_one(z_raw_data, MAX_WATCH_DATA_LEN);
-	average_s = average_data_one(device_smooth_data, DEVICE_LEN);
-	average_fs = average_data_one(flip_device_data, DEVICE_LEN);
-
-	LOGD("pingjunzhi %d,%d,%d,%d",average_x,average_y,average_z,average_s);
 
 
-	//求数组最大与最小值差
-	minu_x = minu_data(x_raw_data, MAX_WATCH_DATA_LEN);
-	minu_y = minu_data(y_raw_data, MAX_WATCH_DATA_LEN);
-	minu_z = minu_data(z_raw_data, MAX_WATCH_DATA_LEN);
-	minu_s = minu_data(device_smooth_data, DEVICE_LEN);
-
-	LOGD("pingjunzhizuidazuixiao %d,%d,%d,%d",minu_x,minu_y,minu_z,minu_s);
+	filter_data(device_data, device_data_len, &device_raw_data[0], &device_real_data_len);
 
 
-	//同步归一化
-	same_amp_data(x_raw_data, MAX_WATCH_DATA_LEN, minu_x, average_x);
-	same_amp_data(y_raw_data, MAX_WATCH_DATA_LEN, minu_y, average_y);
-	same_amp_data(z_raw_data, MAX_WATCH_DATA_LEN, minu_z, average_z);
-	same_amp_data(device_smooth_data, DEVICE_LEN, minu_s, average_s);
-	same_amp_data(flip_device_data, DEVICE_LEN, minu_s, average_fs);
+
+	//平滑160ms设备曲线
+	for (index_s = 0; index_s < device_filtlen - 2; index_s++)
+	{
+		*(device_smooth_data_raw + index_s) = (*(device_raw_data + index_s) + *(device_raw_data + index_s + 1) + *(device_raw_data + index_s + 2)) / 3;
+	}
+	*(device_smooth_data_raw + device_filtlen - 2) = *(device_raw_data + device_filtlen - 2);
+	*(device_smooth_data_raw + device_filtlen - 1) = *(device_raw_data + device_filtlen - 1);
 
 
-	//求距离
-	min_sumlen_x = min_sumlen_data(x_raw_data, device_smooth_data);
-	min_sumlen_y = min_sumlen_data(y_raw_data, device_smooth_data);
-	min_sumlen_z = min_sumlen_data(z_raw_data, device_smooth_data);
-	min_sumlen_fx = min_sumlen_data(x_raw_data, flip_device_data);
-	min_sumlen_fy = min_sumlen_data(y_raw_data, flip_device_data);
-	min_sumlen_fz = min_sumlen_data(z_raw_data, flip_device_data);
 
-	LOGD("min_sumlen_x:%d\n", min_sumlen_x);
-	LOGD("min_sumlen_y:%d\n", min_sumlen_y);
-	LOGD("min_sumlen_z:%d\n", min_sumlen_z);
-	min_number = min_sumlen_x;
-	if (min_sumlen_y < min_number)
-		min_number = min_sumlen_y;
-	if (min_sumlen_z < min_number)
-		min_number = min_sumlen_z;
-	if (min_sumlen_fx < min_number)
-		min_number = min_sumlen_fx;
-	if (min_sumlen_fy < min_number)
-		min_number = min_sumlen_fy;
-	if (min_sumlen_fz < min_number)
-		min_number = min_sumlen_fz;
+	average_data(x_raw_data, watch_data_len);
+	average_data(y_raw_data, watch_data_len);
+	average_data(z_raw_data, watch_data_len);
+
+	//各轴活跃度
+	extent_x = extent(x_raw_data, watch_data_len);
+	extent_y = extent(y_raw_data, watch_data_len);
+	extent_z = extent(z_raw_data, watch_data_len);
+
+	extent_value = extent_x;
+	active_axis(extent_raw_data, x_raw_data, watch_data_len);
+	if (extent_y > extent_value)
+	{
+		extent_value = extent_y;
+		active_axis(extent_raw_data, y_raw_data, watch_data_len);
+	}
+	if (extent_z > extent_value)
+	{
+		extent_value = extent_z;
+		active_axis(extent_raw_data, z_raw_data, watch_data_len);
+	}
+
+	wa_times = times(extent_raw_data, watch_data_len) + 1;
+	device_times = times(device_smooth_data_raw, device_filtlen) + 1;
+
+	printf("device_times:%d\n", device_times);
+	printf("wa_times:%d\n", wa_times);
 
 
-	return min_number;
+	free(x_raw_data);
+	free(y_raw_data);
+	free(z_raw_data);
+	free(device_raw_data);
+	free(device_smooth_data);
+	free(flip_device_data);
+	free(extent_raw_data);
+	free(device_smooth_data_raw);
 
+
+	out_data = (device_times & 0xff);
+	out_data += (wa_times << 8);
+	return out_data;
 
 }
 
