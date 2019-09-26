@@ -25,7 +25,7 @@ extern "C" {
 #define DEVICE_LEN 25       // 传感器中参与距离计算的数据量
 #define MOVE 15            // 平移要求量
 #define AMP 100            // 归一要求比例
-
+#define MIN_HIGHTHR 10
 #define  MAX_WATCH_DATA_LEN 40
 #define  MAX_DEVICE_DATA_LEN 130
 
@@ -131,6 +131,8 @@ short times(char *active_data, short in_data_len) {
             max_final = max;
             min_final = min;
             high_thr = (max_final - min_final) * HIGH_THR_P;
+            if (high_thr<MIN_HIGHTHR)
+                high_thr = MIN_HIGHTHR;
 
             //printf("high_thr:%d\n", high_thr);
         }
@@ -168,6 +170,8 @@ short times(char *active_data, short in_data_len) {
                     max_final = max;
                     min_final = min;
                     high_thr = (max_final - min_final) * HIGH_THR_P;
+                    if (high_thr<MIN_HIGHTHR)
+                        high_thr = MIN_HIGHTHR;
                     //printf("max:%d\n", max);
                     //printf("min:%d\n", min);
                     //printf("high_thr:%d\n", high_thr);

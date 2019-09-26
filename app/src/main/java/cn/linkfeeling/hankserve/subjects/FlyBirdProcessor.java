@@ -183,7 +183,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
             }
 
             int second = (int) (diffTime / 1000);
-            int watchDataNum = 5 * second;
+            Log.i("fly_match_second", second + "");
+            int watchDataNum = 6 * second;
 
             if (map != null) {
                 for (UWBCoordData next : map.keySet()) {
@@ -191,16 +192,19 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     if (wristbandProcessor != null) {
                         WatchData watchData = new WatchData();
                         AccelData[] accelData = new AccelData[watchDataNum];
+                        Log.i("fly_match_accel",watchDataNum+"");
 
                         MatchQueue<AccelData> wristQueue = wristbandProcessor.getWatchQueue();
                         List<AccelData> watchList = new ArrayList<>(wristQueue);
                         if (watchList.size() > watchDataNum) {
-                            Log.i("fly_match_watch", gson.toJson(watchList));
+
                             Log.i("fly_match_device", gson.toJson(devicesList));
                             Collections.reverse(watchList);
                             for (int i = 0; i < watchDataNum; i++) {
-                                accelData[i] = watchList.get(i);
+                                accelData[i] = watchList.get(watchDataNum - 1 - i);
                             }
+
+                            Log.i("fly_match_watch",gson.toJson(new ArrayList<>(Arrays.asList(accelData))) );
                             watchData.setData(accelData);
                             int matchNum = NDKTools.match_data(deviceData, (short) deviceData.length, watchData, (short) watchDataNum);
 
