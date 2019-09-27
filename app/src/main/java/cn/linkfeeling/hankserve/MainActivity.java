@@ -376,12 +376,12 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                         }
 
                     } else {
-
-                        UWBCoordData.FencePoint.Point centerPoint = uwbCoordData.getDevice().getCenterPoint();
+                        uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
+                 /*       UWBCoordData.FencePoint.Point centerPoint = uwbCoordData.getDevice().getCenterPoint();
                         if (CalculateUtil.pointDistance(centerPoint.getX(), centerPoint.getY(), newUwb.getX(), newUwb.getY()) > 150) {
                             //8、将信号量+1
                             uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
-                        }
+                        }*/
                     }
                 }
                 return;
@@ -401,10 +401,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
                         } else {
                             //8、将信号量+1
-                            UWBCoordData.FencePoint.Point centerPoint = spareFireUwb.getDevice().getCenterPoint();
+                            spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
+                      /*      UWBCoordData.FencePoint.Point centerPoint = spareFireUwb.getDevice().getCenterPoint();
                             if (CalculateUtil.pointDistance(centerPoint.getX(), centerPoint.getY(), newUwb.getX(), newUwb.getY()) > 150) {
                                 spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
-                            }
+                            }*/
 
                         }
                     }
@@ -440,11 +441,12 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     }
 
                 } else {
-                    UWBCoordData.FencePoint.Point centerPoint = uwbCoordData.getDevice().getCenterPoint();
+                    uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
+               /*     UWBCoordData.FencePoint.Point centerPoint = uwbCoordData.getDevice().getCenterPoint();
                     if(CalculateUtil.pointDistance(centerPoint.getX(),centerPoint.getY(),newUwb.getX(),newUwb.getY())>150){
                         //8、将信号量+1
                         uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
-                    }
+                    }*/
                 }
                 return;
             }
@@ -458,11 +460,12 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                         spareFireUwb.setSemaphore(0);
 
                     } else {
-                        UWBCoordData.FencePoint.Point centerPoint = spareFireUwb.getDevice().getCenterPoint();
+                        spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
+                     /*   UWBCoordData.FencePoint.Point centerPoint = spareFireUwb.getDevice().getCenterPoint();
                         if(CalculateUtil.pointDistance(centerPoint.getX(),centerPoint.getY(),newUwb.getX(),newUwb.getY())>150){
                             //8、将信号量+1
                             spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
-                        }
+                        }*/
                     }
 
                 }
