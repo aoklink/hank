@@ -195,6 +195,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
             start = true;
             select = true;
             flag = CalculateUtil.byteArrayToInt(seqNum);
+            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+            FinalDataManager.getInstance().getAlternative().remove(fenceId);
 
             if (serviceData[10] == 0 || serviceData[13] == 0) {
                 //       deviceByBleName.setAbility(0);
