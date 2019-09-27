@@ -36,7 +36,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
 
     private int flag = -1;
-
+    private volatile boolean select = true;
     private volatile boolean start = true;
     private long startTime;
 
@@ -80,6 +80,59 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (b) {
             return null;
         }
+
+        if (start) {
+            FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
+            startTime = System.currentTimeMillis();
+            start = false;
+        }
+
+
+        if (select && System.currentTimeMillis() - startTime >= 10 * 1000) {
+            ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
+            if (spareTire == null || spareTire.isEmpty()) {
+                Log.i("pppppppp", "-5-5-5");
+                select = false;
+                return null;
+            }
+
+            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+            for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                String key = next.getKey();
+                UWBCoordData uwbCoordData = new UWBCoordData();
+                uwbCoordData.setCode(key);
+                uwbCoordData.setSemaphore(0);
+                uwbCoordData.setDevice(deviceByBleName);
+                queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+
+            }
+            Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
+
+            FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
+            select = false;
+        }
+
+        if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
+            Log.i("ppppppp", CalculateUtil.byteToInt(serviceData[13]) + "");
+            if (CalculateUtil.byteToInt(serviceData[13]) > 0) {
+                String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
+                if (s != null) {
+                    String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
+                    if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
+                        LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
+                    }
+                } else {
+
+                    Log.i("ppppp", "daozhele");
+                    LinkDataManager.getInstance().checkBind(deviceByBleName);
+                }
+            }
+        }
+
+
+
+/*
+
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             Log.i("ppppp", "-777777");
@@ -121,7 +174,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     LinkDataManager.getInstance().checkBind(deviceByBleName);
                 }
             }
-        }
+        }*/
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
 
@@ -140,6 +193,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
             start = true;
+            select = true;
             flag = CalculateUtil.byteArrayToInt(seqNum);
 
             if (serviceData[10] == 0 || serviceData[13] == 0) {
