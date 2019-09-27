@@ -108,7 +108,9 @@ public class LinkDataManager {
             e.printStackTrace();
         } finally {
             try {
-                bufferedReader.close();
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -268,10 +270,45 @@ public class LinkDataManager {
      * @param uwbCoordData
      * @return
      */
-    public boolean isPointInRect(UWBCoordData uwbCoordData) {
+    public synchronized boolean isPointInRect(UWBCoordData uwbCoordData) {
         double x = uwbCoordData.getX();
         double y = uwbCoordData.getY();
         List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().getDevicesData();
+        try {
+            for (LinkSpecificDevice devicesDatum : devicesData) {
+                UWBCoordData.FencePoint fencePoint = devicesDatum.getFencePoint();
+                UWBCoordData.FencePoint.Point A = fencePoint.getRight_top();
+                UWBCoordData.FencePoint.Point B = fencePoint.getLeft_top();
+                UWBCoordData.FencePoint.Point C = fencePoint.getLeft_bottom();
+                UWBCoordData.FencePoint.Point D = fencePoint.getRight_bottom();
+                if ("跑步机".equals(devicesDatum.getType()) || "椭圆机".equals(devicesDatum.getType())) {
+                    final double a = ((B.x - 50) - (A.x + 50)) * (y - A.y) - (B.y - A.y) * (x - (A.x + 50));
+                    final double b = ((C.x - 50) - (B.x - 50)) * (y - B.y) - (C.y - B.y) * (x - (B.x - 50));
+                    final double c = ((D.x + 50) - (C.x - 50)) * (y - C.y) - (D.y - C.y) * (x - (C.x - 50));
+                    final double d = ((A.x + 50) - (D.x + 50)) * (y - D.y) - (A.y - D.y) * (x - (D.x + 50));
+                    if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
+                        uwbCoordData.setDevice(devicesDatum);
+                        writeQueue(uwbCoordData);
+                    }
+                } else {
+                    final double a = (B.x - A.x) * (y - A.y) - (B.y - A.y) * (x - A.x);
+                    final double b = (C.x - B.x) * (y - B.y) - (C.y - B.y) * (x - B.x);
+                    final double c = (D.x - C.x) * (y - C.y) - (D.y - C.y) * (x - C.x);
+                    final double d = (A.x - D.x) * (y - D.y) - (A.y - D.y) * (x - D.x);
+                    if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
+                        uwbCoordData.setDevice(devicesDatum);
+                        writeQueue(uwbCoordData);
+                    }
+                }
+            }
+            if (uwbCoordData.getDevice() == null) {
+                writeQueue(uwbCoordData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         for (LinkSpecificDevice devicesDatum : devicesData) {
             UWBCoordData.FencePoint fencePoint = devicesDatum.getFencePoint();
             UWBCoordData.FencePoint.Point A = fencePoint.getRight_top();
@@ -288,9 +325,70 @@ public class LinkDataManager {
                 return true;
             }
         }
+        uwbCoordData.setDevice(null);
         uwbCoordData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoordData.getCode())));
         return false;
     }
+
+    private void writeQueue(UWBCoordData uwbCoordData) {
+        UwbQueue<Point> points = FinalDataManager.getInstance().getCode_points().get(uwbCoordData.getCode());
+        if (points == null) {
+            UwbQueue<Point> uwbQueue = new UwbQueue<>(25);
+            Point point = new Point();
+            if (uwbCoordData.getDevice() == null) {
+                point.setId(-1);
+            } else {
+                point.setId(uwbCoordData.getDevice().getId());
+            }
+            point.setX(uwbCoordData.getX());
+            point.setY(uwbCoordData.getY());
+            uwbQueue.offer(point);
+            FinalDataManager.getInstance().getCode_points().put(uwbCoordData.getCode(), uwbQueue);
+        } else {
+            Point point = new Point();
+            if (uwbCoordData.getDevice() == null) {
+                point.setId(-1);
+            } else {
+                point.setId(uwbCoordData.getDevice().getId());
+            }
+            point.setX(uwbCoordData.getX());
+            point.setY(uwbCoordData.getY());
+            points.offer(point);
+        }
+    }
+
+
+    private boolean contain(UWBCoordData old, UWBCoordData newU) {
+        if (old.getDevice() != null && old.getDevice().getFencePoint() != null) {
+            UWBCoordData.FencePoint fencePoint = old.getDevice().getFencePoint();
+            UWBCoordData.FencePoint.Point A = fencePoint.getRight_top();
+            UWBCoordData.FencePoint.Point B = fencePoint.getLeft_top();
+            UWBCoordData.FencePoint.Point C = fencePoint.getLeft_bottom();
+            UWBCoordData.FencePoint.Point D = fencePoint.getRight_bottom();
+            double x = newU.getX();
+            double y = newU.getY();
+            if ("跑步机".equals(old.getDevice().getType()) || "椭圆机".equals(old.getDevice().getType())) {
+                final double a = ((B.x - 50) - (A.x + 50)) * (y - A.y) - (B.y - A.y) * (x - (A.x + 50));
+                final double b = ((C.x - 50) - (B.x - 50)) * (y - B.y) - (C.y - B.y) * (x - (B.x - 50));
+                final double c = ((D.x + 50) - (C.x - 50)) * (y - C.y) - (D.y - C.y) * (x - (C.x - 50));
+                final double d = ((A.x + 50) - (D.x + 50)) * (y - D.y) - (A.y - D.y) * (x - (D.x + 50));
+                if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
+                    return true;
+                }
+            } else {
+                final double a = (B.x - A.x) * (y - A.y) - (B.y - A.y) * (x - A.x);
+                final double b = (C.x - B.x) * (y - B.y) - (C.y - B.y) * (x - B.x);
+                final double c = (D.x - C.x) * (y - C.y) - (D.y - C.y) * (x - C.x);
+                final double d = (A.x - D.x) * (y - D.y) - (A.y - D.y) * (x - D.x);
+                if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
 
     /**
      * 根据蓝牙名字查询对象
@@ -312,6 +410,7 @@ public class LinkDataManager {
 
     /**
      * 根据anchName 获取设备
+     *
      * @param anchName
      * @return
      */
