@@ -8,9 +8,9 @@ public class MatchResult {
 
     private String deviceName;
     private String wristband;
-    private int matchResult;
-    private String deviceSeq;
-    private String watchSeq;
+    private String  match_time;
+    private String match_two;
+    private String match_three;
 
     public String getDeviceName() {
         return deviceName;
@@ -28,27 +28,27 @@ public class MatchResult {
         this.wristband = wristband;
     }
 
-    public int getMatchResult() {
-        return matchResult;
+    public String getMatch_time() {
+        return match_time;
     }
 
-    public void setMatchResult(int matchResult) {
-        this.matchResult = matchResult;
+    public void setMatch_time(String match_time) {
+        this.match_time = match_time;
     }
 
-    public String getDeviceSeq() {
-        return deviceSeq;
+    public String getMatch_two() {
+        return match_two;
     }
 
-    public void setDeviceSeq(String deviceSeq) {
-        this.deviceSeq = deviceSeq;
+    public void setMatch_two(String match_two) {
+        this.match_two = match_two;
     }
 
-    public String getWatchSeq() {
-        return watchSeq;
+    public String getMatch_three() {
+        return match_three;
     }
 
-    public void setWatchSeq(String watchSeq) {
-        this.watchSeq = watchSeq;
+    public void setMatch_three(String match_three) {
+        this.match_three = match_three;
     }
 }

@@ -631,6 +631,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     public void receiveMatchData(MatchResult matchResult) {
         matchResultList.add(matchResult);
         matchAdapter.notifyDataSetChanged();
+        match_recycleView.scrollToPosition(matchAdapter.getItemCount()-1);
 
     }
 

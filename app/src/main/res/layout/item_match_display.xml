@@ -21,7 +21,6 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="BFF4"
             android:textColor="@android:color/black"
 
 
@@ -34,7 +33,6 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="跑步机"
             android:textColor="@android:color/black"
 
             />
@@ -44,7 +42,6 @@
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="100"
             android:gravity="center"
             android:textColor="@android:color/black"
             />
@@ -57,25 +54,24 @@
             android:gravity="center"
             android:textColor="@android:color/black"
             />
+        <TextView
+            android:id="@+id/tv_two"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            />
+        <TextView
+            android:id="@+id/tv_three"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            />
 
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/tv_deviceSeq"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:background="@android:color/white"
-        />
-
-    <TextView
-        android:id="@+id/tv_watchSeq"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:background="@android:color/white"
-        />
-
 
 </LinearLayout>
