@@ -206,9 +206,9 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
                             Log.i("fly_match_watch", gson.toJson(new ArrayList<>(Arrays.asList(accelData))));
                             watchData.setData(accelData);
-                         //  int matchNum = NDKTools.match_data(deviceData, (short) deviceData.length, watchData, (short) watchDataNum);
+                          int matchNum = NDKTools.match_data(deviceData, (short) deviceData.length, watchData, (short) watchDataNum);
 
-                      /*      byte[] bytes = CalculateUtil.intToByteArray(matchNum);
+                            byte[] bytes = CalculateUtil.intToByteArray(matchNum);
                             Log.i("fly_match_two", String.valueOf(CalculateUtil.byteToInt(bytes[2])));
                             Log.i("fly_match_three", String.valueOf(CalculateUtil.byteToInt(bytes[3])));
                             Log.i("fly_match_result", matchNum + "");
@@ -220,7 +220,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
                             matchResult.setMatch_time(String.valueOf(second));
                             matchResult.setMatch_two(String.valueOf(CalculateUtil.byteToInt(bytes[2])));
                             matchResult.setMatch_three(String.valueOf(CalculateUtil.byteToInt(bytes[3])));
-                            EventBus.getDefault().post(matchResult);*/
+                            EventBus.getDefault().post(matchResult);
 
 
                         }
