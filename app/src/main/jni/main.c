@@ -47,7 +47,7 @@ typedef struct tag_watch_data {
 
 //滑窗
 void average_data(signed char *pdata, short len) {
-    unsigned char index;
+    short index;
     for (index = 0; index < (len - 2); index++) {
         pdata[index] = (pdata[index] + pdata[index + 1] + pdata[index + 2]) / 3;
     }
