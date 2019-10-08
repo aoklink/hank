@@ -48,6 +48,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
     private static final float SELF_GRAVITY = 2.5f;
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
+    private LimitQueue<Integer> deviceSeq = new LimitQueue<>(200);
     private List<Byte> devicesList = new ArrayList<>();
 
     private int flag = -1;
@@ -175,7 +176,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
         long diffTime = System.currentTimeMillis() - startTime;
         if (!bind && diffTime > 0 && (diffTime / 1000) >= 5 && (diffTime / 1000) % 5 == 0 && diffTime <= 60 * 1000) {
-            Log.i("fly_match_time", diffTime + "");
+            //     Log.i("fly_match_time", diffTime + "");
             ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> map = FinalDataManager.getInstance().getMatchTemp().get(deviceByBleName.getFencePoint().getFenceId());
             byte[] deviceData = new byte[devicesList.size()];
             for (int i = 0; i < devicesList.size(); i++) {
@@ -185,35 +186,81 @@ public class FlyBirdProcessor implements IDataAnalysis {
             int second = (int) (diffTime / 1000);
             Log.i("fly_match_time_second", second + "");
             int watchDataNum = 6 * second;
+            if (map != null && !map.isEmpty()) {
+                Log.i("fly_match_sizeOfDevice", String.valueOf(devicesList.size()));
+                Log.i("fly_match_device", gson.toJson(devicesList));
+                List<Integer> dSeq = new ArrayList<>(deviceSeq);
+                Log.i("fly_match_device_seq", gson.toJson(dSeq));
+                boolean error = false;
+                for (int i = 0; i < dSeq.size(); i++) {
+                    if (i != dSeq.size() - 1) {
+                        if ((dSeq.get(i + 1) - dSeq.get(i)) != 1 && (dSeq.get(i + 1) - dSeq.get(i)) != -65535) {
 
-            if (map != null) {
+                            error = true;
+                        }
+                    }
+                }
+                if (error) {
+                    Log.i("fly_match_stateOfDevice", "设备数据异常");
+                } else {
+                    Log.i("fly_match_stateOfDevice", "设备数据正常");
+
+                }
+
+
                 for (UWBCoordData next : map.keySet()) {
                     WristbandProcessor wristbandProcessor = WristbandProcessor.map.get(LinkDataManager.getInstance().getUwbCode_wristbandName().get(next.getCode()));
                     if (wristbandProcessor != null) {
                         WatchData watchData = new WatchData();
                         AccelData[] accelData = new AccelData[watchDataNum];
-                        Log.i("fly_match_accel", watchDataNum + "");
-
                         MatchQueue<AccelData> wristQueue = wristbandProcessor.getWatchQueue();
                         List<AccelData> watchList = new ArrayList<>(wristQueue);
                         if (watchList.size() > watchDataNum) {
-
-                            Log.i("fly_match_device", gson.toJson(devicesList));
                             Collections.reverse(watchList);
                             for (int i = 0; i < watchDataNum; i++) {
                                 accelData[i] = watchList.get(watchDataNum - 1 - i);
                             }
+                            final String watchName = LinkDataManager.getInstance().getUwbCode_wristbandName().get(next.getCode());
+                            Log.i("fly_match_watch---" + watchName, gson.toJson(new ArrayList<>(Arrays.asList(accelData))));
+                            Log.i("fly_match_sizeOfWatch--" + watchName, accelData.length + "");
+                            int watchSeqNum = (second / 5) * 6;
+                            int[] xxx = new int[watchSeqNum];
+                            LimitQueue<Integer> watchSeq = wristbandProcessor.getWatchSeq();
+                            if (watchSeq.size() >= watchSeqNum) {
+                                List<Integer> integerList = new ArrayList<>(watchSeq);
+                                for (int i = 0; i < watchSeqNum; i++) {
+                                    xxx[i] = integerList.get(integerList.size() - watchSeqNum + i);
+                                }
+                                Log.i("fly_match_watchSeq---" + watchName, Arrays.toString(xxx));
 
-                            Log.i("fly_match_watch", gson.toJson(new ArrayList<>(Arrays.asList(accelData))));
+                            }
+                            boolean errorWatch = false;
+                            for (int i = 0; i < xxx.length; i++) {
+                                if (i != xxx.length - 1) {
+                                    if ((xxx[i + 1] - xxx[i]) != 1 && (xxx[i + 1] - xxx[i]) != -65535) {
+                                        errorWatch = true;
+                                    }
+                                }
+                            }
+                            if (errorWatch) {
+                                Log.i("fly_match_stateOfWatch", watchName + "数据异常");
+                            } else {
+                                Log.i("fly_match_stateOfWatch", watchName + "数据正常");
+
+                            }
+
+
                             watchData.setData(accelData);
-                          int matchNum = NDKTools.match_data(deviceData, (short) deviceData.length, watchData, (short) watchDataNum);
+                            int matchNum = NDKTools.match_data(deviceData, (short) deviceData.length, watchData, (short) watchDataNum);
 
                             byte[] bytes = CalculateUtil.intToByteArray(matchNum);
-                            Log.i("fly_match_two", String.valueOf(CalculateUtil.byteToInt(bytes[2])));
-                            Log.i("fly_match_three", String.valueOf(CalculateUtil.byteToInt(bytes[3])));
-                            Log.i("fly_match_result", matchNum + "");
+                            Log.i("fly_match_two---" + watchName, String.valueOf(CalculateUtil.byteToInt(bytes[2])));
+                            Log.i("fly_match_three---" + watchName, String.valueOf(CalculateUtil.byteToInt(bytes[3])));
+                            Log.i("fly_match_result---" + watchName, matchNum + "");
 
                             MatchResult matchResult = new MatchResult();
+                            matchResult.setDeviceStatus(error);
+                            matchResult.setWatchStatus(errorWatch);
                             matchResult.setDeviceName(deviceByBleName.getDeviceName());
                             String name = LinkDataManager.getInstance().getUwbCode_wristbandName().get(next.getCode());
                             matchResult.setWristband(name == null ? "" : name);
@@ -259,6 +306,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 }
                 devicesList.add(serviceData[j]);
             }
+            deviceSeq.offer(CalculateUtil.byteArrayToInt(seqNum));
         }
 
 
@@ -267,6 +315,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             select = true;
             bind = false;
             devicesList.clear();
+            deviceSeq.clear();
             FinalDataManager.getInstance().getMatchTemp().clear();
             flag = CalculateUtil.byteArrayToInt(seqNum);
 

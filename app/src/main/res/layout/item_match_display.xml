@@ -25,7 +25,16 @@
 
 
             />
+        <TextView
+            android:id="@+id/tv_device_status"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@android:color/black"
 
+
+            />
 
         <TextView
             android:id="@+id/tv_deviceName"
@@ -34,6 +43,17 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:textColor="@android:color/black"
+
+            />
+
+        <TextView
+            android:id="@+id/tv_watch_status"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+
 
             />
 

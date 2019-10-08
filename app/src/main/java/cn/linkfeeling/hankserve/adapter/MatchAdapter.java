@@ -41,6 +41,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.BLEViewHolde
         holder.tv_heat.setText(matchResult.getMatch_time());
         holder.tv_two.setText(matchResult.getMatch_two());
         holder.tv_three.setText(matchResult.getMatch_three());
+        holder.tv_device_status.setText(matchResult.isDeviceStatus() ? "设备data异常" : "设备data正常");
+        holder.tv_watch_status.setText(matchResult.isWatchStatus() ? "手环data异常" : "手环data正常");
 
     }
 
@@ -56,6 +58,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.BLEViewHolde
         private TextView tv_heat;
         private TextView tv_two;
         private TextView tv_three;
+        private TextView tv_device_status;
+        private TextView tv_watch_status;
 
 
         BLEViewHolder(View itemView) {
@@ -67,6 +71,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.BLEViewHolde
             tv_heat = itemView.findViewById(R.id.tv_heat);
             tv_two = itemView.findViewById(R.id.tv_two);
             tv_three = itemView.findViewById(R.id.tv_three);
+            tv_watch_status = itemView.findViewById(R.id.tv_watch_status);
+            tv_device_status = itemView.findViewById(R.id.tv_device_status);
 
         }
     }

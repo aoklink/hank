@@ -28,6 +28,7 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
 
     private MatchQueue<AccelData> watchQueue = new MatchQueue<>(360);
+    private LimitQueue<Integer> watchSeq = new LimitQueue<>(72);
 
     static {
         map = new ConcurrentHashMap<>();
@@ -41,7 +42,6 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
     private static class WristbandProcessorHolder {
         private static final WristbandProcessor sWristbandProcessor = new WristbandProcessor();
     }
-
 
 
     @Override
@@ -87,7 +87,7 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
             SparseArray<byte[]> manufacturerSpecificData = watchScanRecord.getManufacturerSpecificData();
             if (manufacturerSpecificData != null && manufacturerSpecificData.size() != 0) {
                 byte[] bytes1 = manufacturerSpecificData.valueAt(0);
-                Log.i("shshshsh"+bleName,Arrays.toString(bytes1));
+                Log.i("shshshsh" + bleName, Arrays.toString(bytes1));
                 if (bytes1 == null || bytes1.length == 0) {
                     return null;
                 }
@@ -100,7 +100,9 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
                     return null;
                 }
                 limitQueue.offer(seq);
-                Log.i("bvbvbv"+bleName,seq+"");
+                watchSeq.offer(seq);
+
+                Log.i("bvbvbv" + bleName, seq + "");
 
                 for (int j = 5; j < 20; j = j + 3) {
                     AccelData accelData = new AccelData();
@@ -129,4 +131,7 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
         return watchQueue;
     }
 
+    public LimitQueue<Integer> getWatchSeq() {
+        return watchSeq;
+    }
 }
