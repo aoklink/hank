@@ -52,7 +52,7 @@ import io.reactivex.schedulers.Schedulers;
 import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
 
 public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUploadView, IUploadContract.IBleUploadPresenter> implements IUploadContract.IBleUploadView {
-    private List<UWBCoordData> list = new ArrayList<>();
+    private static final int Untied_Time = 150;
     private TextView tv_ipTip, tv_ipTipRemove;
     private Gson gson = new Gson();
     private SimpleDateFormat simpleDateFormat;
@@ -334,16 +334,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             return;
         }
         //写入队列
-
         Log.i("666666666", "查看长度，，，" + FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
-
         boolean within = LinkDataManager.getInstance().isPointInRect(newUwb);
-//
-//        UwbQueue<Point> limitQueue = FinalDataManager.getInstance().getCode_points().get(newUwb.getCode());
-//        if (limitQueue != null && !limitQueue.isEmpty()) {
-//            Log.i(newUwb.getCode(), new Gson().toJson(limitQueue));
-//        }
-
         //1、首先查找在哪个围栏内
         String code = newUwb.getCode();
         UWBCoordData uwbCoordData = FinalDataManager.getInstance().queryUwb(code);
@@ -351,17 +343,14 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
         if (within) {
             //  writeQueue(newUwb);
-
             if (uwbCoordData != null) {
                 //2.说明已经绑定围栏
                 //4、说明该标签已经绑定设备
-                if (uwbCoordData.getDevice().getId() == newUwb.getDevice().getId()) {
-                    //5、说明是进入了之前绑定的区域
+                if (LinkDataManager.getInstance().contain(uwbCoordData, newUwb)) {
                     uwbCoordData.setSemaphore(0);
                 } else {
-
                     //6、说明进入的不是之前绑定的区域
-                    if (uwbCoordData.getSemaphore() == 100) {
+                    if (uwbCoordData.getSemaphore() == Untied_Time) {
                         //7、需要解除绑定
 
                         FinalDataManager.getInstance().removeUwb(uwbCoordData.getDevice().getFencePoint().getFenceId());
@@ -377,11 +366,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
                     } else {
                         uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
-                 /*       UWBCoordData.FencePoint.Point centerPoint = uwbCoordData.getDevice().getCenterPoint();
-                        if (CalculateUtil.pointDistance(centerPoint.getX(), centerPoint.getY(), newUwb.getX(), newUwb.getY()) > 150) {
-                            //8、将信号量+1
-                            uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
-                        }*/
                     }
                 }
                 return;
@@ -391,10 +375,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             List<UWBCoordData> list = FinalDataManager.getInstance().querySpareFireUwb(code);
             if (!list.isEmpty()) {
                 for (UWBCoordData spareFireUwb : list) {
-                    if (spareFireUwb.getDevice().getId() == newUwb.getDevice().getId()) {
+                    if (LinkDataManager.getInstance().contain(spareFireUwb, newUwb)) {
                         spareFireUwb.setSemaphore(0);
                     } else {
-                        if (spareFireUwb.getSemaphore() == 100) {
+                        if (spareFireUwb.getSemaphore() == Untied_Time) {
                             //7、需要解除绑定
                             FinalDataManager.getInstance().removeSpareFireUwb(spareFireUwb);
                             spareFireUwb.setSemaphore(0);
@@ -402,11 +386,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                         } else {
                             //8、将信号量+1
                             spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
-                      /*      UWBCoordData.FencePoint.Point centerPoint = spareFireUwb.getDevice().getCenterPoint();
-                            if (CalculateUtil.pointDistance(centerPoint.getX(), centerPoint.getY(), newUwb.getX(), newUwb.getY()) > 150) {
-                                spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
-                            }*/
-
                         }
                     }
                 }
@@ -423,30 +402,30 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (!within) {
             //   writeQueue(newUwb);
             if (uwbCoordData != null) {
-
-                Log.i("666666666", "空位值，，，" + uwbCoordData.getCode());
-                Log.i("666666666", "空位值，，，" + FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
-                //    int fenceId = newUwb.getDevice().getFencePoint().getFenceId();
-                if (uwbCoordData.getSemaphore() == 100) {
-                    //7、需要解除绑定
-                    FinalDataManager.getInstance().removeUwb(uwbCoordData.getDevice().getFencePoint().getFenceId());
+                if (LinkDataManager.getInstance().contain(uwbCoordData, newUwb)) {
                     uwbCoordData.setSemaphore(0);
-
-                    if (newUwb.getWristband().getBracelet_id() == null) {
-                        return;
-                    }
-                    BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(newUwb.getWristband().getBracelet_id());
-                    if (bleDeviceInfo != null) {
-                        LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
-                    }
-
                 } else {
-                    uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
-               /*     UWBCoordData.FencePoint.Point centerPoint = uwbCoordData.getDevice().getCenterPoint();
-                    if(CalculateUtil.pointDistance(centerPoint.getX(),centerPoint.getY(),newUwb.getX(),newUwb.getY())>150){
-                        //8、将信号量+1
+                    if (uwbCoordData.getSemaphore() == Untied_Time) {
+                        //7、需要解除绑定
+                        FinalDataManager.getInstance().removeUwb(uwbCoordData.getDevice().getFencePoint().getFenceId());
+                        uwbCoordData.setSemaphore(0);
+
+                        if (newUwb.getWristband().getBracelet_id() == null) {
+                            return;
+                        }
+                        BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(newUwb.getWristband().getBracelet_id());
+                        if (bleDeviceInfo != null) {
+                            LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
+                        }
+
+                    } else {
                         uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
-                    }*/
+                  /*      UWBCoordData.FencePoint.Point centerPoint = uwbCoordData.getDevice().getCenterPoint();
+                        if(CalculateUtil.pointDistance(centerPoint.getX(),centerPoint.getY(),newUwb.getX(),newUwb.getY())>150){
+                            //8、将信号量+1
+                            uwbCoordData.setSemaphore(uwbCoordData.getSemaphore() + 1);
+                        }*/
+                    }
                 }
                 return;
             }
@@ -454,20 +433,24 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             List<UWBCoordData> list = FinalDataManager.getInstance().querySpareFireUwb(code);
             if (!list.isEmpty()) {
                 for (UWBCoordData spareFireUwb : list) {
-                    if (spareFireUwb.getSemaphore() == 100) {
-                        //7、需要解除绑定
-                        FinalDataManager.getInstance().removeSpareFireUwb(spareFireUwb);
+                    if (LinkDataManager.getInstance().contain(spareFireUwb, newUwb)) {
                         spareFireUwb.setSemaphore(0);
-
                     } else {
-                        spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
-                     /*   UWBCoordData.FencePoint.Point centerPoint = spareFireUwb.getDevice().getCenterPoint();
-                        if(CalculateUtil.pointDistance(centerPoint.getX(),centerPoint.getY(),newUwb.getX(),newUwb.getY())>150){
-                            //8、将信号量+1
-                            spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
-                        }*/
-                    }
+                        if (spareFireUwb.getSemaphore() == Untied_Time) {
+                            //7、需要解除绑定
+                            FinalDataManager.getInstance().removeSpareFireUwb(spareFireUwb);
+                            spareFireUwb.setSemaphore(0);
 
+                        } else {
+                       /*     UWBCoordData.FencePoint.Point centerPoint = spareFireUwb.getDevice().getCenterPoint();
+                            if (CalculateUtil.pointDistance(centerPoint.getX(), centerPoint.getY(), newUwb.getX(), newUwb.getY()) > 150) {
+                                //8、将信号量+1
+                                spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
+                            }*/
+
+                            spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
+                        }
+                    }
                 }
             }
 
@@ -476,8 +459,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             }
             BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(newUwb.getWristband().getBracelet_id());
             if (bleDeviceInfo != null) {
-
-                Log.i("666666666", bleDeviceInfo.getBracelet_id() + "清空数据了");
                 LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
             }
         }
