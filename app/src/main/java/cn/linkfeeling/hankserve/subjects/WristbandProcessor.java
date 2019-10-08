@@ -27,7 +27,8 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
 
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
 
-    private MatchQueue<AccelData> watchQueue = new MatchQueue<>(40);
+    private MatchQueue<AccelData> watchQueue = new MatchQueue<>(360);
+    private LimitQueue<Integer> watchSeq = new LimitQueue<>(72);
 
     static {
         map = new ConcurrentHashMap<>();
@@ -94,6 +95,7 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
                     return null;
                 }
                 limitQueue.offer(seq);
+                watchSeq.offer(seq);
 
                 Log.i("power"+bleName,CalculateUtil.byteToInt(bytes1[21])+"");
                 //[-36, 39, 0, 108, 51, -9, 0, -62, -9, 0, -62, -9, -1, -62, -8, 0, -62, -9, 0, -61, 0, 100]
@@ -122,5 +124,9 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
 
     public MatchQueue<AccelData> getWatchQueue() {
         return watchQueue;
+    }
+
+    public LimitQueue<Integer> getWatchSeq() {
+        return watchSeq;
     }
 }

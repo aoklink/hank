@@ -64,6 +64,20 @@ public class CalculateUtil {
         int v3 = (a[3] & 0xff);
         return v0 + v1 + v2 + v3;
     }
+    /**
+     * int到byte[]
+     * @param i
+     * @return
+     */
+    public static byte[] intToByteArray(int i) {
+        byte[] result = new byte[4];
+        // 由高位到低位
+        result[0] = (byte) ((i >> 24) & 0xFF);
+        result[1] = (byte) ((i >> 16) & 0xFF);
+        result[2] = (byte) ((i >> 8) & 0xFF);
+        result[3] = (byte) (i & 0xFF);
+        return result;
+    }
 
     /**
      * byte转int
