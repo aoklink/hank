@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import cn.linkfeeling.hankserve.bean.AccelData;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
+import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.queue.MatchQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
@@ -101,6 +102,9 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
                 }
                 limitQueue.offer(seq);
                 watchSeq.offer(seq);
+
+                Log.i("power"+bleName,CalculateUtil.byteToInt(bytes1[21])+"");
+                LinkDataManager.getInstance().getWristPowerMap().put(bleName,CalculateUtil.byteToInt(bytes1[21]));
 
                 Log.i("bvbvbv" + bleName, seq + "");
 

@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import cn.linkfeeling.hankserve.adapter.BLEAdapter;
@@ -40,6 +41,7 @@ import cn.linkfeeling.hankserve.bean.NDKTools;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.bean.WatchData;
+import cn.linkfeeling.hankserve.bean.WristbandPower;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
 import cn.linkfeeling.hankserve.interfaces.IAnchDataAnalysis;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
@@ -70,18 +72,20 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private Gson gson = new Gson();
     private SimpleDateFormat simpleDateFormat;
     private Disposable disposable;
+    private Disposable wristPowerDisposable;
     private RecyclerView recycleView, match_recycleView;
     private BLEAdapter bleAdapter;
     private MatchAdapter matchAdapter;
 
     private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
-    private byte[] data = {63,70,82,82,79,76,74,63,58,50,57,62,66,65,68,70,70,71,74,75,79,77,77,75,74,74,74,75,76,78,80,80,78,79,78,72,63,58,54,54,44,43,40,39,39,44,47,48,49,48,54,55,54,60,60,66,66,70,73,73,77,77,78,78,77,76,74,73,72,72,75,77,79,80,81,79,77,76,73,68,58,55,51,46,44,43,40,38,41,44};
+    private byte[] data = {63, 70, 82, 82, 79, 76, 74, 63, 58, 50, 57, 62, 66, 65, 68, 70, 70, 71, 74, 75, 79, 77, 77, 75, 74, 74, 74, 75, 76, 78, 80, 80, 78, 79, 78, 72, 63, 58, 54, 54, 44, 43, 40, 39, 39, 44, 47, 48, 49, 48, 54, 55, 54, 60, 60, 66, 66, 70, 73, 73, 77, 77, 78, 78, 77, 76, 74, 73, 72, 72, 75, 77, 79, 80, 81, 79, 77, 76, 73, 68, 58, 55, 51, 46, 44, 43, 40, 38, 41, 44};
     private byte[][] content = {
-            {-11,-62,-12},{4,-61,-3},{23,-93,1},{24,-77,17},{33,-31,29},{48,-37,0},{55,-69,-12},{18,-87,-27},{-49,-54,-34},{-52,-66,-25},{-33,-69,-25},{-5,-69,-18},{22,-64,-5},{28,-44,-3},{28,-24,5},{40,-14,6},{27,-18,1},{32,-34,-6},{31,-65,-18},{-10,-74,-35},{-46,-57,-32},{-71,-45,-16},{-58,-53,-25},{-35,-68,-26},{-5,-71,-21},{28,-37,-9},{34,-71,-41},{1,-73,-31},{-52,-51,-33},{-79,-31,-10}};
+            {-11, -62, -12}, {4, -61, -3}, {23, -93, 1}, {24, -77, 17}, {33, -31, 29}, {48, -37, 0}, {55, -69, -12}, {18, -87, -27}, {-49, -54, -34}, {-52, -66, -25}, {-33, -69, -25}, {-5, -69, -18}, {22, -64, -5}, {28, -44, -3}, {28, -24, 5}, {40, -14, 6}, {27, -18, 1}, {32, -34, -6}, {31, -65, -18}, {-10, -74, -35}, {-46, -57, -32}, {-71, -45, -16}, {-58, -53, -25}, {-35, -68, -26}, {-5, -71, -21}, {28, -37, -9}, {34, -71, -41}, {1, -73, -31}, {-52, -51, -33}, {-79, -31, -10}};
     private WatchData watchData = new WatchData();
 
     private AccelData[] accelData = new AccelData[content.length];
     private List<MatchResult> matchResultList = new ArrayList<>();
+    private List<WristbandPower.DataBean> wristPowerList = new ArrayList<>();
 
 
     @Override
@@ -111,8 +115,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
         watchData.setData(accelData);
 
-        int i = NDKTools.match_data(data,(short) data.length, watchData,(short) watchData.getData().length);
-       Log.i("nnnnnnnnnnnnnn", i + "");
+        int i = NDKTools.match_data(data, (short) data.length, watchData, (short) watchData.getData().length);
+        Log.i("nnnnnnnnnnnnnn", i + "");
 
 
         recycleView = findViewById(R.id.recycleView);
@@ -140,6 +144,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         connectWebSocket();
         //connectLinkWS();
         startIntervalListener();
+        startIntervalPowerUpload();
 
 
     }
@@ -260,6 +265,32 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
                             }
                         }
+                    });
+        }
+    }
+
+
+    private void startIntervalPowerUpload() {
+        if (wristPowerDisposable == null) {
+            wristPowerDisposable = Observable.interval(8, TimeUnit.MINUTES)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribe(aLong -> {
+                        wristPowerList.clear();
+                        WristbandPower wristbandPower = new WristbandPower();
+                        wristbandPower.setGym_name(BuildConfig.GYM_NAME);
+                        ConcurrentHashMap<String, Integer> wristPowerMap = LinkDataManager.getInstance().getWristPowerMap();
+                        for (Map.Entry<String, Integer> next : wristPowerMap.entrySet()) {
+                            WristbandPower.DataBean dataBean = new WristbandPower.DataBean();
+                            dataBean.setBracelet_id(next.getKey());
+                            dataBean.setBattery(String.valueOf(next.getValue()));
+                            wristPowerList.add(dataBean);
+                        }
+                        wristbandPower.setData(wristPowerList);
+                        Log.i("kkkkkkk", gson.toJson(wristbandPower));
+                        getPresenter().uploadWristPower(wristbandPower);
+
+
                     });
         }
     }
@@ -555,6 +586,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
     }
 
+    @Override
+    public void uploadWristPowerStatus(boolean status) {
+        showToast(status ? "手环电量上传成功" : "上环电量上传失败");
+    }
+
     private void updateData(BleDeviceInfo bleDeviceInfo) {
         int index = bleDeviceInfos.indexOf(bleDeviceInfo);
         if (index == -1) {
@@ -631,7 +667,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     public void receiveMatchData(MatchResult matchResult) {
         matchResultList.add(matchResult);
         matchAdapter.notifyDataSetChanged();
-        match_recycleView.scrollToPosition(matchAdapter.getItemCount()-1);
+        match_recycleView.scrollToPosition(matchAdapter.getItemCount() - 1);
 
     }
 
@@ -642,6 +678,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
             disposable = null;
+        }
+
+        if (wristPowerDisposable != null && !wristPowerDisposable.isDisposed()) {
+            wristPowerDisposable.dispose();
+            wristPowerDisposable = null;
         }
     }
 }

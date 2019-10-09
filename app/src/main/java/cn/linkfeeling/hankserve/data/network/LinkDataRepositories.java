@@ -4,6 +4,7 @@ import com.link.feeling.framework.component.net.FrameworkNet;
 
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.WristbandPower;
 import io.reactivex.Completable;
 
 import static com.link.feeling.framework.component.net.json.ResponseParse.completableFun;
@@ -31,6 +32,16 @@ public final class LinkDataRepositories {
     public Completable uploadBleGymData(BleDeviceInfo request) {
         return mRemoteDataSources.uploadBleGymData(request).flatMapCompletable(completableFun());
     }
+
+    /**
+     * 上报手环电量数据
+     * @param request
+     * @return
+     */
+    public Completable uploadWristPowerData(WristbandPower request) {
+        return mRemoteDataSources.uploadWristbandPower(request).flatMapCompletable(completableFun());
+    }
+
 
 
 }
