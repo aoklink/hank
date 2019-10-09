@@ -4,6 +4,7 @@ import com.link.feeling.framework.component.net.FrameworkNet;
 
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.WristbandPower;
 import io.reactivex.Completable;
 
@@ -42,6 +43,13 @@ public final class LinkDataRepositories {
         return mRemoteDataSources.uploadWristbandPower(request).flatMapCompletable(completableFun());
     }
 
-
+    /**
+     * 上报设备电量
+     * @param request
+     * @return
+     */
+    public Completable uploadPowerPowerData(DevicePower request) {
+        return mRemoteDataSources.uploadDevicePower(request).flatMapCompletable(completableFun());
+    }
 
 }

@@ -36,6 +36,7 @@ import cn.linkfeeling.hankserve.adapter.BLEAdapter;
 import cn.linkfeeling.hankserve.adapter.MatchAdapter;
 import cn.linkfeeling.hankserve.bean.AccelData;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.MatchResult;
 import cn.linkfeeling.hankserve.bean.NDKTools;
 import cn.linkfeeling.hankserve.bean.Point;
@@ -189,8 +190,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
                     @Override
                     public void getBLEStream(String hostString, SmartCarProtocol smartCarProtocol) {
+                        if (smartCarProtocol.getContent().length == 1) {
+                            Log.i("kkkkkkkidle----", hostString + "++++++" + Arrays.toString(smartCarProtocol.getContent()));
+                        }
 
-                        Log.i("idle----", hostString + "++++++" + Arrays.toString(smartCarProtocol.getContent()));
 
                         onLeScanSelf(hostString, smartCarProtocol.getContent());
 //                        ThreadPoolManager.getInstance().execute(new Runnable() {
@@ -591,6 +594,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         showToast(status ? "手环电量上传成功" : "上环电量上传失败");
     }
 
+    @Override
+    public void uploadDevicePowerStatus(boolean status) {
+        showToast(status ? "设备电量上传成功" : "设备电量上传失败");
+    }
+
     private void updateData(BleDeviceInfo bleDeviceInfo) {
         int index = bleDeviceInfos.indexOf(bleDeviceInfo);
         if (index == -1) {
@@ -669,6 +677,12 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         matchAdapter.notifyDataSetChanged();
         match_recycleView.scrollToPosition(matchAdapter.getItemCount() - 1);
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void receiveDevicePower(DevicePower devicePower) {
+        Log.i("kkkkkkkk", gson.toJson(devicePower));
+        getPresenter().uploadDevicePower(devicePower);
     }
 
     @Override

@@ -22,6 +22,7 @@ import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.AccelData;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.DeviceData;
+import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.MatchResult;
 import cn.linkfeeling.hankserve.bean.NDKTools;
@@ -357,6 +358,20 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 serviceData[10] == 0 &&
                 serviceData[13] == 0 &&
                 serviceData[14] == 0) {
+
+        /*    DevicePower devicePower=new DevicePower();
+            List<DevicePower.DataBean> list=new ArrayList<>();
+            DevicePower.DataBean dataBean=new DevicePower.DataBean();
+            dataBean.setSerial_no(String.valueOf(1));
+            dataBean.setDevice_id(bleName);
+            dataBean.setDevice(deviceByBleName.getDeviceName());
+            int powerLevel = CalculateUtil.byteToInt(serviceData[15]);
+            dataBean.setBattery(String.valueOf(100/powerLevel));
+            list.add(dataBean);
+            devicePower.setData(list);
+            devicePower.setGym_name(BuildConfig.GYM_NAME);
+            EventBus.getDefault().post(devicePower);*/
+
 
             Power power1 = new Power();
             power1.setDeviceName(deviceByBleName.getDeviceName());

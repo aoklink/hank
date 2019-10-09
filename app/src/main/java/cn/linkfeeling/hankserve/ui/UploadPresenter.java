@@ -4,6 +4,7 @@ import com.link.feeling.framework.base.BasePresenter;
 import com.link.feeling.framework.component.rx.BaseCompletableObserver;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.WristbandPower;
 import cn.linkfeeling.hankserve.data.network.LinkDataRepositories;
 import io.reactivex.Completable;
@@ -67,6 +68,34 @@ public class UploadPresenter extends BasePresenter<IUploadContract.IBleUploadVie
                         super.onError(e);
                         onceViewAttached(view -> {
                             view.uploadWristPowerStatus(false);
+                            //  showToast(e.getMessage());
+                        });
+                    }
+                });
+    }
+
+    @Override
+    public void uploadDevicePower(DevicePower devicePower) {
+        Completable completable = LinkDataRepositories.getInstance().uploadPowerPowerData(devicePower);
+        completable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseCompletableObserver(this) {
+                    @Override
+                    public void onComplete() {
+                        super.onComplete();
+
+                        onceViewAttached(view -> {
+                            view.uploadDevicePowerStatus(true);
+                        });
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        onceViewAttached(view -> {
+                            view.uploadDevicePowerStatus(false);
                             //  showToast(e.getMessage());
                         });
                     }

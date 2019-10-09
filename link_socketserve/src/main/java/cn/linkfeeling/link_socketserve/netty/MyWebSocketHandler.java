@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
@@ -240,7 +241,6 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.READER_IDLE) {
-
              /*   lossConnectCount++;
                 if (lossConnectCount == 5) {
                     ctx.channel().close();

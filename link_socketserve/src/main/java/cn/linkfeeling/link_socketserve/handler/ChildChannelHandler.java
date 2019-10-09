@@ -43,7 +43,7 @@ public class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
         //在管道中添加我们自己的接收数据实现方法
         ChannelPipeline pipeline = socketChannel.pipeline();
 
-        pipeline.addLast(new IdleStateHandler(10 * 60, 0, 10 * 60, TimeUnit.SECONDS));
+        pipeline.addLast(new IdleStateHandler(10, 0, 10, TimeUnit.MINUTES));
         pipeline.addLast("logging", new LoggingHandler(LogLevel.INFO));
         // pipeline.addLast("http-codec", new HttpServerCodec());
         pipeline.addLast("aggregator", new HttpObjectAggregator(65536));
