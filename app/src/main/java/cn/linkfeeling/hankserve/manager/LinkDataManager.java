@@ -37,6 +37,8 @@ import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
  * @time 2019/3/14
  */
 public class LinkDataManager {
+    private static final int ExpandRange_100 = 100;
+    private static final int ExpandRange_150 = 150;
     private static final String FIRST_LEVEL = "json";
     private static final String SECOND_LEVEL = BuildConfig.PROJECT_NAME;
     private static final String SUFFIX = ".json";
@@ -267,10 +269,45 @@ public class LinkDataManager {
      * @param uwbCoordData
      * @return
      */
-    public boolean isPointInRect(UWBCoordData uwbCoordData) {
+    public synchronized boolean isPointInRect(UWBCoordData uwbCoordData) {
         double x = uwbCoordData.getX();
         double y = uwbCoordData.getY();
         List<LinkSpecificDevice> devicesData = LinkDataManager.getInstance().getDevicesData();
+        try {
+            for (LinkSpecificDevice devicesDatum : devicesData) {
+                UWBCoordData.FencePoint fencePoint = devicesDatum.getFencePoint();
+                UWBCoordData.FencePoint.Point A = fencePoint.getRight_top();
+                UWBCoordData.FencePoint.Point B = fencePoint.getLeft_top();
+                UWBCoordData.FencePoint.Point C = fencePoint.getLeft_bottom();
+                UWBCoordData.FencePoint.Point D = fencePoint.getRight_bottom();
+                if ("跑步机".equals(devicesDatum.getType()) || "椭圆机".equals(devicesDatum.getType())) {
+                    final double a = ((B.x - ExpandRange_100) - (A.x + ExpandRange_100)) * (y - A.y) - (B.y - A.y) * (x - (A.x + ExpandRange_100));
+                    final double b = ((C.x - ExpandRange_100) - (B.x - ExpandRange_100)) * (y - B.y) - (C.y - B.y) * (x - (B.x - ExpandRange_100));
+                    final double c = ((D.x + ExpandRange_100) - (C.x - ExpandRange_100)) * (y - C.y) - (D.y - C.y) * (x - (C.x - ExpandRange_100));
+                    final double d = ((A.x + ExpandRange_100) - (D.x + ExpandRange_100)) * (y - D.y) - (A.y - D.y) * (x - (D.x + ExpandRange_100));
+                    if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
+                        uwbCoordData.setDevice(devicesDatum);
+                        writeQueue(uwbCoordData);
+                    }
+                } else {
+                    final double a = ((B.x- ExpandRange_150) - (A.x+ ExpandRange_150)) * (y - (A.y- ExpandRange_150)) - ((B.y- ExpandRange_150) - (A.y- ExpandRange_150)) * (x - (A.x+ ExpandRange_150));
+                    final double b = ((C.x- ExpandRange_150) - (B.x- ExpandRange_150)) * (y - (B.y- ExpandRange_150)) - ((C.y+ ExpandRange_150) - (B.y- ExpandRange_150)) * (x - (B.x- ExpandRange_150));
+                    final double c = ((D.x+ ExpandRange_150) - (C.x- ExpandRange_150)) * (y - (C.y+ ExpandRange_150)) - ((D.y+ ExpandRange_150) - (C.y+ ExpandRange_150)) * (x - (C.x- ExpandRange_150));
+                    final double d = ((A.x+ ExpandRange_150) - (D.x+ ExpandRange_150)) * (y - (D.y+ ExpandRange_150)) - ((A.y- ExpandRange_150) - (D.y+ ExpandRange_150)) * (x - (D.x+ ExpandRange_150));
+                    if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
+                        uwbCoordData.setDevice(devicesDatum);
+                        writeQueue(uwbCoordData);
+                    }
+                }
+            }
+            if (uwbCoordData.getDevice() == null) {
+                writeQueue(uwbCoordData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         for (LinkSpecificDevice devicesDatum : devicesData) {
             UWBCoordData.FencePoint fencePoint = devicesDatum.getFencePoint();
             UWBCoordData.FencePoint.Point A = fencePoint.getRight_top();
@@ -287,7 +324,68 @@ public class LinkDataManager {
                 return true;
             }
         }
+        uwbCoordData.setDevice(null);
         uwbCoordData.setWristband(new Wristband(LinkDataManager.getInstance().getUwbCode_wristbandName().get(uwbCoordData.getCode())));
+        return false;
+    }
+
+
+
+    private void writeQueue(UWBCoordData uwbCoordData) {
+        UwbQueue<Point> points = FinalDataManager.getInstance().getCode_points().get(uwbCoordData.getCode());
+        if (points == null) {
+            UwbQueue<Point> uwbQueue = new UwbQueue<>(25);
+            Point point = new Point();
+            if (uwbCoordData.getDevice() == null) {
+                point.setId(-1);
+            } else {
+                point.setId(uwbCoordData.getDevice().getId());
+            }
+            point.setX(uwbCoordData.getX());
+            point.setY(uwbCoordData.getY());
+            uwbQueue.offer(point);
+            FinalDataManager.getInstance().getCode_points().put(uwbCoordData.getCode(), uwbQueue);
+        } else {
+            Point point = new Point();
+            if (uwbCoordData.getDevice() == null) {
+                point.setId(-1);
+            } else {
+                point.setId(uwbCoordData.getDevice().getId());
+            }
+            point.setX(uwbCoordData.getX());
+            point.setY(uwbCoordData.getY());
+            points.offer(point);
+        }
+    }
+
+    public boolean contain(UWBCoordData old, UWBCoordData newU) {
+        if (old.getDevice() != null && old.getDevice().getFencePoint() != null) {
+            UWBCoordData.FencePoint fencePoint = old.getDevice().getFencePoint();
+            UWBCoordData.FencePoint.Point A = fencePoint.getRight_top();
+            UWBCoordData.FencePoint.Point B = fencePoint.getLeft_top();
+            UWBCoordData.FencePoint.Point C = fencePoint.getLeft_bottom();
+            UWBCoordData.FencePoint.Point D = fencePoint.getRight_bottom();
+            double x = newU.getX();
+            double y = newU.getY();
+            if ("跑步机".equals(old.getDevice().getType()) || "椭圆机".equals(old.getDevice().getType())) {
+                final double a = ((B.x - ExpandRange_100) - (A.x + ExpandRange_100)) * (y - A.y) - (B.y - A.y) * (x - (A.x + ExpandRange_100));
+                final double b = ((C.x - ExpandRange_100) - (B.x - ExpandRange_100)) * (y - B.y) - (C.y - B.y) * (x - (B.x - ExpandRange_100));
+                final double c = ((D.x + ExpandRange_100) - (C.x - ExpandRange_100)) * (y - C.y) - (D.y - C.y) * (x - (C.x - ExpandRange_100));
+                final double d = ((A.x + ExpandRange_100) - (D.x + ExpandRange_100)) * (y - D.y) - (A.y - D.y) * (x - (D.x + ExpandRange_100));
+                if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
+                    return true;
+                }
+            } else {
+                final double a = ((B.x- ExpandRange_150) - (A.x+ ExpandRange_150)) * (y - (A.y- ExpandRange_150)) - ((B.y- ExpandRange_150) - (A.y- ExpandRange_150)) * (x - (A.x+ ExpandRange_150));
+                final double b = ((C.x- ExpandRange_150) - (B.x- ExpandRange_150)) * (y - (B.y- ExpandRange_150)) - ((C.y+ ExpandRange_150) - (B.y- ExpandRange_150)) * (x - (B.x- ExpandRange_150));
+                final double c = ((D.x+ ExpandRange_150) - (C.x- ExpandRange_150)) * (y - (C.y+ ExpandRange_150)) - ((D.y+ ExpandRange_150) - (C.y+ ExpandRange_150)) * (x - (C.x- ExpandRange_150));
+                final double d = ((A.x+ ExpandRange_150) - (D.x+ ExpandRange_150)) * (y - (D.y+ ExpandRange_150)) - ((A.y- ExpandRange_150) - (D.y+ ExpandRange_150)) * (x - (D.x+ ExpandRange_150));
+                if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
+                    return true;
+                }
+            }
+
+        }
         return false;
     }
 
