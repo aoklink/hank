@@ -21,16 +21,13 @@ import com.link.feeling.framework.utils.data.ToastUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -63,7 +60,6 @@ import cn.linkfeeling.link_socketserve.NettyServer;
 import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
 import cn.linkfeeling.link_socketserve.netty.Global;
 import cn.linkfeeling.link_socketserve.unpack.SmartCarProtocol;
-import io.netty.channel.Channel;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -195,8 +191,14 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
                     @Override
                     public void getBLEStream(String hostString, SmartCarProtocol smartCarProtocol) {
-                        if (smartCarProtocol.getContent().length == 1) {
+                        if (smartCarProtocol != null && smartCarProtocol.getContent() != null && smartCarProtocol.getContent().length == 1) {
                             Log.i("kkkkkkkidle----", hostString + "++++++" + Arrays.toString(smartCarProtocol.getContent()));
+                            DevicePower.DataBean gateWay = new DevicePower.DataBean();
+                            gateWay.setSerial_no(String.valueOf(1));
+                            gateWay.setDevice("GateWay" + CalculateUtil.byteArrayToInt(smartCarProtocol.getContent()));
+                            gateWay.setDevice_id("GateWay" + CalculateUtil.byteArrayToInt(smartCarProtocol.getContent()));
+                            gateWay.setBattery(String.valueOf(-2));
+                            FinalDataManager.getInstance().getBleName_dateBean().put(hostString, gateWay);
                         }
 
 
@@ -209,6 +211,16 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 //                        });
 
 
+                    }
+
+                    @Override
+                    public void offLine(String hostString) {
+                        if (hostString != null) {
+                            DevicePower.DataBean dataBean = FinalDataManager.getInstance().getBleName_dateBean().get(hostString);
+                            if (dataBean != null) {
+                                dataBean.setBattery(String.valueOf(-1));
+                            }
+                        }
                     }
                 });
             }
@@ -319,6 +331,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 devicePowerList.add(value);
                             }
                             devicePower.setData(devicePowerList);
+                            Log.i("kkkkk",gson.toJson(devicePower));
                             getPresenter().uploadDevicePower(devicePower);
                         }
                     });
@@ -704,12 +717,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         matchAdapter.notifyDataSetChanged();
         match_recycleView.scrollToPosition(matchAdapter.getItemCount() - 1);
 
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void receiveDevicePower(DevicePower devicePower) {
-        Log.i("kkkkkkkk", gson.toJson(devicePower));
-        getPresenter().uploadDevicePower(devicePower);
     }
 
     @Override

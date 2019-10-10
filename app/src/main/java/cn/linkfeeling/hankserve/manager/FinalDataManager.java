@@ -4,8 +4,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +13,6 @@ import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
-import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.queue.UwbQueue;
 
 
@@ -51,6 +48,7 @@ public class FinalDataManager {
         matchTemp = new ConcurrentHashMap<>(); //临时的  可被删除
         bleName_dateBean=new ConcurrentHashMap<>();//存储设备电量
     }
+
 
     public ConcurrentHashMap<String, DevicePower.DataBean> getBleName_dateBean() {
         return bleName_dateBean;

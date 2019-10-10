@@ -15,5 +15,7 @@ public interface SocketCallBack {
 
     void getBLEStream(String hostString,SmartCarProtocol tbody);
 
+    void offLine(String hostString);
+
 
 }

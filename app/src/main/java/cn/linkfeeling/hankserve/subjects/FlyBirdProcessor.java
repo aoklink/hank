@@ -367,7 +367,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             dataBean.setBattery(String.valueOf(100/powerLevel));
             FinalDataManager.getInstance().getBleName_dateBean().put(bleName, dataBean);
 
-
+/*
             Power power1 = new Power();
             power1.setDeviceName(deviceByBleName.getDeviceName());
             power1.setBleNme(bleName);
@@ -382,7 +382,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     Log.i("99999-----", s == null ? "null" : s);
                     Log.i("99999eeeee", e == null ? "null" : e.getMessage());
                 }
-            });
+            });*/
             return true;
         }
         return false;
