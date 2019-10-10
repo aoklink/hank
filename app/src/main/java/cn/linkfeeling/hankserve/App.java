@@ -6,6 +6,7 @@ import android.support.multidex.MultiDex;
 
 import com.link.feeling.framework.base.BaseApplication;
 import com.simple.spiderman.SpiderMan;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -58,7 +59,8 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         app = this;
-        SpiderMan.init(this).setTheme(R.style.SpiderManTheme_Light);
+        CrashReport.initCrashReport(getApplicationContext(), "56e15b1a1e", true);
+        // SpiderMan.init(this).setTheme(R.style.SpiderManTheme_Light);
         Bmob.initialize(this, "8e77895692321d5403a19faff7202e36");
         initWakeLock();
 

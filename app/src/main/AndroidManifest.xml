@@ -30,6 +30,10 @@
     <!--允许读取手机状态 用于创建BmobInstallation-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <!--bugly-->
+    <uses-permission android:name="android.permission.READ_LOGS"
+        tools:ignore="ProtectedPermissions" />
+
     <application
         android:name=".App"
         android:allowBackup="true"

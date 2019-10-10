@@ -16,6 +16,7 @@ import com.link.feeling.framework.base.FrameworkBaseActivity;
 import com.link.feeling.framework.executor.ThreadPoolManager;
 import com.link.feeling.framework.utils.data.L;
 import com.link.feeling.framework.utils.data.ToastUtils;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
