@@ -1,8 +1,11 @@
 package cn.linkfeeling.hankserve;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.support.multidex.MultiDex;
+import android.widget.Toast;
 
 import com.link.feeling.framework.base.BaseApplication;
 import com.simple.spiderman.SpiderMan;
@@ -10,10 +13,12 @@ import com.tencent.bugly.crashreport.CrashReport;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import cn.bmob.v3.Bmob;
 import cn.linkfeeling.hankserve.alarm.LinkAlarmManager;
+import cn.linkfeeling.hankserve.crash.UnCeHandler;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.udp.UDPBroadcast;
@@ -26,6 +31,7 @@ import okhttp3.OkHttpClient;
  * @time 2019/3/25
  */
 public class App extends BaseApplication {
+    private ArrayList<Activity> list = new ArrayList<Activity>();
 
     private static App app;
     private volatile boolean isStart;
@@ -45,6 +51,10 @@ public class App extends BaseApplication {
 
     public void setChannelsNum(int channelsNum) {
         this.channelsNum = channelsNum;
+    }
+
+    public App() {
+        Thread.setDefaultUncaughtExceptionHandler(new UnCeHandler(this));
     }
 
     @Override
@@ -114,5 +124,32 @@ public class App extends BaseApplication {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 16      * Activity关闭时，删除Activity列表中的Activity对象
+     */
+    public void removeActivity(Activity a) {
+        list.remove(a);
+    }
+
+    /**
+     * 向Activity列表中添加Activity对象
+     */
+    public void addActivity(Activity a) {
+        list.add(a);
+    }
+
+    /**
+     * 关闭Activity列表中的所有Activity
+     */
+    public void finishActivity() {
+        for (Activity activity : list) {
+            if (null != activity) {
+                activity.finish();
+            }
+        }
+        //杀死该应用进程
+        android.os.Process.killProcess(android.os.Process.myPid());
     }
 }

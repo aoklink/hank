@@ -572,6 +572,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             return true;
         }
 
+        if(itemId==R.id.action_add){
+            throw new NullPointerException();
+
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
