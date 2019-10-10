@@ -38,6 +38,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     private int flag = -1;
 
     private volatile boolean start = true;
+    private volatile boolean select = true;
     private long startTime;
 
     static {
@@ -45,7 +46,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     }
 
     @Override
-    public synchronized BleDeviceInfo analysisBLEData( byte[] scanRecord, String bleName) {
+    public synchronized BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
@@ -79,14 +80,21 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (b) {
             return null;
         }
+
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             startTime = System.currentTimeMillis();
+            start = false;
+        }
+
+        if (select && System.currentTimeMillis() - startTime >= 10 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
-            if (spareTire.isEmpty()) {
-                start = false;
+            if (spareTire == null || spareTire.isEmpty()) {
+                Log.i("pppppppp", "-5-5-5");
+                select = false;
                 return null;
             }
+
             ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
             for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
                 String key = next.getKey();
@@ -95,15 +103,17 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 uwbCoordData.setSemaphore(0);
                 uwbCoordData.setDevice(deviceByBleName);
                 queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+
             }
+            Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
+
             FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-            start = false;
+            select = false;
         }
 
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
-            //System.currentTimeMillis() - startTime >= 5 * 1000
-            if (serviceData[13] > 0) {
+            if (CalculateUtil.byteToInt(serviceData[13]) > 0) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
                 if (s != null) {
                     String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
@@ -134,7 +144,11 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
         if (serviceData[0] == -1 && serviceData[1] == -1) {
             start = true;
+            select = true;
             flag = CalculateUtil.byteArrayToInt(seqNum);
+
+            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+            FinalDataManager.getInstance().getAlternative().remove(fenceId);
 
             if (serviceData[10] == 0 || serviceData[13] == 0) {
                 //       deviceByBleName.setAbility(0);
