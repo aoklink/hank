@@ -27,8 +27,10 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -74,6 +76,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private SimpleDateFormat simpleDateFormat;
     private Disposable disposable;
     private Disposable wristPowerDisposable;
+    private Disposable devicePowerDisposable;
     private RecyclerView recycleView, match_recycleView;
     private BLEAdapter bleAdapter;
     private MatchAdapter matchAdapter;
@@ -87,6 +90,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private AccelData[] accelData = new AccelData[content.length];
     private List<MatchResult> matchResultList = new ArrayList<>();
     private List<WristbandPower.DataBean> wristPowerList = new ArrayList<>();
+    private List<DevicePower.DataBean> devicePowerList = new ArrayList<>();
 
 
     @Override
@@ -146,6 +150,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         //connectLinkWS();
         startIntervalListener();
         startIntervalPowerUpload();
+        startIntervalDevicePowerUpload();
 
 
     }
@@ -275,7 +280,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
     private void startIntervalPowerUpload() {
         if (wristPowerDisposable == null) {
-            wristPowerDisposable = Observable.interval(8, TimeUnit.MINUTES)
+            wristPowerDisposable = Observable.interval(10, TimeUnit.MINUTES)
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
                     .subscribe(aLong -> {
@@ -294,6 +299,28 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                         getPresenter().uploadWristPower(wristbandPower);
 
 
+                    });
+        }
+    }
+
+    private void startIntervalDevicePowerUpload() {
+        if (devicePowerDisposable == null) {
+            devicePowerDisposable = Observable.interval(10, TimeUnit.MINUTES)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribe(aLong -> {
+                        devicePowerList.clear();
+                        ConcurrentHashMap<String, DevicePower.DataBean> bleName_dateBean = FinalDataManager.getInstance().getBleName_dateBean();
+                        if (bleName_dateBean != null && !bleName_dateBean.isEmpty()) {
+                            DevicePower devicePower = new DevicePower();
+                            devicePower.setGym_name(BuildConfig.GYM_NAME);
+                            for (Map.Entry<String, DevicePower.DataBean> next : bleName_dateBean.entrySet()) {
+                                DevicePower.DataBean value = next.getValue();
+                                devicePowerList.add(value);
+                            }
+                            devicePower.setData(devicePowerList);
+                            getPresenter().uploadDevicePower(devicePower);
+                        }
                     });
         }
     }
@@ -697,6 +724,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (wristPowerDisposable != null && !wristPowerDisposable.isDisposed()) {
             wristPowerDisposable.dispose();
             wristPowerDisposable = null;
+        }
+
+        if (devicePowerDisposable != null && !devicePowerDisposable.isDisposed()) {
+            devicePowerDisposable.dispose();
+            devicePowerDisposable = null;
         }
     }
 }

@@ -359,18 +359,13 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 serviceData[13] == 0 &&
                 serviceData[14] == 0) {
 
-        /*    DevicePower devicePower=new DevicePower();
-            List<DevicePower.DataBean> list=new ArrayList<>();
             DevicePower.DataBean dataBean=new DevicePower.DataBean();
             dataBean.setSerial_no(String.valueOf(1));
             dataBean.setDevice_id(bleName);
             dataBean.setDevice(deviceByBleName.getDeviceName());
             int powerLevel = CalculateUtil.byteToInt(serviceData[15]);
             dataBean.setBattery(String.valueOf(100/powerLevel));
-            list.add(dataBean);
-            devicePower.setData(list);
-            devicePower.setGym_name(BuildConfig.GYM_NAME);
-            EventBus.getDefault().post(devicePower);*/
+            FinalDataManager.getInstance().getBleName_dateBean().put(bleName, dataBean);
 
 
             Power power1 = new Power();

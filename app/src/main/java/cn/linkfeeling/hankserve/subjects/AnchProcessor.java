@@ -12,6 +12,7 @@ import cn.bmob.v3.listener.SaveListener;
 import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.AccelData;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Power;
 import cn.linkfeeling.hankserve.interfaces.IAnchDataAnalysis;
@@ -39,7 +40,7 @@ public class AnchProcessor extends IAnchDataAnalysis {
     public static ConcurrentHashMap<String, AnchProcessor> map;
     public static ConcurrentHashMap<String, String> mac_label;
 
-  //  private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
+    //  private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
 
     static {
         map = new ConcurrentHashMap<>();
@@ -132,6 +133,14 @@ public class AnchProcessor extends IAnchDataAnalysis {
                 serviceData[10] == 0 &&
                 serviceData[11] == 0 &&
                 serviceData[12] == 0) {
+
+            DevicePower.DataBean dataBean = new DevicePower.DataBean();
+            dataBean.setDevice_id(bleName);
+            dataBean.setDevice(deviceByBleName.getDeviceName());
+            dataBean.setSerial_no(String.valueOf(1));
+            dataBean.setBattery(String.valueOf(100 / CalculateUtil.byteToInt(serviceData[15])));
+
+            FinalDataManager.getInstance().getBleName_dateBean().put(bleName, dataBean);
 
 
        /*     Power power1 = new Power();
