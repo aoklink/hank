@@ -1,0 +1,1505 @@
+{
+  "uwb_wristband": {
+    "00002510": "I7F8CA",
+    "00002516": "I7DC27",
+    "00002f11": "I7CD33",
+    "00002f0f": "I7FEF8",
+    "00002f0e": "I7E5E3"
+
+  },
+  "deviceInfo": [
+    {
+      "id": 0,
+      "deviceName": "HIIT",
+      "anchName": "000000",
+      "type": "HIIT",
+      "fencePoint": {
+        "fenceId": 0,
+        "left_top": {
+          "x": 0.0,
+          "y": 990.0
+        },
+        "right_top": {
+          "x": 470.0,
+          "y": 990.0
+        },
+        "left_bottom": {
+          "x": 0.0,
+          "y": 1845.0
+        },
+        "right_bottom": {
+          "x": 470.0,
+          "y": 1845.0
+        }
+      }
+    },
+    {
+      "id": 1,
+      "deviceName": "跑步机01",
+      "anchName": "000001",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 1,
+        "left_top": {
+          "x": 2228.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 2343.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 2228.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 2343.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 2285.5,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL01",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "deviceName": "跑步机02",
+      "anchName": "000002",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 2,
+        "left_top": {
+          "x": 2127.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 2228.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 2127.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 2228.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 2177.5,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL02",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "deviceName": "跑步机03",
+      "anchName": "000003",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 3,
+        "left_top": {
+          "x": 2028.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 2127.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 2028.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 2127.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 2077.0,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL03",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "deviceName": "跑步机04",
+      "anchName": "000004",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 4,
+        "left_top": {
+          "x": 1921.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 2028.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 1921.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 2028.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 1974.0,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL04",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "deviceName": "跑步机05",
+      "anchName": "000005",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 5,
+        "left_top": {
+          "x": 1810.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 1921.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 1810.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 1921.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 1865.0,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL05",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "deviceName": "跑步机06",
+      "anchName": "000006",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 6,
+        "left_top": {
+          "x": 1558.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 1735.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 1558.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 1735.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 1646.0,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL06",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "deviceName": "跑步机07",
+      "anchName": "000007",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 7,
+        "left_top": {
+          "x": 1200.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 1350.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 1200.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 1350.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 1275.0,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL07",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "deviceName": "跑步机08",
+      "anchName": "000008",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 8,
+        "left_top": {
+          "x": 1050.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 1200.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 1050.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 1200.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 1125.0,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL08",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "deviceName": "跑步机09",
+      "anchName": "000009",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 9,
+        "left_top": {
+          "x": 609.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 745.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 609.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 745.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 677.0,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL09",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "deviceName": "跑步机10",
+      "anchName": "000010",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 10,
+        "left_top": {
+          "x": 470.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 609.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 470.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 609.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 539.0,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL10",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "deviceName": "跑步机11",
+      "anchName": "000011",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 11,
+        "left_top": {
+          "x": 470.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 609.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 470.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 609.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 539.0,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL11",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "deviceName": "跑步机12",
+      "anchName": "000012",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 12,
+        "left_top": {
+          "x": 470.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 609.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 470.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 609.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 539.0,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL12",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+
+    {
+      "id": 13,
+      "deviceName": "跑步机13",
+      "anchName": "000013",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 13,
+        "left_top": {
+          "x": 470.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 609.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 470.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 609.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 539.0,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL13",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+
+
+    {
+      "id": 14,
+      "deviceName": "跑步机14",
+      "anchName": "000014",
+      "type": "跑步机",
+      "fencePoint": {
+        "fenceId": 14,
+        "left_top": {
+          "x": 470.0,
+          "y": 1657.0
+        },
+        "right_top": {
+          "x": 609.0,
+          "y": 1657.0
+        },
+        "left_bottom": {
+          "x": 470.0,
+          "y": 1896.0
+        },
+        "right_bottom": {
+          "x": 609.0,
+          "y": 1896.0
+        }
+      },
+      "centerPoint": {
+        "x": 539.0,
+        "y": 1776.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL14",
+          "type": "跑步机t1"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "deviceName": "椭圆机01",
+      "anchName": "000015",
+      "type": "椭圆机",
+      "perimeter": 1.587,
+      "slope": 0.129164,
+      "fencePoint": {
+        "fenceId": 15,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "椭圆机t3"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "deviceName": "椭圆机02",
+      "anchName": "000016",
+      "type": "椭圆机",
+      "perimeter": 1.587,
+      "slope": 0.129164,
+      "fencePoint": {
+        "fenceId": 16,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "椭圆机t3"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "deviceName": "椭圆机03",
+      "anchName": "000017",
+      "type": "椭圆机",
+      "perimeter": 1.587,
+      "slope": 0.129164,
+      "fencePoint": {
+        "fenceId": 17,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "椭圆机t3"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "deviceName": "椭圆机04",
+      "anchName": "000018",
+      "type": "椭圆机",
+      "perimeter": 1.587,
+      "slope": 0.129164,
+      "fencePoint": {
+        "fenceId": 18,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "椭圆机t3"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "deviceName": "单车01",
+      "anchName": "000019",
+      "type": "单车",
+      "perimeter": 1.587,
+      "slope": 0.129164,
+      "fencePoint": {
+        "fenceId": 15,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "椭圆机t3"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "deviceName": "高拉背01",
+      "anchName": "000012",
+      "type": "高拉背",
+      "fencePoint": {
+        "fenceId": 12,
+        "left_top": {
+          "x": 2074.0,
+          "y": 1200.0
+        },
+        "right_top": {
+          "x": 2282.0,
+          "y": 1200.0
+        },
+        "left_bottom": {
+          "x": 2074.0,
+          "y": 1400.0
+        },
+        "right_bottom": {
+          "x": 2282.0,
+          "y": 1400.0
+        }
+      },
+      "centerPoint": {
+        "x": 2178.0,
+        "y": 1300.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL27",
+          "type": "砝码器械t4",
+          "weight": [
+            4.0,
+            8.0,
+            12.0,
+            16.0,
+            20.0,
+            25.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            65.0,
+            70.0,
+            75.0,
+            80.0,
+            85.0,
+            90.0,
+            95.0,
+            100.0,
+            105.0,
+            110.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "deviceName": "肩部训练器01",
+      "anchName": "000013",
+      "type": "肩部训练器",
+      "fencePoint": {
+        "fenceId": 13,
+        "left_top": {
+          "x": 1916.0,
+          "y": 1227.0
+        },
+        "right_top": {
+          "x": 2074.0,
+          "y": 1227.0
+        },
+        "left_bottom": {
+          "x": 1916.0,
+          "y": 1400.0
+        },
+        "right_bottom": {
+          "x": 2074.0,
+          "y": 1400.0
+        }
+      },
+      "centerPoint": {
+        "x": 1995.0,
+        "y": 1313.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL20",
+          "type": "砝码器械t4",
+          "weight": [
+            4.0,
+            8.0,
+            12.0,
+            16.0,
+            20.0,
+            24.0,
+            28.0,
+            32.0,
+            36.0,
+            40.0,
+            44.0,
+            48.0,
+            52.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "deviceName": "坐式推胸01",
+      "anchName": "ANCH36",
+      "type": "坐式推胸",
+      "fencePoint": {
+        "fenceId": 14,
+        "left_top": {
+          "x": 1758.0,
+          "y": 1204.0
+        },
+        "right_top": {
+          "x": 1916.0,
+          "y": 1204.0
+        },
+        "left_bottom": {
+          "x": 1758.0,
+          "y": 1400.0
+        },
+        "right_bottom": {
+          "x": 1916.0,
+          "y": 1400.0
+        }
+      },
+      "centerPoint": {
+        "x": 1837.0,
+        "y": 1302.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL30",
+          "type": "砝码器械t4",
+          "weight": [
+            0.0,
+            4.0,
+            8.0,
+            12.0,
+            16.0,
+            20.0,
+            25.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            65.0,
+            70.0,
+            75.0,
+            80.0,
+            85.0,
+            90.0,
+            95.0,
+            100.0,
+            105.0,
+            110.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "deviceName": "平行拉背01",
+      "anchName": "000015",
+      "type": "平行拉背",
+      "fencePoint": {
+        "fenceId": 15,
+        "left_top": {
+          "x": 1606.0,
+          "y": 1206.0
+        },
+        "right_top": {
+          "x": 1758.0,
+          "y": 1206.0
+        },
+        "left_bottom": {
+          "x": 1606.0,
+          "y": 1400.0
+        },
+        "right_bottom": {
+          "x": 1758.0,
+          "y": 1400.0
+        }
+      },
+      "centerPoint": {
+        "x": 1682.0,
+        "y": 1303.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL25",
+          "type": "砝码器械t4",
+          "weight": [
+            0.0,
+            4.0,
+            8.0,
+            12.0,
+            16.0,
+            20.0,
+            25.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            65.0,
+            70.0,
+            75.0,
+            80.0,
+            85.0,
+            90.0,
+            95.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "deviceName": "45度三头训练器01",
+      "anchName": "000016",
+      "type": "45度三头训练器",
+      "fencePoint": {
+        "fenceId": 16,
+        "left_top": {
+          "x": 1460.0,
+          "y": 1230.0
+        },
+        "right_top": {
+          "x": 1606.0,
+          "y": 1230.0
+        },
+        "left_bottom": {
+          "x": 1460.0,
+          "y": 1406.0
+        },
+        "right_bottom": {
+          "x": 1606.0,
+          "y": 1406.0
+        }
+      },
+      "centerPoint": {
+        "x": 1533.0,
+        "y": 1318.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL21",
+          "type": "砝码器械t4",
+          "weight": [
+            0.0,
+            4.0,
+            8.0,
+            12.0,
+            16.0,
+            20.0,
+            25.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            65.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "deviceName": "坐式伸腿训练器01",
+      "anchName": "000017",
+      "type": "坐式伸腿训练器",
+      "fencePoint": {
+        "fenceId": 17,
+        "left_top": {
+          "x": 1295.0,
+          "y": 1200.0
+        },
+        "right_top": {
+          "x": 1460.0,
+          "y": 1200.0
+        },
+        "left_bottom": {
+          "x": 1295.0,
+          "y": 1412.0
+        },
+        "right_bottom": {
+          "x": 1460.0,
+          "y": 1412.0
+        }
+      },
+      "centerPoint": {
+        "x": 1377.5,
+        "y": 1306.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL29",
+          "type": "砝码器械t4",
+          "weight": [
+            4.0,
+            8.0,
+            12.0,
+            16.0,
+            20.0,
+            25.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            65.0,
+            70.0,
+            75.0,
+            80.0,
+            85.0,
+            90.0,
+            95.0,
+            100.0,
+            105.0,
+            110.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "deviceName": "低拉背01",
+      "anchName": "000018",
+      "type": "低拉背",
+      "fencePoint": {
+        "fenceId": 18,
+        "left_top": {
+          "x": 1315.0,
+          "y": 1412.0
+        },
+        "right_top": {
+          "x": 1520.0,
+          "y": 1412.0
+        },
+        "left_bottom": {
+          "x": 1315.0,
+          "y": 1650.0
+        },
+        "right_bottom": {
+          "x": 1520.0,
+          "y": 1650.0
+        }
+      },
+      "centerPoint": {
+        "x": 1417.5,
+        "y": 1351.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL32",
+          "type": "砝码器械t4",
+          "weight": [
+            2.5,
+            5.0,
+            7.5,
+            10.0,
+            12.5,
+            15.0,
+            17.5,
+            20.0,
+            22.5,
+            25.0,
+            27.5,
+            30.0,
+            32.5,
+            35.0,
+            37.5,
+            40.0,
+            42.5,
+            45.0,
+            47.5,
+            50.0,
+            52.5,
+            55.0,
+            57.5,
+            60.0,
+            62.5,
+            65.0,
+            67.5,
+            70.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "deviceName": "大腿内侧训练器01",
+      "anchName": "000019",
+      "type": "大腿内侧训练器",
+      "fencePoint": {
+        "fenceId": 19,
+        "left_top": {
+          "x": 1520.0,
+          "y": 1420.0
+        },
+        "right_top": {
+          "x": 1697.0,
+          "y": 1420.0
+        },
+        "left_bottom": {
+          "x": 1520.0,
+          "y": 1610.0
+        },
+        "right_bottom": {
+          "x": 1697.0,
+          "y": 1610.0
+        }
+      },
+      "centerPoint": {
+        "x": 1608.5,
+        "y": 1515.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL26",
+          "type": "砝码器械t4",
+          "weight": [
+            4.0,
+            8.0,
+            12.0,
+            16.0,
+            20.0,
+            25.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            65.0,
+            70.0,
+            75.0,
+            80.0,
+            85.0,
+            90.0,
+            95.0,
+            100.0,
+            105.0,
+            110.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "deviceName": "俯卧曲腿训练器01",
+      "anchName": "000020",
+      "type": "俯卧曲腿训练器",
+      "fencePoint": {
+        "fenceId": 20,
+        "left_top": {
+          "x": 1697.0,
+          "y": 1400.0
+        },
+        "right_top": {
+          "x": 1845.0,
+          "y": 1400.0
+        },
+        "left_bottom": {
+          "x": 1697.0,
+          "y": 1615.0
+        },
+        "right_bottom": {
+          "x": 1845.0,
+          "y": 1615.0
+        }
+      },
+      "centerPoint": {
+        "x": 1771.0,
+        "y": 1507.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL24",
+          "type": "砝码器械t4",
+          "weight": [
+            4.0,
+            8.0,
+            12.0,
+            16.0,
+            20.0,
+            25.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            65.0,
+            70.0,
+            75.0,
+            80.0,
+            85.0,
+            90.0,
+            95.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "deviceName": "蝴蝶夹胸训练器01",
+      "anchName": "000021",
+      "type": "蝴蝶夹胸训练器",
+      "fencePoint": {
+        "fenceId": 21,
+        "left_top": {
+          "x": 1845.0,
+          "y": 1433.0
+        },
+        "right_top": {
+          "x": 2042.0,
+          "y": 1433.0
+        },
+        "left_bottom": {
+          "x": 1845.0,
+          "y": 1580.0
+        },
+        "right_bottom": {
+          "x": 2042.0,
+          "y": 1580.0
+        }
+      },
+      "centerPoint": {
+        "x": 1943.5,
+        "y": 1506.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL31",
+          "type": "砝码器械t4",
+          "weight": [
+            0.0,
+            4.0,
+            8.0,
+            12.0,
+            16.0,
+            20.0,
+            25.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            65.0,
+            70.0,
+            75.0,
+            80.0,
+            85.0,
+            90.0,
+            95.0,
+            100.0,
+            105.0,
+            110.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "deviceName": "反飞鸟01",
+      "anchName": "000022",
+      "type": "反飞鸟",
+      "fencePoint": {
+        "fenceId": 22,
+        "left_top": {
+          "x": 2042.0,
+          "y": 1400.0
+        },
+        "right_top": {
+          "x": 2280.0,
+          "y": 1400.0
+        },
+        "left_bottom": {
+          "x": 2042.0,
+          "y": 1580.0
+        },
+        "right_bottom": {
+          "x": 2280.0,
+          "y": 1580.0
+        }
+      },
+      "centerPoint": {
+        "x": 2161.0,
+        "y": 1490.0
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL28",
+          "type": "砝码器械t4",
+          "weight": [
+            4.0,
+            8.0,
+            12.0,
+            16.0,
+            20.0,
+            25.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            65.0,
+            70.0,
+            75.0,
+            80.0,
+            85.0,
+            90.0,
+            95.0,
+            100.0,
+            105.0,
+            110.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "deviceName": "飞鸟架01",
+      "anchName": "ANCH34",
+      "type": "飞鸟架",
+      "fencePoint": {
+        "fenceId": 23,
+        "left_top": {
+          "x": 530.0,
+          "y": 0.0
+        },
+        "right_top": {
+          "x": 760.0,
+          "y": 0.0
+        },
+        "left_bottom": {
+          "x": 530.0,
+          "y": 185.0
+        },
+        "right_bottom": {
+          "x": 760.0,
+          "y": 185.0
+        }
+      },
+      "centerPoint": {
+        "x": 645.0,
+        "y": 92.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL22",
+          "type": "砝码器械t4",
+          "weight": [
+            2.5,
+            5.0,
+            7.5,
+            10.0,
+            12.5,
+            15.0,
+            17.5,
+            20.0,
+            22.5,
+            25.0,
+            27.5,
+            30.0,
+            32.5,
+            35.0,
+            37.5,
+            40.0,
+            42.5,
+            45.0,
+            47.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "deviceName": "飞鸟架02",
+      "anchName": "ANCH35",
+      "type": "飞鸟架",
+      "fencePoint": {
+        "fenceId": 24,
+        "left_top": {
+          "x": 294.0,
+          "y": 0.0
+        },
+        "right_top": {
+          "x": 530.0,
+          "y": 0.0
+        },
+        "left_bottom": {
+          "x": 294.0,
+          "y": 185.0
+        },
+        "right_bottom": {
+          "x": 530.0,
+          "y": 185.0
+        }
+      },
+      "centerPoint": {
+        "x": 412.0,
+        "y": 92.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL23",
+          "type": "砝码器械t4",
+          "weight": [
+            2.5,
+            5.0,
+            7.5,
+            10.0,
+            12.5,
+            15.0,
+            17.5,
+            20.0,
+            22.5,
+            25.0,
+            27.5,
+            30.0,
+            32.5,
+            35.0,
+            37.5,
+            40.0,
+            42.5,
+            45.0,
+            47.5
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+
