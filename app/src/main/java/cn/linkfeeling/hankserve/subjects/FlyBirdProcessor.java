@@ -101,7 +101,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             startTime = System.currentTimeMillis();
 
-            ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
+/*            ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire.isEmpty()) {
                 start = false;
                 return null;
@@ -115,11 +115,11 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 uwbCoordData.setDevice(deviceByBleName);
                 tempHashMap.put(uwbCoordData, next.getValue());
             }
-            FinalDataManager.getInstance().getMatchTemp().put(deviceByBleName.getFencePoint().getFenceId(), tempHashMap);
+            FinalDataManager.getInstance().getMatchTemp().put(deviceByBleName.getFencePoint().getFenceId(), tempHashMap);*/
             start = false;
         }
 
-        long diffTime = System.currentTimeMillis() - startTime;
+     /*   long diffTime = System.currentTimeMillis() - startTime;
         if (diffTime > 0 && (diffTime / 1000) >= 5 && (diffTime / 1000) % 5 == 0 && diffTime <= 60 * 1000) {
             //     Log.i("fly_match_time", diffTime + "");
             ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> map = FinalDataManager.getInstance().getMatchTemp().get(deviceByBleName.getFencePoint().getFenceId());
@@ -218,7 +218,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 }
             }
         }
-
+*/
 
 
         if (select && System.currentTimeMillis() - startTime >= 10 * 1000) {
@@ -272,9 +272,9 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     bleDeviceInfoNow.getCurve().add(cuv1);
                     bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
                 }
-                devicesList.add(serviceData[j]);
+             //   devicesList.add(serviceData[j]);
             }
-            deviceSeq.offer(CalculateUtil.byteArrayToInt(seqNum));
+          //  deviceSeq.offer(CalculateUtil.byteArrayToInt(seqNum));
         }
 
 

@@ -573,7 +573,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         }
 
         if(itemId==R.id.action_add){
-            throw new NullPointerException();
+            throw new IndexOutOfBoundsException();
 
         }
 
