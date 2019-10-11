@@ -5,7 +5,6 @@
     "00002f11": "I7CD33",
     "00002f0f": "I7FEF8",
     "00002f0e": "I7E5E3"
-
   },
   "deviceInfo": [
     {
@@ -465,7 +464,6 @@
         }
       ]
     },
-
     {
       "id": 13,
       "deviceName": "跑步机13",
@@ -502,8 +500,6 @@
         }
       ]
     },
-
-
     {
       "id": 14,
       "deviceName": "跑步机14",
@@ -697,10 +693,10 @@
       "deviceName": "单车01",
       "anchName": "000019",
       "type": "单车",
-      "perimeter": 1.587,
-      "slope": 0.129164,
+      "perimeter": 3.84,
+      "slope": 0.226829,
       "fencePoint": {
-        "fenceId": 15,
+        "fenceId": 19,
         "left_top": {
           "x": 773.0,
           "y": 1038.0
@@ -726,17 +722,549 @@
         {
           "bleId": 0,
           "bleName": "LKFL50",
-          "type": "椭圆机t3"
+          "type": "单车t2"
         }
       ]
     },
     {
-      "id": 12,
-      "deviceName": "高拉背01",
-      "anchName": "000012",
-      "type": "高拉背",
+      "id": 20,
+      "deviceName": "单车02",
+      "anchName": "000020",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
       "fencePoint": {
-        "fenceId": 12,
+        "fenceId": 20,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "deviceName": "单车03",
+      "anchName": "000021",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
+      "fencePoint": {
+        "fenceId": 21,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "deviceName": "单车04",
+      "anchName": "000022",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
+      "fencePoint": {
+        "fenceId": 19,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "deviceName": "单车05",
+      "anchName": "000023",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
+      "fencePoint": {
+        "fenceId": 23,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "deviceName": "单车06",
+      "anchName": "000024",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
+      "fencePoint": {
+        "fenceId": 24,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "deviceName": "单车07",
+      "anchName": "000025",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
+      "fencePoint": {
+        "fenceId": 25,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "deviceName": "单车08",
+      "anchName": "000026",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
+      "fencePoint": {
+        "fenceId": 26,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "deviceName": "单车09",
+      "anchName": "000027",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
+      "fencePoint": {
+        "fenceId": 27,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "deviceName": "单车10",
+      "anchName": "000028",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
+      "fencePoint": {
+        "fenceId": 28,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "deviceName": "单车11",
+      "anchName": "000029",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
+      "fencePoint": {
+        "fenceId": 29,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "deviceName": "单车12",
+      "anchName": "000030",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
+      "fencePoint": {
+        "fenceId": 30,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "deviceName": "单车13",
+      "anchName": "000031",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
+      "fencePoint": {
+        "fenceId": 31,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "deviceName": "单车14",
+      "anchName": "000032",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
+      "fencePoint": {
+        "fenceId": 32,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "deviceName": "单车15",
+      "anchName": "000033",
+      "type": "单车",
+      "perimeter": 3.84,
+      "slope": 0.226829,
+      "fencePoint": {
+        "fenceId": 33,
+        "left_top": {
+          "x": 773.0,
+          "y": 1038.0
+        },
+        "right_top": {
+          "x": 881.0,
+          "y": 1038.0
+        },
+        "left_bottom": {
+          "x": 773.0,
+          "y": 1325.0
+        },
+        "right_bottom": {
+          "x": 881.0,
+          "y": 1325.0
+        }
+      },
+      "centerPoint": {
+        "x": 827.0,
+        "y": 1181.5
+      },
+      "linkBLES": [
+        {
+          "bleId": 0,
+          "bleName": "LKFL50",
+          "type": "单车t2"
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "deviceName": "高位下拉01",
+      "anchName": "000034",
+      "type": "高位下拉",
+      "fencePoint": {
+        "fenceId": 34,
         "left_top": {
           "x": 2074.0,
           "y": 1200.0
@@ -792,12 +1320,12 @@
       ]
     },
     {
-      "id": 13,
-      "deviceName": "肩部训练器01",
-      "anchName": "000013",
-      "type": "肩部训练器",
+      "id": 35,
+      "deviceName": "坐姿肩上举01",
+      "anchName": "000035",
+      "type": "坐姿肩上举",
       "fencePoint": {
-        "fenceId": 13,
+        "fenceId": 35,
         "left_top": {
           "x": 1916.0,
           "y": 1227.0
@@ -843,12 +1371,12 @@
       ]
     },
     {
-      "id": 14,
-      "deviceName": "坐式推胸01",
-      "anchName": "ANCH36",
-      "type": "坐式推胸",
+      "id": 36,
+      "deviceName": "卷腹机01",
+      "anchName": "000036",
+      "type": "卷腹机",
       "fencePoint": {
-        "fenceId": 14,
+        "fenceId": 36,
         "left_top": {
           "x": 1758.0,
           "y": 1204.0
@@ -905,12 +1433,12 @@
       ]
     },
     {
-      "id": 15,
-      "deviceName": "平行拉背01",
-      "anchName": "000015",
-      "type": "平行拉背",
+      "id": 37,
+      "deviceName": "蝴蝶机01",
+      "anchName": "000037",
+      "type": "蝴蝶机",
       "fencePoint": {
-        "fenceId": 15,
+        "fenceId": 37,
         "left_top": {
           "x": 1606.0,
           "y": 1206.0
@@ -964,12 +1492,12 @@
       ]
     },
     {
-      "id": 16,
-      "deviceName": "45度三头训练器01",
-      "anchName": "000016",
-      "type": "45度三头训练器",
+      "id": 38,
+      "deviceName": "夹腿训练器01",
+      "anchName": "000038",
+      "type": "夹腿训练器",
       "fencePoint": {
-        "fenceId": 16,
+        "fenceId": 38,
         "left_top": {
           "x": 1460.0,
           "y": 1230.0
@@ -1017,12 +1545,12 @@
       ]
     },
     {
-      "id": 17,
-      "deviceName": "坐式伸腿训练器01",
-      "anchName": "000017",
-      "type": "坐式伸腿训练器",
+      "id": 39,
+      "deviceName": "抬腿训练器01",
+      "anchName": "000039",
+      "type": "抬腿训练器",
       "fencePoint": {
-        "fenceId": 17,
+        "fenceId": 39,
         "left_top": {
           "x": 1295.0,
           "y": 1200.0
@@ -1078,12 +1606,12 @@
       ]
     },
     {
-      "id": 18,
-      "deviceName": "低拉背01",
-      "anchName": "000018",
-      "type": "低拉背",
+      "id": 40,
+      "deviceName": "手臂训练器01",
+      "anchName": "000040",
+      "type": "手臂训练器",
       "fencePoint": {
-        "fenceId": 18,
+        "fenceId": 40,
         "left_top": {
           "x": 1315.0,
           "y": 1412.0
@@ -1144,12 +1672,12 @@
       ]
     },
     {
-      "id": 19,
-      "deviceName": "大腿内侧训练器01",
-      "anchName": "000019",
-      "type": "大腿内侧训练器",
+      "id": 41,
+      "deviceName": "坐姿蹬腿训练器01",
+      "anchName": "000041",
+      "type": "坐姿蹬腿训练器",
       "fencePoint": {
-        "fenceId": 19,
+        "fenceId": 41,
         "left_top": {
           "x": 1520.0,
           "y": 1420.0
@@ -1205,12 +1733,12 @@
       ]
     },
     {
-      "id": 20,
-      "deviceName": "俯卧曲腿训练器01",
-      "anchName": "000020",
-      "type": "俯卧曲腿训练器",
+      "id": 42,
+      "deviceName": "双臂训练器01",
+      "anchName": "000042",
+      "type": "双臂训练器",
       "fencePoint": {
-        "fenceId": 20,
+        "fenceId": 42,
         "left_top": {
           "x": 1697.0,
           "y": 1400.0
@@ -1263,12 +1791,12 @@
       ]
     },
     {
-      "id": 21,
-      "deviceName": "蝴蝶夹胸训练器01",
-      "anchName": "000021",
-      "type": "蝴蝶夹胸训练器",
+      "id": 43,
+      "deviceName": "坐式推胸训练器01",
+      "anchName": "000043",
+      "type": "坐式推胸训练器",
       "fencePoint": {
-        "fenceId": 21,
+        "fenceId": 43,
         "left_top": {
           "x": 1845.0,
           "y": 1433.0
@@ -1325,73 +1853,12 @@
       ]
     },
     {
-      "id": 22,
-      "deviceName": "反飞鸟01",
-      "anchName": "000022",
-      "type": "反飞鸟",
-      "fencePoint": {
-        "fenceId": 22,
-        "left_top": {
-          "x": 2042.0,
-          "y": 1400.0
-        },
-        "right_top": {
-          "x": 2280.0,
-          "y": 1400.0
-        },
-        "left_bottom": {
-          "x": 2042.0,
-          "y": 1580.0
-        },
-        "right_bottom": {
-          "x": 2280.0,
-          "y": 1580.0
-        }
-      },
-      "centerPoint": {
-        "x": 2161.0,
-        "y": 1490.0
-      },
-      "linkBLES": [
-        {
-          "bleId": 0,
-          "bleName": "LKFL28",
-          "type": "砝码器械t4",
-          "weight": [
-            4.0,
-            8.0,
-            12.0,
-            16.0,
-            20.0,
-            25.0,
-            30.0,
-            35.0,
-            40.0,
-            45.0,
-            50.0,
-            55.0,
-            60.0,
-            65.0,
-            70.0,
-            75.0,
-            80.0,
-            85.0,
-            90.0,
-            95.0,
-            100.0,
-            105.0,
-            110.0
-          ]
-        }
-      ]
-    },
-    {
-      "id": 23,
+      "id": 44,
       "deviceName": "飞鸟架01",
-      "anchName": "ANCH34",
+      "anchName": "000044",
       "type": "飞鸟架",
       "fencePoint": {
-        "fenceId": 23,
+        "fenceId": 44,
         "left_top": {
           "x": 530.0,
           "y": 0.0
@@ -1443,12 +1910,12 @@
       ]
     },
     {
-      "id": 24,
+      "id": 45,
       "deviceName": "飞鸟架02",
-      "anchName": "ANCH35",
+      "anchName": "000045",
       "type": "飞鸟架",
       "fencePoint": {
-        "fenceId": 24,
+        "fenceId": 45,
         "left_top": {
           "x": 294.0,
           "y": 0.0
