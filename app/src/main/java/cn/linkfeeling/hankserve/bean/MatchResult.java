@@ -11,9 +11,26 @@ public class MatchResult {
     private String  match_time;
     private String match_two;
     private String match_three;
+    private String watchNum;
+    private String deviceNum;
     private boolean watchStatus;
     private boolean deviceStatus;
 
+    public String getWatchNum() {
+        return watchNum;
+    }
+
+    public void setWatchNum(String watchNum) {
+        this.watchNum = watchNum;
+    }
+
+    public String getDeviceNum() {
+        return deviceNum;
+    }
+
+    public void setDeviceNum(String deviceNum) {
+        this.deviceNum = deviceNum;
+    }
 
     public void setWatchStatus(boolean watchStatus) {
         this.watchStatus = watchStatus;

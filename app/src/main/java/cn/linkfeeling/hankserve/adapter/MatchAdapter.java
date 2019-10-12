@@ -39,6 +39,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.BLEViewHolde
         holder.tv_bracelet_id.setText(matchResult.getDeviceName());
         holder.tv_deviceName.setText(matchResult.getWristband());
         holder.tv_heat.setText(matchResult.getMatch_time());
+        holder.tv_watchNum.setText(matchResult.getWatchNum());
+        holder.tv_deviceNum.setText(matchResult.getDeviceNum());
         holder.tv_two.setText(matchResult.getMatch_two());
         holder.tv_three.setText(matchResult.getMatch_three());
         holder.tv_device_status.setText(matchResult.isDeviceStatus() ? "设备data异常" : "设备data正常");
@@ -60,6 +62,9 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.BLEViewHolde
         private TextView tv_three;
         private TextView tv_device_status;
         private TextView tv_watch_status;
+        private TextView tv_watchNum;
+        private TextView tv_deviceNum;
+
 
 
         BLEViewHolder(View itemView) {
@@ -73,6 +78,9 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.BLEViewHolde
             tv_three = itemView.findViewById(R.id.tv_three);
             tv_watch_status = itemView.findViewById(R.id.tv_watch_status);
             tv_device_status = itemView.findViewById(R.id.tv_device_status);
+            tv_watchNum = itemView.findViewById(R.id.tv_watchNum);
+            tv_deviceNum = itemView.findViewById(R.id.tv_deviceNum);
+
 
         }
     }
