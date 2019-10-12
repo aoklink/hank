@@ -25,14 +25,17 @@ extern "C" {
 #define DEVICE_LEN 25       // 传感器中参与距离计算的数据量
 #define MOVE 15            // 平移要求量
 #define AMP 100            // 归一要求比例
-#define MIN_HIGHTHR 10
+
 #define  MAX_WATCH_DATA_LEN 40
 #define  MAX_DEVICE_DATA_LEN 130
 
 #define MAX_MAC_ADDR_LEN 4
 #define MAX_DEVICE_NAME_LEN 6
-#define THR_TIME 30            // 动态门限更改周期
 #define HIGH_THR_P 0.6        // 门限比例
+#define DEVICE_MIN_HIGH_THR 4
+#define WATCH_THR_TIME 30
+#define DEVICE_THR_TIME 90
+#define WATCH_MIN_HIGH_THR 10
 
 typedef struct tag_raw_data {
     signed char x;
@@ -86,7 +89,7 @@ void active_axis(char *active_data, char *axis_data_wa, short in_data_len) {
 }
 
 // 计次函数
-short times(char *active_data, short in_data_len) {
+short times(char *active_data, short in_data_len,short min_high_thr,short time_thr) {
     short count_times = 0;
     short high_thr;
     short index_h;
@@ -108,15 +111,15 @@ short times(char *active_data, short in_data_len) {
     max_final = active_data[0];
     min_final = active_data[0];
     index_s = 0;
-    high_thr = 10;
+    high_thr = min_high_thr;
     while (index_s < in_data_len - 1) {
         //printf("in_data_len:%d\n", in_data_len);
-        if (index_s % THR_TIME == 0) {
+        if (index_s % time_thr == 0) {
             max = active_data[index_s];
             min = active_data[index_s];
             //max_final = active_data[index_s];
             //min_final = active_data[index_s];
-            for (index_h = 0; index_h < THR_TIME; index_h++) {
+            for (index_h = 0; index_h < time_thr; index_h++) {
                 if (active_data[index_s + index_h] > max)
                     max = active_data[index_s + index_h];
                 if (active_data[index_s + index_h] < min)
@@ -131,8 +134,8 @@ short times(char *active_data, short in_data_len) {
             max_final = max;
             min_final = min;
             high_thr = (max_final - min_final) * HIGH_THR_P;
-            if (high_thr<MIN_HIGHTHR)
-                high_thr = MIN_HIGHTHR;
+            if (high_thr<min_high_thr)
+                high_thr = min_high_thr;
 
             //printf("high_thr:%d\n", high_thr);
         }
@@ -150,12 +153,12 @@ short times(char *active_data, short in_data_len) {
             count_max2 = count_min;
             index_sj = index_s;
             while (index_sj < in_data_len - 1) {
-                if (index_s % THR_TIME == 0) {
+                if (index_s % time_thr == 0) {
                     max = active_data[index_s];
                     min = active_data[index_s];
                     //max_final = active_data[index_s];
                     //min_final = active_data[index_s];
-                    for (index_h = 0; index_h < THR_TIME; index_h++) {
+                    for (index_h = 0; index_h < time_thr; index_h++) {
                         if (active_data[index_s + index_h] > max)
                             max = active_data[index_s + index_h];
                         if (active_data[index_s + index_h] < min)
@@ -170,8 +173,8 @@ short times(char *active_data, short in_data_len) {
                     max_final = max;
                     min_final = min;
                     high_thr = (max_final - min_final) * HIGH_THR_P;
-                    if (high_thr<MIN_HIGHTHR)
-                        high_thr = MIN_HIGHTHR;
+                    if (high_thr<min_high_thr)
+                        high_thr = min_high_thr;
                     //printf("max:%d\n", max);
                     //printf("min:%d\n", min);
                     //printf("high_thr:%d\n", high_thr);
@@ -300,8 +303,8 @@ unsigned int match_data(unsigned char *device_data, short de_data_len, WATCH_DAT
         active_axis(extent_raw_data, z_raw_data, watch_data_len);
     }
 
-    wa_times = times(extent_raw_data, watch_data_len) + 1;
-    device_times = times(device_smooth_data_raw, device_filtlen) + 1;
+	wa_times = times(extent_raw_data, watch_data_len, WATCH_MIN_HIGH_THR, WATCH_THR_TIME) + 1 ;
+	device_times = times(device_smooth_data_raw, device_filtlen, DEVICE_MIN_HIGH_THR, DEVICE_THR_TIME) + 1;
 
     printf("device_times:%d\n", device_times);
     printf("wa_times:%d\n", wa_times);
