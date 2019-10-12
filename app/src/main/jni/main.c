@@ -34,7 +34,7 @@ extern "C" {
 #define HIGH_THR_P 0.6        // 门限比例
 #define DEVICE_MIN_HIGH_THR 4
 #define WATCH_THR_TIME 30
-#define DEVICE_THR_TIME 90
+#define DEVICE_THR_TIME 30
 #define WATCH_MIN_HIGH_THR 10
 
 typedef struct tag_raw_data {
