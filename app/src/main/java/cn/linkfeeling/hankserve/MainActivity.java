@@ -80,6 +80,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private List<MatchResult> matchResultList = new ArrayList<>();
     private List<WristbandPower.DataBean> wristPowerList = new ArrayList<>();
     private List<DevicePower.DataBean> devicePowerList = new ArrayList<>();
+
     @Override
     protected int getLayoutRes() {
         return R.layout.activity_main;
@@ -269,6 +270,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     });
         }
     }
+
     private void startIntervalDevicePowerUpload() {
         if (devicePowerDisposable == null) {
             devicePowerDisposable = Observable.interval(10, TimeUnit.MINUTES)
@@ -285,7 +287,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 devicePowerList.add(value);
                             }
                             devicePower.setData(devicePowerList);
-                            Log.i("kkkkk",gson.toJson(devicePower));
+                            Log.i("kkkkk", gson.toJson(devicePower));
                             getPresenter().uploadDevicePower(devicePower);
                         }
                     });
@@ -553,6 +555,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             }
         }
     }
+
     @Override
     public void uploadBleStatus(BleDeviceInfo temp, BleDeviceInfo bleDeviceInfo, boolean status, Throwable throwable) {
         try {

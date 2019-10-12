@@ -39,11 +39,17 @@ public class AnchProcessor extends IAnchDataAnalysis {
     static {
         map = new ConcurrentHashMap<>();
         mac_label = new ConcurrentHashMap<>();
-        mac_label.put("F8CA",I7);
-        mac_label.put("DC27",I7);
-        mac_label.put("CD33",I7);
-        mac_label.put("FEF8",I7);
-        mac_label.put("E5E3",I7);
+        mac_label.put("CA9B",I7);
+        mac_label.put("FA43",I7);
+        mac_label.put("E027",I7);
+        mac_label.put("E13B",I7);
+        mac_label.put("E0AB",I7);
+        mac_label.put("FA0A",I7);
+        mac_label.put("CA34",I7);
+        mac_label.put("F8BB",I7);
+        mac_label.put("EEF3",I7);
+        mac_label.put("CC82",I7);
+        mac_label.put("CFE2",I7);
     }
 
 
