@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import cn.linkfeeling.hankserve.BuildConfig;
+import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Power;
 import cn.linkfeeling.hankserve.interfaces.IAnchDataAnalysis;
@@ -118,7 +119,15 @@ public class AnchProcessor extends IAnchDataAnalysis {
                 serviceData[12] == 0) {
 
 
-            Power power1 = new Power();
+            DevicePower.DataBean dataBean = new DevicePower.DataBean();
+            dataBean.setDevice_id(bleName);
+            dataBean.setDevice(deviceByBleName.getDeviceName());
+            dataBean.setSerial_no(String.valueOf(1));
+            dataBean.setBattery(String.valueOf(100 / CalculateUtil.byteToInt(serviceData[15])));
+            FinalDataManager.getInstance().getBleName_dateBean().put(bleName, dataBean);
+
+
+         /*   Power power1 = new Power();
             power1.setDeviceName(deviceByBleName.getDeviceName());
             power1.setBleNme(bleName);
             power1.setPowerLevel(CalculateUtil.byteToInt(serviceData[15]));
@@ -132,7 +141,7 @@ public class AnchProcessor extends IAnchDataAnalysis {
                     Log.i("99999-----", s == null ? "null" : s);
                     Log.i("99999eeeee", e == null ? "null" : e.getMessage());
                 }
-            });
+            });*/
             return true;
         }
         return false;

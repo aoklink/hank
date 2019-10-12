@@ -20,6 +20,7 @@ import cn.bmob.v3.listener.SaveListener;
 import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.AccelData;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.LinkBLE;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.MatchResult;
@@ -337,6 +338,16 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 serviceData[13] == 0 &&
                 serviceData[14] == 0) {
 
+            DevicePower.DataBean dataBean=new DevicePower.DataBean();
+            dataBean.setSerial_no(String.valueOf(1));
+            dataBean.setDevice_id(bleName);
+            dataBean.setDevice(deviceByBleName.getDeviceName());
+            int powerLevel = CalculateUtil.byteToInt(serviceData[15]);
+            dataBean.setBattery(String.valueOf(100/powerLevel));
+            FinalDataManager.getInstance().getBleName_dateBean().put(bleName, dataBean);
+
+
+/*
             Power power1 = new Power();
             power1.setDeviceName(deviceByBleName.getDeviceName());
             power1.setBleNme(bleName);
@@ -351,7 +362,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     Log.i("99999-----", s == null ? "null" : s);
                     Log.i("99999eeeee", e == null ? "null" : e.getMessage());
                 }
-            });
+            });*/
             return true;
         }
         return false;

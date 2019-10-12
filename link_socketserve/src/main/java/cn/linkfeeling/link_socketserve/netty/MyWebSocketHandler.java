@@ -49,7 +49,6 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
     private WebSocketServerHandshaker handshaker;
     private SocketCallBack socketCallBack;
     private byte[] dataByte;
-    private int lossConnectCount = 0;
 
 
     public MyWebSocketHandler(SocketCallBack socketCallBack) {
@@ -232,25 +231,20 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
 ////        System.out.println("bbbbbbbbbbbbbbb-----"+bf.array().length);
 //    }
 
-
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.READER_IDLE) {
-                lossConnectCount++;
-                if (lossConnectCount == 5) {
-                    ctx.channel().close();
-                }
+                String hostString = ((InetSocketAddress) ctx.channel().remoteAddress()).getHostString();
+                socketCallBack.offLine(hostString);
             }
         } else {
             super.userEventTriggered(ctx, evt);
         }
     }
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        lossConnectCount = 0;
         SmartCarProtocol body = (SmartCarProtocol) msg;
         String hostString = ((InetSocketAddress) ctx.channel().remoteAddress()).getHostString();
         Log.i("xxxxxxxxxxx", hostString);

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
@@ -77,6 +78,11 @@ public class BicycleProcessor implements IDataAnalysis {
         }
         Log.i("dancheseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
+        boolean b = dealPowerData(serviceData, deviceByBleName, bleName);
+        if (b) {
+            return null;
+
+        }
 
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
@@ -204,6 +210,45 @@ public class BicycleProcessor implements IDataAnalysis {
             return (float) 0;
         }
         return v;
+    }
+
+
+    //[0, 0, 0, 0, 1, 117, 3, 5]
+
+    private boolean dealPowerData(byte[] serviceData, LinkSpecificDevice deviceByBleName, String bleName) {
+        if (serviceData[0] == 0 &&
+                serviceData[1] == 0 &&
+                serviceData[2] == 0 &&
+                serviceData[3] == 0) {
+
+            DevicePower.DataBean dataBean = new DevicePower.DataBean();
+            dataBean.setSerial_no(String.valueOf(1));
+            dataBean.setDevice_id(bleName);
+            dataBean.setDevice(deviceByBleName.getDeviceName());
+            int powerLevel = CalculateUtil.byteToInt(serviceData[6]);
+            dataBean.setBattery(String.valueOf(100 / powerLevel));
+            FinalDataManager.getInstance().getBleName_dateBean().put(bleName, dataBean);
+
+
+
+           /* Power power1 = new Power();
+            power1.setDeviceName(deviceByBleName.getDeviceName());
+            power1.setBleNme(bleName);
+            power1.setPowerLevel(CalculateUtil.byteToInt(serviceData[6]));
+            power1.setGymName(BuildConfig.PROJECT_NAME);
+
+
+            power1.save(new SaveListener<String>() {
+                @Override
+                public void done(String s, BmobException e) {
+
+                    Log.i("99999-----", s == null ? "null" : s);
+                    Log.i("99999eeeee", e == null ? "null" : e.getMessage());
+                }
+            });*/
+            return true;
+        }
+        return false;
     }
 
 }

@@ -29,15 +29,18 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import cn.linkfeeling.hankserve.adapter.BLEAdapter;
 import cn.linkfeeling.hankserve.adapter.MatchAdapter;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.MatchResult;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
+import cn.linkfeeling.hankserve.bean.WristbandPower;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
 import cn.linkfeeling.hankserve.interfaces.IAnchDataAnalysis;
 import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
@@ -67,14 +70,16 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private Gson gson = new Gson();
     private SimpleDateFormat simpleDateFormat;
     private Disposable disposable;
+    private Disposable wristPowerDisposable;
+    private Disposable devicePowerDisposable;
     private RecyclerView recycleView, match_recycleView;
     private BLEAdapter bleAdapter;
     private MatchAdapter matchAdapter;
 
     private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
     private List<MatchResult> matchResultList = new ArrayList<>();
-
-
+    private List<WristbandPower.DataBean> wristPowerList = new ArrayList<>();
+    private List<DevicePower.DataBean> devicePowerList = new ArrayList<>();
     @Override
     protected int getLayoutRes() {
         return R.layout.activity_main;
@@ -107,6 +112,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         // UDPBroadcast.udpBroadcast(this);
         connectWebSocket();
         startIntervalListener();
+        startIntervalPowerUpload();
+        startIntervalDevicePowerUpload();
     }
 
 
@@ -146,7 +153,15 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
                     @Override
                     public void getBLEStream(String hostString, SmartCarProtocol smartCarProtocol) {
-
+                        if (smartCarProtocol != null && smartCarProtocol.getContent() != null && smartCarProtocol.getContent().length == 1) {
+                            Log.i("kkkkkkkidle----", hostString + "++++++" + Arrays.toString(smartCarProtocol.getContent()));
+                            DevicePower.DataBean gateWay = new DevicePower.DataBean();
+                            gateWay.setSerial_no(String.valueOf(1));
+                            gateWay.setDevice("GateWay" + CalculateUtil.byteArrayToInt(smartCarProtocol.getContent()));
+                            gateWay.setDevice_id("GateWay" + CalculateUtil.byteArrayToInt(smartCarProtocol.getContent()));
+                            gateWay.setBattery(String.valueOf(-2));
+                            FinalDataManager.getInstance().getBleName_dateBean().put(hostString, gateWay);
+                        }
                         onLeScanSelf(hostString, smartCarProtocol.getContent());
 //                        ThreadPoolManager.getInstance().execute(new Runnable() {
 //                            @Override
@@ -156,6 +171,16 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 //                        });
 
 
+                    }
+
+                    @Override
+                    public void offLine(String hostString) {
+                        if (hostString != null) {
+                            DevicePower.DataBean dataBean = FinalDataManager.getInstance().getBleName_dateBean().get(hostString);
+                            if (dataBean != null) {
+                                dataBean.setBattery(String.valueOf(-1));
+                            }
+                        }
                     }
                 });
             }
@@ -215,6 +240,53 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 }
 
                             }
+                        }
+                    });
+        }
+    }
+
+    private void startIntervalPowerUpload() {
+        if (wristPowerDisposable == null) {
+            wristPowerDisposable = Observable.interval(10, TimeUnit.MINUTES)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribe(aLong -> {
+                        wristPowerList.clear();
+                        WristbandPower wristbandPower = new WristbandPower();
+                        wristbandPower.setGym_name(BuildConfig.GYM_NAME);
+                        ConcurrentHashMap<String, Integer> wristPowerMap = LinkDataManager.getInstance().getWristPowerMap();
+                        for (Map.Entry<String, Integer> next : wristPowerMap.entrySet()) {
+                            WristbandPower.DataBean dataBean = new WristbandPower.DataBean();
+                            dataBean.setBracelet_id(next.getKey());
+                            dataBean.setBattery(String.valueOf(next.getValue()));
+                            wristPowerList.add(dataBean);
+                        }
+                        wristbandPower.setData(wristPowerList);
+                        Log.i("kkkkkkk", gson.toJson(wristbandPower));
+                        getPresenter().uploadWristPower(wristbandPower);
+
+
+                    });
+        }
+    }
+    private void startIntervalDevicePowerUpload() {
+        if (devicePowerDisposable == null) {
+            devicePowerDisposable = Observable.interval(10, TimeUnit.MINUTES)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribe(aLong -> {
+                        devicePowerList.clear();
+                        ConcurrentHashMap<String, DevicePower.DataBean> bleName_dateBean = FinalDataManager.getInstance().getBleName_dateBean();
+                        if (bleName_dateBean != null && !bleName_dateBean.isEmpty()) {
+                            DevicePower devicePower = new DevicePower();
+                            devicePower.setGym_name(BuildConfig.GYM_NAME);
+                            for (Map.Entry<String, DevicePower.DataBean> next : bleName_dateBean.entrySet()) {
+                                DevicePower.DataBean value = next.getValue();
+                                devicePowerList.add(value);
+                            }
+                            devicePower.setData(devicePowerList);
+                            Log.i("kkkkk",gson.toJson(devicePower));
+                            getPresenter().uploadDevicePower(devicePower);
                         }
                     });
         }
@@ -481,35 +553,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             }
         }
     }
-
-/*
-    private void writeQueue(UWBCoordData uwbCoordData) {
-        UwbQueue<Point> points = FinalDataManager.getInstance().getCode_points().get(uwbCoordData.getCode());
-        if (points == null) {
-            UwbQueue<Point> uwbQueue = new UwbQueue<>(25);
-            Point point = new Point();
-            if (uwbCoordData.getDevice() == null) {
-                point.setId(-1);
-            } else {
-                point.setId(uwbCoordData.getDevice().getId());
-            }
-            point.setX(uwbCoordData.getX());
-            point.setY(uwbCoordData.getY());
-            uwbQueue.offer(point);
-            FinalDataManager.getInstance().getCode_points().put(uwbCoordData.getCode(), uwbQueue);
-        } else {
-            Point point = new Point();
-            if (uwbCoordData.getDevice() == null) {
-                point.setId(-1);
-            } else {
-                point.setId(uwbCoordData.getDevice().getId());
-            }
-            point.setX(uwbCoordData.getX());
-            point.setY(uwbCoordData.getY());
-            points.offer(point);
-        }
-    }*/
-
     @Override
     public void uploadBleStatus(BleDeviceInfo temp, BleDeviceInfo bleDeviceInfo, boolean status, Throwable throwable) {
         try {
@@ -531,6 +574,17 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         }
 
     }
+
+    @Override
+    public void uploadWristPowerStatus(boolean status, Throwable throwable) {
+        showToast(status ? "手环电量上传成功" : throwable.getMessage());
+    }
+
+    @Override
+    public void uploadDevicePowerStatus(boolean status, Throwable throwable) {
+        showToast(status ? "设备电量上传成功" : throwable.getMessage());
+    }
+
 
     private void updateData(BleDeviceInfo bleDeviceInfo) {
         int index = bleDeviceInfos.indexOf(bleDeviceInfo);
@@ -591,6 +645,15 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
             disposable = null;
+        }
+        if (wristPowerDisposable != null && !wristPowerDisposable.isDisposed()) {
+            wristPowerDisposable.dispose();
+            wristPowerDisposable = null;
+        }
+
+        if (devicePowerDisposable != null && !devicePowerDisposable.isDisposed()) {
+            devicePowerDisposable.dispose();
+            devicePowerDisposable = null;
         }
     }
 }

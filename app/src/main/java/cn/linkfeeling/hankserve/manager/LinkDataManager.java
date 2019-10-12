@@ -55,6 +55,7 @@ public class LinkDataManager {
     private static final LinkDataManager linkDataManager = new LinkDataManager();
     private ConcurrentHashMap<String, String> deviceBleTypeMaps;
     private ConcurrentHashMap<String, String> uwbCode_wristbandName;
+    private ConcurrentHashMap<String, Integer> wristPowerMap;
     private List<LinkSpecificDevice> devicesData = new ArrayList<>();
     private Gson gson = new Gson();
 
@@ -62,7 +63,12 @@ public class LinkDataManager {
     private LinkDataManager() {
         deviceBleTypeMaps = new ConcurrentHashMap<>();
         uwbCode_wristbandName = new ConcurrentHashMap<>();
+        wristPowerMap = new ConcurrentHashMap<>();
     }
+    public ConcurrentHashMap<String, Integer> getWristPowerMap() {
+        return wristPowerMap;
+    }
+
 
     public static LinkDataManager getInstance() {
         return linkDataManager;
