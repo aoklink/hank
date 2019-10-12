@@ -35,16 +35,20 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.BLEViewHolde
     @Override
     public void onBindViewHolder(BLEViewHolder holder, int position) {
 
-        MatchResult matchResult = list.get(holder.getLayoutPosition());
-        holder.tv_bracelet_id.setText(matchResult.getDeviceName());
-        holder.tv_deviceName.setText(matchResult.getWristband());
-        holder.tv_heat.setText(matchResult.getMatch_time());
-        holder.tv_watchNum.setText(matchResult.getWatchNum());
-        holder.tv_deviceNum.setText(matchResult.getDeviceNum());
-        holder.tv_two.setText(matchResult.getMatch_two());
-        holder.tv_three.setText(matchResult.getMatch_three());
-        holder.tv_device_status.setText(matchResult.isDeviceStatus() ? "设备data异常" : "设备data正常");
-        holder.tv_watch_status.setText(matchResult.isWatchStatus() ? "手环data异常" : "手环data正常");
+        try {
+            MatchResult matchResult = list.get(holder.getLayoutPosition());
+            holder.tv_bracelet_id.setText(matchResult.getDeviceName());
+            holder.tv_deviceName.setText(matchResult.getWristband());
+            holder.tv_heat.setText(matchResult.getMatch_time());
+            holder.tv_watchNum.setText(matchResult.getWatchNum());
+            holder.tv_deviceNum.setText(matchResult.getDeviceNum());
+            holder.tv_two.setText(matchResult.getMatch_two());
+            holder.tv_three.setText(matchResult.getMatch_three());
+            holder.tv_device_status.setText(matchResult.isDeviceStatus() ? "设备data异常" : "设备data正常");
+            holder.tv_watch_status.setText(matchResult.isWatchStatus() ? "手环data异常" : "手环data正常");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
