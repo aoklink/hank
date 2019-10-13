@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 
 import org.junit.Test;
 
+import cn.linkfeeling.hankserve.utils.CalculateUtil;
+
 import static org.junit.Assert.*;
 
 /**
@@ -14,12 +16,8 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
-        Gson gson=new Gson();
-        TestClass testClass=new TestClass();
-        testClass.setName("ssssss");
-        testClass.setHhh(new float[]{1.0f,2.0f});
-
-        System.out.println(gson.toJson(testClass));
+        byte[] fff={(byte) 222};
+        System.out.println(CalculateUtil.byteArrayToInt(fff));
 
 
 
