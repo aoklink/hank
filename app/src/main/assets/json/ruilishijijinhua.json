@@ -575,7 +575,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL41",
           "type": "椭圆机t3"
         }
       ]
@@ -613,7 +613,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL42",
           "type": "椭圆机t3"
         }
       ]
@@ -651,7 +651,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL43",
           "type": "椭圆机t3"
         }
       ]
@@ -689,7 +689,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL44",
           "type": "椭圆机t3"
         }
       ]
@@ -699,7 +699,7 @@
       "deviceName": "单车01",
       "anchName": "000019",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 19,
@@ -727,7 +727,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL59",
           "type": "单车t2"
         }
       ]
@@ -737,7 +737,7 @@
       "deviceName": "单车02",
       "anchName": "000020",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 20,
@@ -765,7 +765,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL58",
           "type": "单车t2"
         }
       ]
@@ -775,7 +775,7 @@
       "deviceName": "单车03",
       "anchName": "000021",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 21,
@@ -803,7 +803,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL57",
           "type": "单车t2"
         }
       ]
@@ -813,7 +813,7 @@
       "deviceName": "单车04",
       "anchName": "000022",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 19,
@@ -841,7 +841,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL56",
           "type": "单车t2"
         }
       ]
@@ -851,7 +851,7 @@
       "deviceName": "单车05",
       "anchName": "000023",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 23,
@@ -879,7 +879,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL55",
           "type": "单车t2"
         }
       ]
@@ -889,7 +889,7 @@
       "deviceName": "单车06",
       "anchName": "000024",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 24,
@@ -917,7 +917,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL54",
           "type": "单车t2"
         }
       ]
@@ -927,7 +927,7 @@
       "deviceName": "单车07",
       "anchName": "000025",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 25,
@@ -955,7 +955,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL53",
           "type": "单车t2"
         }
       ]
@@ -965,7 +965,7 @@
       "deviceName": "单车08",
       "anchName": "000026",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 26,
@@ -993,7 +993,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL52",
           "type": "单车t2"
         }
       ]
@@ -1003,7 +1003,7 @@
       "deviceName": "单车09",
       "anchName": "000027",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 27,
@@ -1031,7 +1031,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL51",
           "type": "单车t2"
         }
       ]
@@ -1041,7 +1041,7 @@
       "deviceName": "单车10",
       "anchName": "000028",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 28,
@@ -1079,7 +1079,7 @@
       "deviceName": "单车11",
       "anchName": "000029",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 29,
@@ -1107,7 +1107,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL49",
           "type": "单车t2"
         }
       ]
@@ -1117,7 +1117,7 @@
       "deviceName": "单车12",
       "anchName": "000030",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 30,
@@ -1145,7 +1145,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL48",
           "type": "单车t2"
         }
       ]
@@ -1155,7 +1155,7 @@
       "deviceName": "单车13",
       "anchName": "000031",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 31,
@@ -1183,7 +1183,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL47",
           "type": "单车t2"
         }
       ]
@@ -1193,7 +1193,7 @@
       "deviceName": "单车14",
       "anchName": "000032",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 32,
@@ -1221,7 +1221,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL46",
           "type": "单车t2"
         }
       ]
@@ -1231,7 +1231,7 @@
       "deviceName": "单车15",
       "anchName": "000033",
       "type": "单车",
-      "perimeter": 3.84,
+      "perimeter": 6.22,
       "slope": 0.226829,
       "fencePoint": {
         "fenceId": 33,
@@ -1259,7 +1259,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL50",
+          "bleName": "LKFL45",
           "type": "单车t2"
         }
       ]
