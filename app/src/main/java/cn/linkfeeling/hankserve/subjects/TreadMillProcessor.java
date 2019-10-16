@@ -147,14 +147,14 @@ public class TreadMillProcessor implements IDataAnalysis {
             int numbers = CalculateUtil.byteArrayToInt(serviceDatum);
             Log.i("serviceDatum" + bleName, Arrays.toString(serviceDatum) + "---" + numbers);
 
-            Log.i("67676", numbers + "");
+            Log.i(bleName+"67676", numbers + "");
             float v = CalculateUtil.txFloat(numbers, 100);
 
-            speed = v * 0.2873563f;
+            speed = v * 0.33783783f;
             //0.256410
         }
 
-        Log.i("6767676", speed + "");
+        Log.i(bleName+"6767676", speed + "");
 
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);

@@ -155,7 +155,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     @Override
                     public void getBLEStream(String hostString, SmartCarProtocol smartCarProtocol) {
                         if (smartCarProtocol != null && smartCarProtocol.getContent() != null && smartCarProtocol.getContent().length == 1) {
-                            Log.i("kkkkkkkidle----", hostString + "++++++" + Arrays.toString(smartCarProtocol.getContent()));
+                            Log.i("kkkkkkkidle----", hostString + "++++++" + CalculateUtil.byteArrayToInt(smartCarProtocol.getContent()));
                             DevicePower.DataBean gateWay = new DevicePower.DataBean();
                             gateWay.setSerial_no(String.valueOf(1));
                             gateWay.setDevice("GateWay" + CalculateUtil.byteArrayToInt(smartCarProtocol.getContent()));
