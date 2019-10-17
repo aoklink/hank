@@ -67,7 +67,7 @@ public class BicycleProcessor implements IDataAnalysis {
 
         Log.i("danchedata", Arrays.toString(serviceData));
 
-        byte[] seqNum = {serviceData[5], serviceData[4]};
+        byte[] seqNum = {serviceData[4], serviceData[5]};
 
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
             return null;
@@ -137,8 +137,8 @@ public class BicycleProcessor implements IDataAnalysis {
 
 
         byte[] ticks = new byte[2];
-        ticks[0] = serviceData[3];
-        ticks[1] = serviceData[2];
+        ticks[0] = serviceData[2];
+        ticks[1] = serviceData[3];
 
         float speed;
         if (CalculateUtil.byteArrayToInt(ticks) == 0) {
