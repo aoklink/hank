@@ -33,7 +33,6 @@ public class AnchProcessor extends IAnchDataAnalysis {
     private final static String I7 = "I7";
     private final static String I7PLUS = "I7PLUS";
 
-
     private LimitQueue<Integer> limitQueue = new LimitQueue<Integer>(50);
 
     static {
@@ -50,6 +49,10 @@ public class AnchProcessor extends IAnchDataAnalysis {
         mac_label.put("EEF3",I7);
         mac_label.put("CC82",I7);
         mac_label.put("CFE2",I7);
+        mac_label.put("F8CA",I7);
+        mac_label.put("DC27",I7);
+        mac_label.put("E5E3",I7);
+        mac_label.put("DA98",I7);
     }
 
 
