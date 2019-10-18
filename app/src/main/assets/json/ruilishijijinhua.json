@@ -10,7 +10,11 @@
     "000033ab": "I7F8BB",
     "000033a7": "I7EEF3",
     "000033b8": "I7CC82",
-    "000033be": "I7CFE2"
+    "000033be": "I7CFE2",
+    "000033be": "I7F8CA",
+    "000033be": "I7DC27",
+    "000033be": "I7E5E3"
+
   },
   "deviceInfo": [
     {
@@ -547,7 +551,7 @@
       "deviceName": "椭圆机01",
       "anchName": "000015",
       "type": "椭圆机",
-      "perimeter": 1.587,
+      "perimeter": 1.639,
       "slope": 0.129164,
       "fencePoint": {
         "fenceId": 15,
@@ -556,7 +560,7 @@
           "y": 2726.0
         },
         "right_top": {
-          "x": 658.0,
+          "x": 658.05,
           "y": 2726.0
         },
         "left_bottom": {
@@ -585,7 +589,7 @@
       "deviceName": "椭圆机02",
       "anchName": "000016",
       "type": "椭圆机",
-      "perimeter": 1.587,
+      "perimeter": 1.639,
       "slope": 0.129164,
       "fencePoint": {
         "fenceId": 16,
@@ -623,7 +627,7 @@
       "deviceName": "椭圆机03",
       "anchName": "000017",
       "type": "椭圆机",
-      "perimeter": 1.587,
+      "perimeter": 1.639,
       "slope": 0.129164,
       "fencePoint": {
         "fenceId": 17,
@@ -661,7 +665,7 @@
       "deviceName": "椭圆机04",
       "anchName": "000018",
       "type": "椭圆机",
-      "perimeter": 1.587,
+      "perimeter": 1.639,
       "slope": 0.129164,
       "fencePoint": {
         "fenceId": 18,
@@ -1646,6 +1650,7 @@
           "bleName": "LKFL06",
           "type": "砝码器械t4",
           "weight": [
+            0.0,
             5.0,
             9.0,
             14.0,

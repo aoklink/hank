@@ -79,10 +79,10 @@ public class BicycleProcessor implements IDataAnalysis {
         Log.i("dancheseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
         boolean b = dealPowerData(serviceData, deviceByBleName, bleName);
-        if (b) {
+      /*  if (b) {
             return null;
 
-        }
+        }*/
 
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());

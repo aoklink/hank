@@ -67,7 +67,7 @@ public class OvalProcessor implements IDataAnalysis {
             return null;
         }
 
-        Log.i("vvvvvvv", Arrays.toString(serviceData));
+        Log.i(bleName+"vvvvvvv", Arrays.toString(serviceData));
 
         byte[] seqNum = {serviceData[4], serviceData[5]};
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
@@ -81,10 +81,10 @@ public class OvalProcessor implements IDataAnalysis {
         Log.i("tuoyuanjiseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
         boolean b = dealPowerData(serviceData, deviceByBleName, bleName);
-        if (b) {
+    /*    if (b) {
             return null;
         }
-
+*/
 
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
@@ -154,7 +154,7 @@ public class OvalProcessor implements IDataAnalysis {
             speed = bigDecimal.floatValue() * 3600;
 
         }
-        Log.i("ticks", speed + "");
+        Log.i(bleName+"ticks", speed + "");
 
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
