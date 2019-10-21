@@ -1,15 +1,20 @@
 package cn.linkfeeling.hankserve.manager;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.link.feeling.framework.utils.data.ToastUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -28,6 +33,7 @@ import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.bean.Wristband;
 import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
+import cn.linkfeeling.hankserve.utils.Logger;
 
 import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
 
@@ -76,6 +82,20 @@ public class LinkDataManager {
 //        uwbCode_wristbandName.put("0000183d", "LEAP BFF4");
 //        uwbCode_wristbandName.put("0000183f", "LEAP 0ADB");
 //        uwbCode_wristbandName.put("00001e27", "LEAP 0DDA");
+
+
+//        File file = new File(Environment.getExternalStorageDirectory(), "linkfeeling/linkfeeling01.json");
+//        try {
+//            FileInputStream fileInputStream = new FileInputStream(file);
+//            byte[] bytes = new byte[fileInputStream.available()];
+//            fileInputStream.read(bytes);
+//            String string = new String(bytes);
+//            Logger.e("09090909",string);
+//        } catch (Exception e) {
+//            Toast.makeText(context, "文件加载异常，请确保文件存在", Toast.LENGTH_LONG).show();
+//            e.printStackTrace();
+//        }
+
 
         BufferedReader bufferedReader = null;
         StringBuilder rewardJson = new StringBuilder();
