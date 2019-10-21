@@ -331,7 +331,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             @Override
             protected void onMessage(@NonNull String text) {
                 super.onMessage(text);
-                dealMessage(text);
+                try {
+                    dealMessage(text);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             }
 

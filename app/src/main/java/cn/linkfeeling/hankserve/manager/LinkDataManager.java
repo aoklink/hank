@@ -38,7 +38,7 @@ import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
  */
 public class LinkDataManager {
     private static final int ExpandRange_100 = 100;
-    private static final int ExpandRange_150 = 150;
+    private static final int ExpandRange_150 = 200;
     private static final String FIRST_LEVEL = "json";
     private static final String SECOND_LEVEL = BuildConfig.PROJECT_NAME;
     private static final String SUFFIX = ".json";
