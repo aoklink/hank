@@ -223,14 +223,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
                                 accelData[i] = watchList.get(watchDataNum - 1 - i);
                             }
                             final String watchName = LinkDataManager.getInstance().getUwbCode_wristbandName().get(next.getCode());
-                        /*   List kkk=new ArrayList();
-                            for (AccelData accelDatum : accelData) {
-                                kkk.add(accelDatum.getX());
-                                kkk.add(accelDatum.getY());
-                                kkk.add(accelDatum.getZ());
-
-                            }*/
-
                             Logger.e("fly_match_watch---" + watchName, gson.toJson(new ArrayList<>(Arrays.asList(accelData))));
                             Log.i("fly_match_sizeOfWatch--" + watchName, accelData.length + "");
                             int watchSeqNum = (second / 5) * 6;
