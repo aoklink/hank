@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.link.feeling.framework.base.FrameworkBaseActivity;
 import com.link.feeling.framework.executor.ThreadPoolManager;
 import com.link.feeling.framework.utils.data.L;
@@ -21,6 +22,7 @@ import com.link.feeling.framework.utils.data.ToastUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -430,6 +432,10 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private void connectWebSocket() {
         LinkWSManager.getInstance().connectWebSocket(text -> {
             try {
+            /*    JSONObject jsonObject=new JSONObject(text);
+                if(jsonObject.has("msgType") && "coord".equals(jsonObject.get("msgType"))){
+                    dealMessage(text);
+                }*/
                 dealMessage(text);
             } catch (Exception e) {
                 e.printStackTrace();
