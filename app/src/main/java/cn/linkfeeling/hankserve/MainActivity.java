@@ -429,9 +429,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
      */
     private void connectWebSocket() {
         LinkWSManager.getInstance().connectWebSocket(text -> {
-            // UWBCoordData uwbCoordData = gson.fromJson(text, UWBCoordData.class);
-            // Log.i("quanji" + uwbCoordData.getCode(), uwbCoordData.getX() + " " + uwbCoordData.getY());
-
             try {
                 dealMessage(text);
             } catch (Exception e) {
