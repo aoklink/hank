@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import cn.linkfeeling.hankserve.adapter.BLEAdapter;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
@@ -67,9 +68,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private SimpleDateFormat simpleDateFormat;
     private Disposable disposable;
     private Disposable wristPowerDisposable;
+    private Disposable devicePowerDisposable;
     private RecyclerView recycleView;
     private BLEAdapter bleAdapter;
     private List<WristbandPower.DataBean> wristPowerList = new ArrayList<>();
+    private List<DevicePower.DataBean> devicePowerList = new ArrayList<>();
     private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
     private static final int Untied_Time = 150;
 
@@ -100,6 +103,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         // UDPBroadcast.udpBroadcast(this);
         connectWebSocket();
         startIntervalListener();
+        startIntervalPowerUpload();
+        startIntervalDevicePowerUpload();
     }
 
 
@@ -225,17 +230,41 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                         WristbandPower wristbandPower = new WristbandPower();
                         wristbandPower.setGym_name(BuildConfig.GYM_NAME);
                         ConcurrentHashMap<String, Integer> wristPowerMap = LinkDataManager.getInstance().getWristPowerMap();
-                        for (Map.Entry<String, Integer> next : wristPowerMap.entrySet()) {
-                            WristbandPower.DataBean dataBean = new WristbandPower.DataBean();
-                            dataBean.setBracelet_id(next.getKey());
-                            dataBean.setBattery(String.valueOf(next.getValue()));
-                            wristPowerList.add(dataBean);
+                        if(wristPowerMap!=null && !wristPowerMap.isEmpty() ){
+                            for (Map.Entry<String, Integer> next : wristPowerMap.entrySet()) {
+                                WristbandPower.DataBean dataBean = new WristbandPower.DataBean();
+                                dataBean.setBracelet_id(next.getKey());
+                                dataBean.setBattery(String.valueOf(next.getValue()));
+                                wristPowerList.add(dataBean);
+                            }
+                            wristbandPower.setData(wristPowerList);
+                            Log.i("kkkkkkk", gson.toJson(wristbandPower));
+                            getPresenter().uploadWristPower(wristbandPower);
                         }
-                        wristbandPower.setData(wristPowerList);
-                        Log.i("kkkkkkk", gson.toJson(wristbandPower));
-                        getPresenter().uploadWristPower(wristbandPower);
+                    });
+        }
+    }
 
 
+    private void startIntervalDevicePowerUpload() {
+        if (devicePowerDisposable == null) {
+            devicePowerDisposable = Observable.interval(10, TimeUnit.MINUTES)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribe(aLong -> {
+                        devicePowerList.clear();
+                        ConcurrentHashMap<String, DevicePower.DataBean> bleName_dateBean = FinalDataManager.getInstance().getBleName_dateBean();
+                        if (bleName_dateBean != null && !bleName_dateBean.isEmpty()) {
+                            DevicePower devicePower = new DevicePower();
+                            devicePower.setGym_name(BuildConfig.GYM_NAME);
+                            for (Map.Entry<String, DevicePower.DataBean> next : bleName_dateBean.entrySet()) {
+                                DevicePower.DataBean value = next.getValue();
+                                devicePowerList.add(value);
+                            }
+                            devicePower.setData(devicePowerList);
+                            Log.i("kkkkk",gson.toJson(devicePower));
+                            getPresenter().uploadDevicePower(devicePower);
+                        }
                     });
         }
     }
@@ -586,6 +615,16 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         }
     }
 
+    @Override
+    public void uploadWristPowerStatus(boolean status) {
+        showToast(status ? "手环电量上传成功" : "上环电量上传失败");
+    }
+
+    @Override
+    public void uploadDevicePowerStatus(boolean status) {
+        showToast(status ? "设备电量上传成功" : "设备电量上传失败");
+    }
+
     private void updateData(BleDeviceInfo bleDeviceInfo) {
         int index = bleDeviceInfos.indexOf(bleDeviceInfo);
         if (index == -1) {
@@ -612,6 +651,15 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
             disposable = null;
+        }
+
+        if (wristPowerDisposable != null && !wristPowerDisposable.isDisposed()) {
+            wristPowerDisposable.dispose();
+            wristPowerDisposable = null;
+        }
+        if (devicePowerDisposable != null && !devicePowerDisposable.isDisposed()) {
+            devicePowerDisposable.dispose();
+            devicePowerDisposable = null;
         }
     }
 }
