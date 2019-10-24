@@ -12,6 +12,7 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.LinkBLE;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Point;
@@ -198,21 +199,14 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 serviceData[13] == 0 &&
                 serviceData[14] == 0) {
 
-            Power power1 = new Power();
-            power1.setDeviceName(deviceByBleName.getDeviceName());
-            power1.setBleNme(bleName);
-            power1.setPowerLevel(CalculateUtil.byteToInt(serviceData[15]));
-            power1.setGymName(BuildConfig.PROJECT_NAME);
+            DevicePower.DataBean dataBean = new DevicePower.DataBean();
+            dataBean.setSerial_no(String.valueOf(1));
+            dataBean.setDevice_id(bleName);
+            dataBean.setDevice(deviceByBleName.getDeviceName());
+            int powerLevel = CalculateUtil.byteToInt(serviceData[15]);
+            dataBean.setBattery(String.valueOf(100 / powerLevel));
+            FinalDataManager.getInstance().getBleName_dateBean().put(bleName, dataBean);
 
-
-            power1.save(new SaveListener<String>() {
-                @Override
-                public void done(String s, BmobException e) {
-
-                    Log.i("99999-----", s == null ? "null" : s);
-                    Log.i("99999eeeee", e == null ? "null" : e.getMessage());
-                }
-            });
             return true;
         }
         return false;

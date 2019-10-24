@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
@@ -30,6 +31,7 @@ public class FinalDataManager {
     private ConcurrentHashMap<String, String> rssi_wristbands;
     private ConcurrentHashMap<String, BleDeviceInfo> wristbands;
     private ConcurrentHashMap<Integer, UWBCoordData> fenceId_uwbData;
+    private ConcurrentHashMap<String, DevicePower.DataBean> bleName_dateBean;
     private ConcurrentHashMap<String, UwbQueue<Point>> code_points;
     private ConcurrentHashMap<Integer, ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> alternative;
 
@@ -45,7 +47,14 @@ public class FinalDataManager {
         fenceId_uwbData = new ConcurrentHashMap<>();//围栏id uwb设备对应关系  key为围栏id  value为uwb对象
         code_points = new ConcurrentHashMap<>();  //
         alternative = new ConcurrentHashMap<>(); //备选池子
+        bleName_dateBean=new ConcurrentHashMap<>();//存储设备电量
     }
+
+
+    public ConcurrentHashMap<String, DevicePower.DataBean> getBleName_dateBean() {
+        return bleName_dateBean;
+    }
+
 
     public ConcurrentHashMap<String, String> getRssi_wristbands() {
         return rssi_wristbands;

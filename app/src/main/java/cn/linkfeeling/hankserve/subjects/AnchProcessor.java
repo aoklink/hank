@@ -12,6 +12,7 @@ import cn.bmob.v3.listener.SaveListener;
 import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.AccelData;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Power;
 import cn.linkfeeling.hankserve.interfaces.IAnchDataAnalysis;
@@ -133,24 +134,14 @@ public class AnchProcessor extends IAnchDataAnalysis {
                 serviceData[9] == 0 &&
                 serviceData[10] == 0 &&
                 serviceData[11] == 0 &&
-                serviceData[12] == 0) {
+                serviceData[12] == 0){
 
-
-       /*     Power power1 = new Power();
-            power1.setDeviceName(deviceByBleName.getDeviceName());
-            power1.setBleNme(bleName);
-            power1.setPowerLevel(CalculateUtil.byteToInt(serviceData[15]));
-            power1.setGymName(BuildConfig.PROJECT_NAME);
-
-
-            power1.save(new SaveListener<String>() {
-                @Override
-                public void done(String s, BmobException e) {
-
-                    Log.i("99999-----", s == null ? "null" : s);
-                    Log.i("99999eeeee", e == null ? "null" : e.getMessage());
-                }
-            });*/
+            DevicePower.DataBean dataBean = new DevicePower.DataBean();
+            dataBean.setDevice_id(bleName);
+            dataBean.setDevice(deviceByBleName.getDeviceName());
+            dataBean.setSerial_no(String.valueOf(1));
+            dataBean.setBattery(String.valueOf(100 / CalculateUtil.byteToInt(serviceData[15])));
+            FinalDataManager.getInstance().getBleName_dateBean().put(bleName, dataBean);
             return true;
         }
         return false;
