@@ -32,10 +32,10 @@ extern "C" {
 #define MAX_MAC_ADDR_LEN 4
 #define MAX_DEVICE_NAME_LEN 6
 #define HIGH_THR_P 0.6        // 门限比例
-#define DEVICE_MIN_HIGH_THR 1
+#define DEVICE_MIN_HIGH_THR 4
 #define WATCH_THR_TIME 30
 #define DEVICE_THR_TIME 30
-#define WATCH_MIN_HIGH_THR 7
+#define WATCH_MIN_HIGH_THR 10
 
 typedef struct tag_raw_data {
     signed char x;
