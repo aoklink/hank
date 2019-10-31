@@ -63,9 +63,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static cn.linkfeeling.hankserve.constants.LinkConstant.INTERVAL_TIME;
+import static cn.linkfeeling.hankserve.constants.LinkConstant.Untied_Time;
 
 public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUploadView, IUploadContract.IBleUploadPresenter> implements IUploadContract.IBleUploadView {
-    private static final int Untied_Time = 150;
+
     private TextView tv_ipTip, tv_ipTipRemove;
     private Gson gson = new Gson();
     private SimpleDateFormat simpleDateFormat;

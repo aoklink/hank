@@ -341,7 +341,7 @@ public class LinkDataManager {
     private void writeQueue(UWBCoordData uwbCoordData) {
         UwbQueue<Point> points = FinalDataManager.getInstance().getCode_points().get(uwbCoordData.getCode());
         if (points == null) {
-            UwbQueue<Point> uwbQueue = new UwbQueue<>(25);
+            UwbQueue<Point> uwbQueue = new UwbQueue<>(50);
             Point point = new Point();
             if (uwbCoordData.getDevice() == null) {
                 point.setId(-1);

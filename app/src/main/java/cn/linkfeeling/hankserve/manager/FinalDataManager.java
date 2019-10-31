@@ -15,6 +15,7 @@ import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.DevicePower;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
+import cn.linkfeeling.hankserve.constants.LinkConstant;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.queue.UwbQueue;
 
@@ -178,7 +179,7 @@ public class FinalDataManager {
             Iterator<Map.Entry<UWBCoordData, UwbQueue<Point>>> iterator1 = next.entrySet().iterator();
             while (iterator1.hasNext()) {
                 Map.Entry<UWBCoordData, UwbQueue<Point>> next1 = iterator1.next();
-                if (next1.getKey().getCode().equals(uwbCoordData.getCode())) {
+                if (next1.getKey().getCode().equals(uwbCoordData.getCode())&& next1.getKey().getSemaphore()==LinkConstant.Untied_Time) {
                     iterator1.remove();
                 }
             }
