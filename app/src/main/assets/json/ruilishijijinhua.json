@@ -1474,7 +1474,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL11",
+          "bleName": "LKFL08",
           "type": "砝码器械t4",
           "weight": [
             5.0,
@@ -1591,7 +1591,7 @@
       "linkBLES": [
         {
           "bleId": 0,
-          "bleName": "LKFL08",
+          "bleName": "LKFL11",
           "type": "砝码器械t4",
           "weight": [
             5.0,

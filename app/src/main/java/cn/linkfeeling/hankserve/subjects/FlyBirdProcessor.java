@@ -90,7 +90,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return null;
         }
-        Log.i("seqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
+        Log.i("seqNum"+bleName, CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
 
         boolean b = dealPowerData(serviceData, deviceByBleName, bleName);
