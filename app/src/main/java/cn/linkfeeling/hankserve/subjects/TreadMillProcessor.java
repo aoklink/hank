@@ -31,8 +31,8 @@ public class TreadMillProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, TreadMillProcessor> map;
     private int flag = -1;
 
-    private volatile boolean start = true;
-    private volatile boolean select = true;
+    private  boolean start = true;
+    private  boolean select = true;
     private long startTime;
 
 
@@ -61,7 +61,8 @@ public class TreadMillProcessor implements IDataAnalysis {
             return null;
         }
 
-        Log.i("87878787"+bleName,Arrays.toString(serviceData));
+        Log.i("87878787跑步机"+bleName,Arrays.toString(serviceData));
+        Log.i("87878787跑步机"+bleName,"flag----"+flag);
 
 
         byte[] pages = new byte[2];
@@ -76,15 +77,13 @@ public class TreadMillProcessor implements IDataAnalysis {
         if (limitQueue.contains(nowPack)) {
             return null;
         }
-        Log.i("seqNum", nowPack + "");
         limitQueue.offer(nowPack);
 
-
+        Log.i("87878787跑步机"+bleName,"nowPack----"+nowPack);
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             startTime = System.currentTimeMillis();
             start = false;
-
         }
 
         if (select && System.currentTimeMillis() - startTime >= 5 * 1000) {
@@ -92,25 +91,22 @@ public class TreadMillProcessor implements IDataAnalysis {
             if (spareTire == null || spareTire.isEmpty()) {
                 Log.i("pppppppp", "-5-5-5");
                 select = false;
-                return null;
+            }else{
+                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+                for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                    String key = next.getKey();
+                    UWBCoordData uwbCoordData = new UWBCoordData();
+                    uwbCoordData.setCode(key);
+                    uwbCoordData.setSemaphore(0);
+                    uwbCoordData.setDevice(deviceByBleName);
+                    queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+
+                }
+                Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
+
+                FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
+                select = false;
             }
-
-            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
-            for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
-                String key = next.getKey();
-                UWBCoordData uwbCoordData = new UWBCoordData();
-                uwbCoordData.setCode(key);
-                uwbCoordData.setSemaphore(0);
-                uwbCoordData.setDevice(deviceByBleName);
-                queueConcurrentHashMap.put(uwbCoordData, next.getValue());
-
-            }
-            Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
-
-            FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-            select = false;
-
-
         }
 
 
@@ -125,9 +121,7 @@ public class TreadMillProcessor implements IDataAnalysis {
                 } else {
                     LinkDataManager.getInstance().checkBind(deviceByBleName);
                 }
-
             }
-
         }
 
 

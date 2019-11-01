@@ -233,14 +233,12 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
                                 if (!"".equals(tempBleInfo.getTime()) && !"".equals(tempBleInfo.getU_time())) {
                                     LinkDataManager.getInstance().cleanFlyBird(value);
-
                                     //解除绑定
                                     int fenceId = LinkDataManager.getInstance().queryFenceIdByDeviceName(tempBleInfo.getDevice_name());
                                     if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
                                         FinalDataManager.getInstance().removeUwb(fenceId);
                                     }
                                 }
-
                             }
                         }
                     });

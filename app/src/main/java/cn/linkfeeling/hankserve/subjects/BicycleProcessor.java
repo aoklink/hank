@@ -65,6 +65,9 @@ public class BicycleProcessor implements IDataAnalysis {
             return null;
         }
 
+
+        Log.i("87878787单车"+bleName,Arrays.toString(serviceData));
+        Log.i("87878787单车"+bleName,"flag----"+flag);
         Log.i("danchedata", Arrays.toString(serviceData));
 
         byte[] seqNum = {serviceData[4], serviceData[5]};
@@ -76,7 +79,7 @@ public class BicycleProcessor implements IDataAnalysis {
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return null;
         }
-        Log.i("dancheseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
+        Log.i("87878787单车", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
         boolean b = dealPowerData(serviceData, deviceByBleName, bleName);
       /*  if (b) {

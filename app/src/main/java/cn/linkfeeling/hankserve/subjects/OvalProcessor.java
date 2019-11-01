@@ -67,18 +67,19 @@ public class OvalProcessor implements IDataAnalysis {
             return null;
         }
 
+        Log.i("87878787椭圆机"+bleName,Arrays.toString(serviceData));
+        Log.i("87878787椭圆机"+bleName,"flag----"+flag);
+
         Log.i(bleName+"vvvvvvv", Arrays.toString(serviceData));
 
         byte[] seqNum = {serviceData[4], serviceData[5]};
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
             return null;
         }
-
-
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return null;
         }
-        Log.i("tuoyuanjiseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
+        Log.i("87878787椭圆机", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
         boolean b = dealPowerData(serviceData, deviceByBleName, bleName);
     /*    if (b) {

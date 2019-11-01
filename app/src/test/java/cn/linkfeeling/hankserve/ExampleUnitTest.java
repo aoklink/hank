@@ -26,6 +26,14 @@ public class ExampleUnitTest {
 
     @Test
     public void testTime() {
+        byte[] pages = new byte[2];
+        pages[0] = 3;
+        pages[1] = 88;
+        int nowPack = CalculateUtil.byteArrayToInt(pages);
+        System.out.println(nowPack);
+
+
+
         UwbQueue<Point> value=new UwbQueue<>(2);
         Point point=new Point();
         point.setId(1);
