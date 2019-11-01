@@ -76,6 +76,9 @@ public class FlyBirdProcessor implements IDataAnalysis {
             return null;
         }
 
+        Log.i("87878787"+bleName,Arrays.toString(serviceData));
+        Log.i("87878787"+bleName,"flag----"+flag);
+
 
         //   dealPowerData(serviceData, deviceByBleName, bleName);
 //        if(serviceData[0]!=0 && serviceData[0]!=-1){
@@ -90,7 +93,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return null;
         }
-        Log.i("seqNum"+bleName, CalculateUtil.byteArrayToInt(seqNum) + "");
+        Log.i("87878787"+bleName, CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
 
         boolean b = dealPowerData(serviceData, deviceByBleName, bleName);

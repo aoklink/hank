@@ -91,7 +91,8 @@ public class TreadMillProcessor implements IDataAnalysis {
             if (spareTire == null || spareTire.isEmpty()) {
                 Log.i("pppppppp", "-5-5-5");
                 select = false;
-            }else{
+                return null;
+            }
                 ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
                 for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
                     String key = next.getKey();
@@ -106,7 +107,6 @@ public class TreadMillProcessor implements IDataAnalysis {
 
                 FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
                 select = false;
-            }
         }
 
 
