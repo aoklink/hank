@@ -5,6 +5,8 @@ import org.junit.Test;
 import java.util.Comparator;
 import java.util.TreeSet;
 
+import cn.linkfeeling.hankserve.bean.Point;
+import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.HexUtil;
 
@@ -24,6 +26,29 @@ public class ExampleUnitTest {
 
     @Test
     public void testTime() {
+        UwbQueue<Point> value=new UwbQueue<>(2);
+        Point point=new Point();
+        point.setId(1);
+        point.setY(34);
+        point.setX(32);
+        value.add(point);
+
+
+        Point point1=new Point();
+        point1.setId(1);
+        point1.setX(100);
+        point1.setY(200);
+
+
+        System.out.println(value.contains(point1));
+
+
+
+
+
+
+
+
      /*   byte[] u_time=new byte[2];
         u_time[0]= (byte) 255;
         u_time[1]= (byte) 255;
