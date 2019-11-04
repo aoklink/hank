@@ -19,6 +19,9 @@ import com.link.feeling.framework.executor.ThreadPoolManager;
 import com.link.feeling.framework.utils.data.L;
 import com.link.feeling.framework.utils.data.ToastUtils;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -51,6 +54,7 @@ import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
 import cn.linkfeeling.hankserve.manager.LinkWSManager;
+import cn.linkfeeling.hankserve.mqtt.MqttManager;
 import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.ui.IUploadContract;
 import cn.linkfeeling.hankserve.ui.UploadPresenter;
@@ -144,15 +148,40 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             startServer();
         }
         // UDPBroadcast.udpBroadcast(this);
+        connectMqtt();
         connectWebSocket();
         //connectLinkWS();
         startIntervalListener();
         startIntervalPowerUpload();
         startIntervalDevicePowerUpload();
-
-
     }
 
+
+    private void connectMqtt() {
+        MqttManager.newInstance().connect(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+                //mqtt连接成功
+                Log.e("333333333333333","connectComplete");
+
+            }
+            @Override
+            public void connectionLost(Throwable cause) {
+                //mqtt连接失败
+                Log.i("333333333333333","connectionLost");
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                //接收mqtt推送的数据
+                Log.e("333333333333333","messageArrived::"+Arrays.toString(message.getPayload()));
+            }
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+                Log.i("333333333333333","deliveryComplete");
+            }
+        }, 1);
+    }
 
     private void startServer() {
         ThreadPoolManager.getInstance().execute(new Runnable() {
@@ -333,7 +362,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 devicePowerList.add(value);
                             }
                             devicePower.setData(devicePowerList);
-                            Log.i("kkkkk",gson.toJson(devicePower));
+                            Log.i("kkkkk", gson.toJson(devicePower));
                             getPresenter().uploadDevicePower(devicePower);
                         }
                     });

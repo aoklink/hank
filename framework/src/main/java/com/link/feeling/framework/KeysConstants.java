@@ -90,8 +90,8 @@ public interface KeysConstants {
     String ACCESS_KEY = "LTAI4FqhrxZucA2dtP28TQ9U";
     String SECRET_KEY = "O5HjD9LuKlqKa8kUJg15vGQBSjta6f";
 
-    String GYM = "link_test";
-    String TOPIC = "hank_log/" + GYM;
+   // String GYM = "link_test";
+    String TOPIC = "hank_log/";
 
     String TOPIC_FATHER = "hank_log";
 

@@ -71,20 +71,19 @@ public class OvalProcessor implements IDataAnalysis {
             return null;
         }
 
-        Log.i("vvvvvvv", Arrays.toString(serviceData));
-
         byte[] seqNum = {serviceData[4], serviceData[5]};
+        Log.i("87878787"+bleName, Arrays.toString(serviceData));
+        Log.i("87878787"+bleName, "flag---"+flag);
+        Log.i("87878787"+bleName, "seq---"+CalculateUtil.byteArrayToInt(seqNum));
+
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
             return null;
         }
-
-
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return null;
         }
-        Log.i("tuoyuanjiseqNum", CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
-
+        Log.i("87878787"+bleName, "seq---"+CalculateUtil.byteArrayToInt(seqNum));
 
         boolean b = dealPowerData(serviceData, deviceByBleName, bleName);
         if (b) {
@@ -99,26 +98,22 @@ public class OvalProcessor implements IDataAnalysis {
 
         if (select && System.currentTimeMillis() - startTime >= 5 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
-            if (spareTire == null || spareTire.isEmpty()) {
-                Log.i("pppppppp", "-5-5-5");
+            if (spareTire != null && !spareTire.isEmpty()) {
+                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+                for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                    String key = next.getKey();
+                    UWBCoordData uwbCoordData = new UWBCoordData();
+                    uwbCoordData.setCode(key);
+                    uwbCoordData.setSemaphore(0);
+                    uwbCoordData.setDevice(deviceByBleName);
+                    queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+
+                }
+                Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
+
+                FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
                 select = false;
-                return null;
             }
-
-            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
-            for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
-                String key = next.getKey();
-                UWBCoordData uwbCoordData = new UWBCoordData();
-                uwbCoordData.setCode(key);
-                uwbCoordData.setSemaphore(0);
-                uwbCoordData.setDevice(deviceByBleName);
-                queueConcurrentHashMap.put(uwbCoordData, next.getValue());
-
-            }
-            Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
-
-            FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-            select = false;
         }
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
             if (System.currentTimeMillis() - startTime >= 5 * 1000) {
@@ -222,23 +217,6 @@ public class OvalProcessor implements IDataAnalysis {
             dataBean.setBattery(String.valueOf(100 / powerLevel));
             FinalDataManager.getInstance().getBleName_dateBean().put(bleName, dataBean);
 
-/*
-
-            Power power1 = new Power();
-            power1.setDeviceName(deviceByBleName.getDeviceName());
-            power1.setBleNme(bleName);
-            power1.setPowerLevel(CalculateUtil.byteToInt(serviceData[6]));
-            power1.setGymName(BuildConfig.PROJECT_NAME);
-
-
-            power1.save(new SaveListener<String>() {
-                @Override
-                public void done(String s, BmobException e) {
-
-                    Log.i("99999-----", s == null ? "null" : s);
-                    Log.i("99999eeeee", e == null ? "null" : e.getMessage());
-                }
-            });*/
             return true;
         }
         return false;

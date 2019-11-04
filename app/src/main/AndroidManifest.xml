@@ -51,21 +51,10 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".receiver.AlarmReceiver" />
-        <provider
-            android:name="cn.bmob.v3.util.BmobContentProvider"
-            android:authorities="cn.linkfeeling.hankserve.BmobContentProvider"></provider>
-
-    <!--    <receiver
-            android:name=".RebootBroadcastReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <category android:name="android.intent.category.HOME" />
-            </intent-filter>
-        </receiver>-->
-
+        <receiver android:name=".receiver.AlarmReceiver"
+            />
+        <!-- Mqtt Service -->
+        <service android:name="org.eclipse.paho.android.service.MqttService" />
 
     </application>
 

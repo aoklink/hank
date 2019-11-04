@@ -16,6 +16,8 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import cn.linkfeeling.hankserve.BuildConfig;
+
 /**
  * Created on 2019/10/30  11:29
  * chenpan pan.chen@linkfeeling.cn
@@ -29,9 +31,10 @@ public final class MqttManager {
 
     private int mType;
 
-    static MqttManager newInstance() {
+    public static MqttManager newInstance() {
         return new MqttManager();
     }
+
 
     public void connect(MqttCallbackExtended callback, int type) {
         mType = type;
@@ -73,7 +76,7 @@ public final class MqttManager {
 
     public void subscribeToTopic() {
         try {
-            final String topicFilter[] = {KeysConstants.TOPIC};
+            final String topicFilter[] = {KeysConstants.TOPIC + BuildConfig.GYM_NAME};
             final int[] qos = {1};
             mqttAndroidClient.subscribe(topicFilter, qos, null, new IMqttActionListener() {
                 @Override
