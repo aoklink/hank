@@ -23,7 +23,11 @@ allprojects {
         google()
         jcenter()
         maven { url "https://raw.github.com/bmob/bmob-android-sdk/master" }
-    //    maven { url "https://mvnrepository.com/artifact/org.jctools/jctools-core" }
+        maven {
+            url "https://repo.eclipse.org/content/repositories/paho-snapshots/"
+        }
+
+        //    maven { url "https://mvnrepository.com/artifact/org.jctools/jctools-core" }
 
     }
 }
