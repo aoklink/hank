@@ -7,7 +7,11 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
+import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.FlagStatus;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
@@ -61,16 +65,18 @@ public class TreadMillProcessor implements IDataAnalysis {
             return null;
         }
 
-        Log.i("87878787跑步机"+bleName,Arrays.toString(serviceData));
-        Log.i("87878787跑步机"+bleName,"flag----"+flag);
-
-
         byte[] pages = new byte[2];
         pages[0] = serviceData[2];
         pages[1] = serviceData[3];
         int nowPack = CalculateUtil.byteArrayToInt(pages);
 
+
+        Log.i("87878787跑步机"+bleName,Arrays.toString(serviceData));
+        Log.i("87878787跑步机"+bleName,"flag----"+flag);
+        Log.i("87878787跑步机"+bleName,"seqNum----" +nowPack);
+
         if (nowPack < flag && flag - nowPack < 10000) {
+            uploadFlagStatus(nowPack, flag, deviceByBleName, bleName);
             return null;
         }
 
@@ -88,11 +94,8 @@ public class TreadMillProcessor implements IDataAnalysis {
 
         if (select && System.currentTimeMillis() - startTime >= 5 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
-            if (spareTire == null || spareTire.isEmpty()) {
+            if (spareTire != null && !spareTire.isEmpty()) {
                 Log.i("pppppppp", "-5-5-5");
-                select = false;
-                return null;
-            }
                 ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
                 for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
                     String key = next.getKey();
@@ -101,14 +104,11 @@ public class TreadMillProcessor implements IDataAnalysis {
                     uwbCoordData.setSemaphore(0);
                     uwbCoordData.setDevice(deviceByBleName);
                     queueConcurrentHashMap.put(uwbCoordData, next.getValue());
-
                 }
-                Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
-
                 FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
                 select = false;
+            }
         }
-
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
             if (System.currentTimeMillis() - startTime >= 5 * 1000) {
@@ -145,7 +145,6 @@ public class TreadMillProcessor implements IDataAnalysis {
             float v = CalculateUtil.txFloat(numbers, 100);
 
             speed = v * 0.337838f;
-            //0.256410
         }
 
         Log.i(bleName+"6767676", speed + "");
@@ -177,5 +176,21 @@ public class TreadMillProcessor implements IDataAnalysis {
 
     }
 
+    private void uploadFlagStatus(int seq, int flag, LinkSpecificDevice deviceByBleName, String bleName) {
+        FlagStatus flagStatus = new FlagStatus();
+        flagStatus.setSeq(seq);
+        flagStatus.setFlag(flag);
+        flagStatus.setBleName(bleName);
+        flagStatus.setDeviceName(deviceByBleName.getDeviceName());
+        flagStatus.setGymName(BuildConfig.GYM_NAME);
 
+        flagStatus.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+
+                Log.i("99999-----", s == null ? "null" : s);
+                Log.i("99999eeeee", e == null ? "null" : e.getMessage());
+            }
+        });
+    }
 }

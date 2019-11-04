@@ -10,8 +10,12 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
+import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.DevicePower;
+import cn.linkfeeling.hankserve.bean.FlagStatus;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
@@ -67,13 +71,14 @@ public class OvalProcessor implements IDataAnalysis {
             return null;
         }
 
-        Log.i("87878787椭圆机"+bleName,Arrays.toString(serviceData));
-        Log.i("87878787椭圆机"+bleName,"flag----"+flag);
-
-        Log.i(bleName+"vvvvvvv", Arrays.toString(serviceData));
-
         byte[] seqNum = {serviceData[4], serviceData[5]};
+
+        Log.i("87878787椭圆机" + bleName, Arrays.toString(serviceData));
+        Log.i("87878787椭圆机" + bleName, "flag----" + flag);
+        Log.i("87878787椭圆机" + bleName, "seqNum----" + CalculateUtil.byteArrayToInt(seqNum));
+
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
+            uploadFlagStatus(CalculateUtil.byteArrayToInt(seqNum), flag, deviceByBleName, bleName);
             return null;
         }
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
@@ -95,27 +100,20 @@ public class OvalProcessor implements IDataAnalysis {
 
         if (select && System.currentTimeMillis() - startTime >= 5 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
-            if (spareTire == null || spareTire.isEmpty()) {
+            if (spareTire != null && !spareTire.isEmpty()) {
                 Log.i("pppppppp", "-5-5-5");
+                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+                for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                    String key = next.getKey();
+                    UWBCoordData uwbCoordData = new UWBCoordData();
+                    uwbCoordData.setCode(key);
+                    uwbCoordData.setSemaphore(0);
+                    uwbCoordData.setDevice(deviceByBleName);
+                    queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+                }
+                FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
                 select = false;
-                return null;
             }
-
-            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
-            for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
-                String key = next.getKey();
-                UWBCoordData uwbCoordData = new UWBCoordData();
-                uwbCoordData.setCode(key);
-                uwbCoordData.setSemaphore(0);
-                uwbCoordData.setDevice(deviceByBleName);
-                queueConcurrentHashMap.put(uwbCoordData, next.getValue());
-
-            }
-            Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
-
-            FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-            select = false;
-
         }
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
@@ -126,9 +124,7 @@ public class OvalProcessor implements IDataAnalysis {
                     if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
                         LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
                     }
-
                 } else {
-
                     LinkDataManager.getInstance().checkBind(deviceByBleName);
                 }
 
@@ -155,7 +151,7 @@ public class OvalProcessor implements IDataAnalysis {
             speed = bigDecimal.floatValue() * 3600;
 
         }
-        Log.i(bleName+"ticks", speed + "");
+        Log.i(bleName + "ticks", speed + "");
 
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
@@ -218,26 +214,26 @@ public class OvalProcessor implements IDataAnalysis {
             int powerLevel = CalculateUtil.byteToInt(serviceData[6]);
             dataBean.setBattery(String.valueOf(100 / powerLevel));
             FinalDataManager.getInstance().getBleName_dateBean().put(bleName, dataBean);
-
-/*
-
-            Power power1 = new Power();
-            power1.setDeviceName(deviceByBleName.getDeviceName());
-            power1.setBleNme(bleName);
-            power1.setPowerLevel(CalculateUtil.byteToInt(serviceData[6]));
-            power1.setGymName(BuildConfig.PROJECT_NAME);
-
-
-            power1.save(new SaveListener<String>() {
-                @Override
-                public void done(String s, BmobException e) {
-
-                    Log.i("99999-----", s == null ? "null" : s);
-                    Log.i("99999eeeee", e == null ? "null" : e.getMessage());
-                }
-            });*/
             return true;
         }
         return false;
+    }
+
+    private void uploadFlagStatus(int seq, int flag, LinkSpecificDevice deviceByBleName, String bleName) {
+        FlagStatus flagStatus = new FlagStatus();
+        flagStatus.setSeq(seq);
+        flagStatus.setFlag(flag);
+        flagStatus.setBleName(bleName);
+        flagStatus.setDeviceName(deviceByBleName.getDeviceName());
+        flagStatus.setGymName(BuildConfig.GYM_NAME);
+
+        flagStatus.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+
+                Log.i("99999-----", s == null ? "null" : s);
+                Log.i("99999eeeee", e == null ? "null" : e.getMessage());
+            }
+        });
     }
 }

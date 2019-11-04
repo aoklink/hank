@@ -21,6 +21,7 @@ import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.AccelData;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.DevicePower;
+import cn.linkfeeling.hankserve.bean.FlagStatus;
 import cn.linkfeeling.hankserve.bean.LinkBLE;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.MatchResult;
@@ -76,24 +77,21 @@ public class FlyBirdProcessor implements IDataAnalysis {
             return null;
         }
 
-        Log.i("87878787"+bleName,Arrays.toString(serviceData));
-        Log.i("87878787"+bleName,"flag----"+flag);
-
-
-        //   dealPowerData(serviceData, deviceByBleName, bleName);
-//        if(serviceData[0]!=0 && serviceData[0]!=-1){
-//            deviceByBleName.setAbility(serviceData[0]);
-//        }
         byte[] seqNum = {serviceData[11], serviceData[12]};
 
+        Log.i("87878787" + bleName, Arrays.toString(serviceData));
+        Log.i("87878787" + bleName, "flag----" + flag);
+        Log.i("87878787" + bleName, "seqNum----" + CalculateUtil.byteArrayToInt(seqNum));
+
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
+            uploadFlagStatus(CalculateUtil.byteArrayToInt(seqNum), flag, deviceByBleName, bleName);
             return null;
         }
 
         if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return null;
         }
-        Log.i("87878787"+bleName, CalculateUtil.byteArrayToInt(seqNum) + "");
+        Log.i("87878787" + bleName, CalculateUtil.byteArrayToInt(seqNum) + "");
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
 
         boolean b = dealPowerData(serviceData, deviceByBleName, bleName);
@@ -230,26 +228,21 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
         if (select && System.currentTimeMillis() - startTime >= 10 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
-            if (spareTire == null || spareTire.isEmpty()) {
+            if (spareTire != null && !spareTire.isEmpty()) {
                 Log.i("pppppppp", "-5-5-5");
+                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+                for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                    String key = next.getKey();
+                    UWBCoordData uwbCoordData = new UWBCoordData();
+                    uwbCoordData.setCode(key);
+                    uwbCoordData.setSemaphore(0);
+                    uwbCoordData.setDevice(deviceByBleName);
+                    queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+                }
+                Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
+                FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
                 select = false;
-                return null;
             }
-
-            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
-            for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
-                String key = next.getKey();
-                UWBCoordData uwbCoordData = new UWBCoordData();
-                uwbCoordData.setCode(key);
-                uwbCoordData.setSemaphore(0);
-                uwbCoordData.setDevice(deviceByBleName);
-                queueConcurrentHashMap.put(uwbCoordData, next.getValue());
-
-            }
-            Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
-
-            FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-            select = false;
         }
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
@@ -262,8 +255,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
                         LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
                     }
                 } else {
-
-                    Log.i("ppppp", "daozhele");
                     LinkDataManager.getInstance().checkBind(deviceByBleName);
                 }
             }
@@ -279,9 +270,9 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     bleDeviceInfoNow.getCurve().add(cuv1);
                     bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
                 }
-             //   devicesList.add(serviceData[j]);
+                //   devicesList.add(serviceData[j]);
             }
-          //  deviceSeq.offer(CalculateUtil.byteArrayToInt(seqNum));
+            //  deviceSeq.offer(CalculateUtil.byteArrayToInt(seqNum));
         }
 
 
@@ -344,33 +335,33 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 serviceData[13] == 0 &&
                 serviceData[14] == 0) {
 
-            DevicePower.DataBean dataBean=new DevicePower.DataBean();
+            DevicePower.DataBean dataBean = new DevicePower.DataBean();
             dataBean.setSerial_no(String.valueOf(1));
             dataBean.setDevice_id(bleName);
             dataBean.setDevice(deviceByBleName.getDeviceName());
             int powerLevel = CalculateUtil.byteToInt(serviceData[15]);
-            dataBean.setBattery(String.valueOf(100/powerLevel));
+            dataBean.setBattery(String.valueOf(100 / powerLevel));
             FinalDataManager.getInstance().getBleName_dateBean().put(bleName, dataBean);
-
-
-/*
-            Power power1 = new Power();
-            power1.setDeviceName(deviceByBleName.getDeviceName());
-            power1.setBleNme(bleName);
-            power1.setPowerLevel(CalculateUtil.byteToInt(serviceData[15]));
-            power1.setGymName(BuildConfig.PROJECT_NAME);
-
-
-            power1.save(new SaveListener<String>() {
-                @Override
-                public void done(String s, BmobException e) {
-
-                    Log.i("99999-----", s == null ? "null" : s);
-                    Log.i("99999eeeee", e == null ? "null" : e.getMessage());
-                }
-            });*/
             return true;
         }
         return false;
+    }
+
+    private void uploadFlagStatus(int seq, int flag, LinkSpecificDevice deviceByBleName, String bleName) {
+        FlagStatus flagStatus = new FlagStatus();
+        flagStatus.setSeq(seq);
+        flagStatus.setFlag(flag);
+        flagStatus.setBleName(bleName);
+        flagStatus.setDeviceName(deviceByBleName.getDeviceName());
+        flagStatus.setGymName(BuildConfig.GYM_NAME);
+
+        flagStatus.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+
+                Log.i("99999-----", s == null ? "null" : s);
+                Log.i("99999eeeee", e == null ? "null" : e.getMessage());
+            }
+        });
     }
 }
