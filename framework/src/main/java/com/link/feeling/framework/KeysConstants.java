@@ -82,4 +82,27 @@ public interface KeysConstants {
 
     String ITEM_HEIGHT = "itemHeight";
 
+
+    // prod
+    String SERVER_URL = "tcp://post-cn-0pp1bk98n05.mqtt.aliyuncs.com";
+    String INSTANCE_ID = "post-cn-0pp1bk98n05";
+
+    String ACCESS_KEY = "LTAI4FqhrxZucA2dtP28TQ9U";
+    String SECRET_KEY = "O5HjD9LuKlqKa8kUJg15vGQBSjta6f";
+
+    String GYM = "link_test";
+    String TOPIC = "hank_log/" + GYM;
+
+    String TOPIC_FATHER = "hank_log";
+
+
+
+    String SIGNATURE = "Signature|";
+    String SEPARATOR = "|";
+    String GID = "GID_LK_HANK_LOG@@@";
+
+
+    int RANK_ITEM = 11;
+
+
 }
