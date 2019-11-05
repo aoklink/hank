@@ -53,8 +53,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
     private List<Byte> devicesList = new ArrayList<>();
 
     private int flag = -1;
-    private volatile boolean select = true;
-    private volatile boolean start = true;
+    private  boolean select = true;
+    private  boolean start = true;
     private long startTime;
     private Gson gson = new Gson();
 

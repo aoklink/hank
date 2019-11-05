@@ -2,6 +2,7 @@ package cn.linkfeeling.hankserve;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.TreeSet;
 
@@ -26,23 +27,25 @@ public class ExampleUnitTest {
 
     @Test
     public void testTime() {
+        int bcbc = 32768;
+        System.out.println(Arrays.toString(CalculateUtil.intToByteArray(bcbc)));
+
         byte[] pages = new byte[2];
-        pages[0] = 3;
-        pages[1] = 88;
+        pages[0] = 82;
+        pages[1] = -100;
         int nowPack = CalculateUtil.byteArrayToInt(pages);
         System.out.println(nowPack);
 
 
-
-        UwbQueue<Point> value=new UwbQueue<>(2);
-        Point point=new Point();
+        UwbQueue<Point> value = new UwbQueue<>(2);
+        Point point = new Point();
         point.setId(1);
         point.setY(34);
         point.setX(32);
         value.add(point);
 
 
-        Point point1=new Point();
+        Point point1 = new Point();
         point1.setId(1);
         point1.setX(100);
         point1.setY(200);
@@ -111,7 +114,7 @@ public class ExampleUnitTest {
         treeSet.add(13);*/
 
         System.out.println(treeSet);
-        short dd = (short)-65534;
+        short dd = (short) -65534;
         System.out.println(dd);
 
 
@@ -128,16 +131,16 @@ public class ExampleUnitTest {
             }
         });
 
-        treeSet1.add(new XXX(1,6553));
-        treeSet1.add(new XXX(2,6552));
-        treeSet1.add(new XXX(3,6554));
-        treeSet1.add(new XXX(4,6555));
-        treeSet1.add(new XXX(5,6550));
-        treeSet1.add(new XXX(6,1));
-        treeSet1.add(new XXX(7,0));
+        treeSet1.add(new XXX(1, 6553));
+        treeSet1.add(new XXX(2, 6552));
+        treeSet1.add(new XXX(3, 6554));
+        treeSet1.add(new XXX(4, 6555));
+        treeSet1.add(new XXX(5, 6550));
+        treeSet1.add(new XXX(6, 1));
+        treeSet1.add(new XXX(7, 0));
 
         for (XXX xxx : treeSet1) {
-            System.out.println(xxx.getAge()+"---"+xxx.getSeq());
+            System.out.println(xxx.getAge() + "---" + xxx.getSeq());
         }
 
 
