@@ -1,6 +1,7 @@
 package cn.linkfeeling.hankserve;
 
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -156,7 +157,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         startIntervalDevicePowerUpload();
     }
 
-
     private void connectMqtt() {
         MqttManager mqttManager = MqttManager.newInstance();
         mqttManager.connect(new MqttCallbackExtended() {
@@ -167,24 +167,24 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     mqttManager.subscribeToTopic();
                 }
 
-                Log.e("333333333333333","connectComplete");
+                Log.e("333333333333333","connectComplete--");
 
             }
             @Override
             public void connectionLost(Throwable cause) {
                 //mqtt连接失败
-                Log.i("333333333333333","connectionLost");
+                Log.i("333333333333333","connectionLost--");
             }
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 //接收mqtt推送的数据
-                Log.e("333333333333333","messageArrived::"+Arrays.toString(message.getPayload()));
+                Log.e("333333333333333","---messageArrived::"+Arrays.toString(message.getPayload()));
 
             }
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
-                Log.i("333333333333333","deliveryComplete");
+                Log.i("333333333333333","deliveryComplete--");
             }
         }, 1);
     }
@@ -205,9 +205,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 tv_ipTip.append("\n");
                                 tv_ipTip.append(simpleDateFormat.format(System.currentTimeMillis()));
                                 tv_ipTip.append("\n\n");
-
-                                byte[] ss = {12, 13};
-                                Global.group.writeAndFlush(new SmartCarProtocol((byte) 1, ss));
                             }
                         });
                     }

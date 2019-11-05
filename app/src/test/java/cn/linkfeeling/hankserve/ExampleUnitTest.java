@@ -10,6 +10,8 @@ import cn.linkfeeling.hankserve.bean.NDKTools;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.HexUtil;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import static org.junit.Assert.*;
 
@@ -27,10 +29,32 @@ public class ExampleUnitTest {
 
     @Test
     public void testTime() {
+        ByteBuf byteBuf= Unpooled.buffer();
+        byteBuf.writeByte(11);
+        byteBuf.writeByte(12);
+        byteBuf.writeByte(13);
+        System.out.println(byteBuf.readerIndex()+"");  //默认为0
+        System.out.println(byteBuf.readableBytes()+"");
+        System.out.println(Arrays.toString(byteBuf.array()));
+        System.out.println(byteBuf.array().length); //256
 
-        short fff= (short) 65530;
+    //    byteBuf.readByte();
 
-        System.out.println(fff);
+        System.out.println(byteBuf.readerIndex()+"");
+        System.out.println(byteBuf.writerIndex());
+
+        byteBuf.skipBytes(1);
+        System.out.println(byteBuf.readerIndex()+"");
+
+        byteBuf.markReaderIndex();
+
+        byteBuf.readByte();
+
+       byteBuf.resetReaderIndex();
+        System.out.println(byteBuf.readerIndex());
+
+
+
 
 
     }
