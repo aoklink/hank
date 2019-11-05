@@ -229,6 +229,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (select && System.currentTimeMillis() - startTime >= 10 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire != null && !spareTire.isEmpty()) {
+
                 Log.i("pppppppp", "-5-5-5");
                 ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
                 for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
