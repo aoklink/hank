@@ -174,7 +174,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     if (reconnect) {
                         Log.e("333333333333333", "wwwwwwwwww");
                     }
-                    mqttManager.publishMessage(JSON.toJSONString(new MqttRequest(1, BuildConfig.GYM_NAME)));
+
+                    mqttManager.subscribeToTopic();
+                 //   mqttManager.publishMessage(JSON.toJSONString(new MqttRequest(1, BuildConfig.GYM_NAME)));
                     Log.e("333333333333333", "connectComplete--");
 
                 }
