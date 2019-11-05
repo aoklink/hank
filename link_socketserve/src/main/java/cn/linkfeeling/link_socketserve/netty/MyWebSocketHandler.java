@@ -69,6 +69,8 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
 
     }
 
+
+
     //客户端与服务端断开连接的时候调用
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
@@ -261,6 +263,6 @@ public class MyWebSocketHandler extends ChannelInboundHandlerAdapter {
         String hostString = ((InetSocketAddress) ctx.channel().remoteAddress()).getHostString();
         Log.i("xxxxxxxxxxx", hostString);
         socketCallBack.getBLEStream(hostString, body);
-        //   super.channelRead(ctx, msg);
+          //super.channelRead(ctx, msg);
     }
 }

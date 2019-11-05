@@ -30,6 +30,16 @@ public class ExampleUnitTest {
     @Test
     public void testTime() {
         ByteBuf byteBuf= Unpooled.buffer();
+
+
+        System.out.println(byteBuf.readerIndex());
+        System.out.println(byteBuf.readByte());
+
+        System.out.println(byteBuf.writerIndex());
+
+
+
+
         byteBuf.writeByte(11);
         byteBuf.writeByte(12);
         byteBuf.writeByte(13);

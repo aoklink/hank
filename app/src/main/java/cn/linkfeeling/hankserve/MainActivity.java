@@ -10,12 +10,15 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.link.feeling.framework.base.FrameworkBaseActivity;
+import com.link.feeling.framework.bean.MqttRequest;
 import com.link.feeling.framework.executor.ThreadPoolManager;
 import com.link.feeling.framework.utils.data.L;
 import com.link.feeling.framework.utils.data.ToastUtils;
@@ -95,6 +98,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private List<WristbandPower.DataBean> wristPowerList = new ArrayList<>();
     private List<DevicePower.DataBean> devicePowerList = new ArrayList<>();
 
+    private MqttManager mqttManager ;
 
     @Override
     protected int getLayoutRes() {
@@ -157,36 +161,45 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         startIntervalDevicePowerUpload();
     }
 
+
     private void connectMqtt() {
-        MqttManager mqttManager = MqttManager.newInstance();
-        mqttManager.connect(new MqttCallbackExtended() {
-            @Override
-            public void connectComplete(boolean reconnect, String serverURI) {
-                //mqtt连接成功
-                if(reconnect){
-                    mqttManager.subscribeToTopic();
+
+
+        if (mqttManager == null) {
+            mqttManager=MqttManager.newInstance();
+            mqttManager.connect(new MqttCallbackExtended() {
+                @Override
+                public void connectComplete(boolean reconnect, String serverURI) {
+                    //mqtt连接成功
+                    if (reconnect) {
+                        Log.e("333333333333333", "wwwwwwwwww");
+                    }
+                    mqttManager.publishMessage(JSON.toJSONString(new MqttRequest(1, BuildConfig.GYM_NAME)));
+                    Log.e("333333333333333", "connectComplete--");
+
                 }
 
-                Log.e("333333333333333","connectComplete--");
+                @Override
+                public void connectionLost(Throwable cause) {
+                    //mqtt连接失败
+                    Log.i("333333333333333", "connectionLost--");
+                }
 
-            }
-            @Override
-            public void connectionLost(Throwable cause) {
-                //mqtt连接失败
-                Log.i("333333333333333","connectionLost--");
-            }
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+                    //{"data":["I7D712"],"type":100}
+                    //接收mqtt推送的数据
+                    String s = new String(message.getPayload());
+                    Log.e("333333333333333", "---messageArrived::" + s);
 
-            @Override
-            public void messageArrived(String topic, MqttMessage message) throws Exception {
-                //接收mqtt推送的数据
-                Log.e("333333333333333","---messageArrived::"+Arrays.toString(message.getPayload()));
+                }
 
-            }
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken token) {
-                Log.i("333333333333333","deliveryComplete--");
-            }
-        }, 1);
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken token) {
+                    Log.i("333333333333333", "deliveryComplete--");
+                }
+            }, 1);
+        }
     }
 
     private void startServer() {
@@ -776,5 +789,12 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             devicePowerDisposable.dispose();
             devicePowerDisposable = null;
         }
+    }
+
+    public void connect(View view) {
+        if(mqttManager!=null){
+            mqttManager.publishMessage(JSON.toJSONString(new MqttRequest(1, BuildConfig.GYM_NAME)));
+        }
+
     }
 }
