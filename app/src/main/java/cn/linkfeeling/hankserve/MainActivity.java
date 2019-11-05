@@ -158,10 +158,15 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
 
     private void connectMqtt() {
-        MqttManager.newInstance().connect(new MqttCallbackExtended() {
+        MqttManager mqttManager = MqttManager.newInstance();
+        mqttManager.connect(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
                 //mqtt连接成功
+                if(reconnect){
+                    mqttManager.subscribeToTopic();
+                }
+
                 Log.e("333333333333333","connectComplete");
 
             }
@@ -175,6 +180,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 //接收mqtt推送的数据
                 Log.e("333333333333333","messageArrived::"+Arrays.toString(message.getPayload()));
+
             }
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {

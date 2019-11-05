@@ -9,10 +9,12 @@ import com.link.feeling.framework.KeysConstants;
 public final class MqttRequest {
 
     private int type;
-    private String gym_id = KeysConstants.GYM;
+    private String gym_id;
 
-    public MqttRequest(int type) {
+
+    public MqttRequest(int type, String gym_id) {
         this.type = type;
+        this.gym_id = gym_id;
     }
 
     public String getGym_id() {

@@ -60,8 +60,6 @@ public class TreadMillProcessor implements IDataAnalysis {
         if (serviceData == null) {
             return null;
         }
-
-
         byte[] pages = new byte[2];
         pages[0] = serviceData[2];
         pages[1] = serviceData[3];
@@ -78,7 +76,6 @@ public class TreadMillProcessor implements IDataAnalysis {
         if (limitQueue.contains(nowPack)) {
             return null;
         }
-
         limitQueue.offer(nowPack);
 
         Log.i("87878787"+bleName, "seq---"+nowPack);
@@ -100,7 +97,6 @@ public class TreadMillProcessor implements IDataAnalysis {
                     uwbCoordData.setSemaphore(0);
                     uwbCoordData.setDevice(deviceByBleName);
                     queueConcurrentHashMap.put(uwbCoordData, next.getValue());
-
                 }
                 Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
 
@@ -156,7 +152,6 @@ public class TreadMillProcessor implements IDataAnalysis {
             bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
             bleDeviceInfoNow.setSpeed(String.valueOf(speed));
             bleDeviceInfoNow.setSeq_num(String.valueOf(nowPack));
-
         }
 
         if (speed == 0) {

@@ -82,7 +82,7 @@ public final class MqttManager {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     L.e(TAG, "subscribe:success");
-                    publishMessage(JSON.toJSONString(new MqttRequest(mType)));
+                    publishMessage(JSON.toJSONString(new MqttRequest(mType,BuildConfig.GYM_NAME)));
                 }
 
                 @Override

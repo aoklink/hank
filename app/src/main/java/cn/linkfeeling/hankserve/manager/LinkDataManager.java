@@ -471,7 +471,11 @@ public class LinkDataManager {
         return -1;
     }
 
-
+    /**
+     * 查询所有落在该围栏内的手环（排除已经绑定的手环）
+     * @param deviceId
+     * @return
+     */
     public ConcurrentHashMap<String, UwbQueue<Point>> queryQueueByDeviceId(int deviceId) {
         Point point;
         ConcurrentHashMap<String, UwbQueue<Point>> newCaculate = new ConcurrentHashMap<>();
@@ -554,6 +558,7 @@ public class LinkDataManager {
         uwbCoordData.setCode(uwbCode);
         FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
         Log.i("binding", "BLE RSSI");
+        //绑定手环后从当前设备备选中移除
         ConcurrentHashMap<Integer, ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> alternative = FinalDataManager.getInstance().getAlternative();
         if (alternative != null && !alternative.isEmpty()) {
             ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = alternative.get(deviceByBleName.getFencePoint().getFenceId());
