@@ -19,8 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
 import cn.linkfeeling.hankserve.BuildConfig;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
+import cn.linkfeeling.hankserve.bean.FinalBind;
 import cn.linkfeeling.hankserve.bean.LinkBLE;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Point;
@@ -559,8 +562,25 @@ public class LinkDataManager {
                 uwbCoordData = next.getKey();
             }
         }
-        queue.remove(uwbCoordData); //从备选人中移除
+
         FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+        queue.remove(uwbCoordData); //从备选人中移除
+
+        if(uwbCoordData!=null){
+            FinalBind finalBind=new FinalBind();
+            finalBind.setDeviceName(deviceByBleName.getDeviceName());
+            finalBind.setGymName(BuildConfig.GYM_NAME);
+            finalBind.setUwbCode(uwbCoordData.getCode());
+            finalBind.setWatchName(LinkDataManager.getInstance().uwbCode_wristbandName.get(uwbCoordData.getCode()));
+            finalBind.save(new SaveListener<String>() {
+                @Override
+                public void done(String s, BmobException e) {
+                }
+            });
+        }
+
+
+
         Log.i("binding", "UWB SCAN");
         Log.i("ppppppppsizebottom", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
 

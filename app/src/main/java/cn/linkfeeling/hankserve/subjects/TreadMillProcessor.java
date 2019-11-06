@@ -76,7 +76,7 @@ public class TreadMillProcessor implements IDataAnalysis {
         Log.i("87878787跑步机"+bleName,"seqNum----" +nowPack);
 
         if (nowPack < flag && flag - nowPack < 10000) {
-            uploadFlagStatus(nowPack, flag, deviceByBleName, bleName);
+          //  uploadFlagStatus(nowPack, flag, deviceByBleName, bleName);
             return null;
         }
 

@@ -84,7 +84,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         Log.i("87878787" + bleName, "seqNum----" + CalculateUtil.byteArrayToInt(seqNum));
 
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
-            uploadFlagStatus(CalculateUtil.byteArrayToInt(seqNum), flag, deviceByBleName, bleName);
+          //  uploadFlagStatus(CalculateUtil.byteArrayToInt(seqNum), flag, deviceByBleName, bleName);
             return null;
         }
 
