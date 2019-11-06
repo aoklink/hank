@@ -7,6 +7,7 @@ import com.link.feeling.framework.utils.data.ToastUtils;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -58,6 +59,7 @@ public class OvalProcessor implements IDataAnalysis {
     @Override
     public synchronized BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
+        BleDeviceInfo bleDeviceInfo = null;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
 
@@ -161,10 +163,21 @@ public class OvalProcessor implements IDataAnalysis {
             bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
         }
 
+        bleDeviceInfo=LinkDataManager.getInstance().getWebFinalBind(deviceByBleName);
+        if (bleDeviceInfo != null) {
+            bleDeviceInfo.setDevice_name(deviceByBleName.getDeviceName());
+            bleDeviceInfo.setSpeed(String.valueOf(speed));
+            bleDeviceInfo.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+        }
+
+
         if (speed == 0) {
 
             start = true;
             select = true;
+            if(bleDeviceInfo!=null){
+                LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
+            }
             //解除绑定
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {

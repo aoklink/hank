@@ -57,6 +57,7 @@ public class BicycleProcessor implements IDataAnalysis {
     @Override
     public synchronized BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
+        BleDeviceInfo bleDeviceInfo = null;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
 
@@ -96,6 +97,7 @@ public class BicycleProcessor implements IDataAnalysis {
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             startTime = System.currentTimeMillis();
+
             start = false;
         }
 
@@ -162,13 +164,26 @@ public class BicycleProcessor implements IDataAnalysis {
             bleDeviceInfoNow.setSpeed(String.valueOf(speed));
             bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
         }
+         //查询后台返回的优先级最高的绑定关系
+         bleDeviceInfo=LinkDataManager.getInstance().getWebFinalBind(deviceByBleName);
 
+        if(bleDeviceInfo!=null){
+            bleDeviceInfo.setDevice_name(deviceByBleName.getDeviceName());
+            bleDeviceInfo.setSpeed(String.valueOf(speed));
+            bleDeviceInfo.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+            FinalDataManager.getInstance().getWristbands().put(bleDeviceInfo.getBracelet_id(),bleDeviceInfo);
+        }
+
+        //
 
         Log.i("00000000000dddd", speed + "");
 
         if (speed == 0) {
             start = true;
             select = true;
+            if(bleDeviceInfo!=null){
+                LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
+            }
             //解除绑定
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {

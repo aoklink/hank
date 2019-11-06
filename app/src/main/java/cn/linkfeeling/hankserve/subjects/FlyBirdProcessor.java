@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -68,6 +69,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     @Override
     public synchronized BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
+        BleDeviceInfo bleDeviceInfo = null;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
         if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
@@ -104,6 +106,10 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             startTime = System.currentTimeMillis();
+            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+            FinalDataManager.getInstance().getAlternative().remove(fenceId);
+            devicesList.clear();
+            deviceSeq.clear();
             start = false;
         }
 
@@ -249,6 +255,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
 
+        bleDeviceInfo=LinkDataManager.getInstance().getWebFinalBind(deviceByBleName);
+
 
         if (serviceData[0] != -1 && serviceData[0] != 0 && serviceData[1] != -1 && serviceData[1] != 0) {
 
@@ -258,6 +266,12 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
                     bleDeviceInfoNow.getCurve().add(cuv1);
                     bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+                }
+
+                if (bleDeviceInfo != null) {
+                    bleDeviceInfo.setDevice_name(deviceByBleName.getDeviceName());
+                    bleDeviceInfo.getCurve().add(cuv1);
+                    bleDeviceInfo.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
                 }
                 devicesList.add(serviceData[j]);
             }
@@ -289,6 +303,15 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 bleDeviceInfoNow.setTime(String.valueOf(act_time));
                 bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
                 bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+            }
+
+            if (bleDeviceInfo != null) {
+                bleDeviceInfo.setDevice_name(deviceByBleName.getDeviceName());
+                bleDeviceInfo.setGravity(String.valueOf(actualGravity));
+                bleDeviceInfo.setTime(String.valueOf(act_time));
+                bleDeviceInfo.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
+                bleDeviceInfo.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+                FinalDataManager.getInstance().getWristbands().put(bleDeviceInfo.getBracelet_id(),bleDeviceInfo);
             }
 
         }

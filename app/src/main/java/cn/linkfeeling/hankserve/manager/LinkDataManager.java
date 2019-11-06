@@ -624,4 +624,51 @@ public class LinkDataManager {
         return null;
 
     }
+
+    public String queryUwbCodeByWatchName(String watchName){
+        Iterator<Map.Entry<String, String>> iterator = uwbCode_wristbandName.entrySet().iterator();
+        while (iterator.hasNext()){
+            Map.Entry<String, String> next = iterator.next();
+            if(watchName.equals(next.getValue())){
+                return next.getKey();
+            }
+        }
+
+        return null;
+
+    }
+
+
+    /**
+     * 获取后台推送的优先级最高的绑定手环（对应相关器械）
+     * @param deviceByBleName
+     * @return
+     */
+    public BleDeviceInfo getWebFinalBind(LinkSpecificDevice deviceByBleName){
+        BleDeviceInfo bleDeviceInfo=null;
+        String watchName = FinalDataManager.getInstance().getDevice_wristbands().get(deviceByBleName.getDeviceName());
+        if(watchName!=null){
+            bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(watchName);
+            String uwbCode = LinkDataManager.getInstance().queryUwbCodeByWatchName(watchName);
+            if(uwbCode!=null){
+                ConcurrentHashMap<Integer, UWBCoordData> fenceId_uwbData = FinalDataManager.getInstance().getFenceId_uwbData();
+                if(fenceId_uwbData!=null && !fenceId_uwbData.isEmpty()){
+                    Iterator<Map.Entry<Integer, UWBCoordData>> iterator = fenceId_uwbData.entrySet().iterator();
+                    while (iterator.hasNext()){
+                        Map.Entry<Integer, UWBCoordData> next = iterator.next();
+                        Integer key = next.getKey();
+                        UWBCoordData value = next.getValue();
+                        if(key!=deviceByBleName.getFencePoint().getFenceId() && value.getCode().equals(uwbCode)){
+                            iterator.remove();
+                            if(bleDeviceInfo!=null){
+                                LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return bleDeviceInfo;
+    }
 }

@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.link.feeling.framework.base.FrameworkBaseActivity;
 import com.link.feeling.framework.bean.MqttRequest;
 import com.link.feeling.framework.executor.ThreadPoolManager;
@@ -29,12 +30,14 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,6 +54,7 @@ import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.bean.WatchData;
 import cn.linkfeeling.hankserve.bean.WebAccount;
+import cn.linkfeeling.hankserve.bean.WebPushBind;
 import cn.linkfeeling.hankserve.bean.WristbandPower;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
 import cn.linkfeeling.hankserve.interfaces.IAnchDataAnalysis;
@@ -204,19 +208,47 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                   //  {"bracelet":"I7PLUSC9B5","type":160,"device":"跑步机01","status":true}
                     //{"bracelet":"I7PLUSC9B5","type":160,"device":"","status":false}
                     //接收mqtt推送的数据
-                    String s = new String(message.getPayload());
-                    JSONObject jsonObject=new JSONObject(s);
-                    if(jsonObject.has("type")){
-                        int type = jsonObject.getInt("type");
-                        if(type==100){
-                            WebAccount webAccount = gson.fromJson(s, WebAccount.class);
-                            List<String> data = webAccount.getData();
-                            FinalDataManager.getInstance().getWebAccounts().clear();
-                            FinalDataManager.getInstance().getWebAccounts().addAll(data);
+                    String s = null;
+                    try {
+                        s = new String(message.getPayload());
+                        JSONObject jsonObject=new JSONObject(s);
+                        if(jsonObject.has("type")){
+                            int type = jsonObject.getInt("type");
+                            if(type==100){
+                                WebAccount webAccount = gson.fromJson(s, WebAccount.class);
+                                List<String> data = webAccount.getData();
+                                FinalDataManager.getInstance().getWebAccounts().clear();
+                                FinalDataManager.getInstance().getWebAccounts().addAll(data);
+                                }
+                            if(type==160){
+                                WebPushBind webPushBind=gson.fromJson(s,WebPushBind.class);
+                                if(webPushBind.isStatus()){
+                                    if(!"".equals(webPushBind.getDevice())){
+                                        FinalDataManager.getInstance().getDevice_wristbands().put(webPushBind.getDevice(),webPushBind.getBracelet());
+                                    }
+                                }
+
+                                if(!webPushBind.isStatus()){
+                                    ConcurrentHashMap<String, String> device_wristbands = FinalDataManager.getInstance().getDevice_wristbands();
+                                    if(device_wristbands!=null && !device_wristbands.isEmpty()){
+                                        Iterator<Map.Entry<String, String>> iterator = device_wristbands.entrySet().iterator();
+                                        while (iterator.hasNext()){
+                                            Map.Entry<String, String> next = iterator.next();
+                                            if(next.getValue().equals(webPushBind.getBracelet())){
+                                                iterator.remove();
+                                                BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(webPushBind.getBracelet());
+                                                if(bleDeviceInfo!=null){
+                                                    LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
-
 
 
                     Log.e("333333333333333", "---messageArrived::" + s);

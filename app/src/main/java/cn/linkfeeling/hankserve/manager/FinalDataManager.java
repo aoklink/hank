@@ -26,6 +26,7 @@ public class FinalDataManager {
 
 
     private ConcurrentHashMap<String, String> rssi_wristbands;
+    private ConcurrentHashMap<String, String> device_wristbands;
     private ConcurrentHashMap<String, BleDeviceInfo> wristbands;
     private ConcurrentHashMap<String, DevicePower.DataBean> bleName_dateBean;
     private ConcurrentHashMap<Integer, UWBCoordData> fenceId_uwbData;
@@ -43,12 +44,21 @@ public class FinalDataManager {
     public void initObject() {
         webAccounts=new ArrayList<>();
         rssi_wristbands = new ConcurrentHashMap<>();
+        device_wristbands = new ConcurrentHashMap<>();
         wristbands = new ConcurrentHashMap<>();  //手环对应的集合   key为手环名称   value为整合后的数据（最终上传数据）
         fenceId_uwbData = new ConcurrentHashMap<>();//围栏id uwb设备对应关系  key为围栏id  value为uwb对象
         code_points = new ConcurrentHashMap<>();  //
         alternative = new ConcurrentHashMap<>(); //备选池子
         matchTemp = new ConcurrentHashMap<>(); //临时的  可被删除
         bleName_dateBean=new ConcurrentHashMap<>();//存储设备电量
+    }
+
+    public ConcurrentHashMap<String, String> getDevice_wristbands() {
+        return device_wristbands;
+    }
+
+    public void setDevice_wristbands(ConcurrentHashMap<String, String> device_wristbands) {
+        this.device_wristbands = device_wristbands;
     }
 
     public List<String> getWebAccounts() {

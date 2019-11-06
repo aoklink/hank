@@ -4,6 +4,7 @@ import android.os.ParcelUuid;
 import android.util.Log;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -51,6 +52,7 @@ public class TreadMillProcessor implements IDataAnalysis {
     @Override
     public synchronized BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
+        BleDeviceInfo bleDeviceInfo = null;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
         if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
@@ -153,17 +155,24 @@ public class TreadMillProcessor implements IDataAnalysis {
             bleDeviceInfoNow.setSpeed(String.valueOf(speed));
             bleDeviceInfoNow.setSeq_num(String.valueOf(nowPack));
         }
+        bleDeviceInfo=LinkDataManager.getInstance().getWebFinalBind(deviceByBleName);
+
+        if (bleDeviceInfo != null) {
+            bleDeviceInfo.setDevice_name(deviceByBleName.getDeviceName());
+            bleDeviceInfo.setSpeed(String.valueOf(speed));
+            bleDeviceInfo.setSeq_num(String.valueOf(nowPack));
+        }
 
         if (speed == 0) {
             start = true;
             select = true;
+            if(bleDeviceInfo!=null){
+                LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
+            }
             //解除绑定
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
-                FinalDataManager.getInstance().removeUwb(fenceId);
-                Log.i("666666666", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
-                Log.i("666666666", "移除了" + fenceId + "----" + LinkDataManager.getInstance().queryDeviceNameByFenceId(fenceId).getDeviceName());
-            }
+                FinalDataManager.getInstance().removeUwb(fenceId); }
 
             FinalDataManager.getInstance().getAlternative().remove(fenceId);
         }
