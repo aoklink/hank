@@ -50,6 +50,7 @@ import cn.linkfeeling.hankserve.bean.NDKTools;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.bean.WatchData;
+import cn.linkfeeling.hankserve.bean.WebAccount;
 import cn.linkfeeling.hankserve.bean.WristbandPower;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
 import cn.linkfeeling.hankserve.interfaces.IAnchDataAnalysis;
@@ -98,7 +99,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private List<WristbandPower.DataBean> wristPowerList = new ArrayList<>();
     private List<DevicePower.DataBean> devicePowerList = new ArrayList<>();
 
-    private MqttManager mqttManager ;
+    private MqttManager mqttManager;
 
     @Override
     protected int getLayoutRes() {
@@ -166,7 +167,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
 
         if (mqttManager == null) {
-            mqttManager=MqttManager.newInstance();
+            mqttManager = MqttManager.newInstance();
             mqttManager.connect(new MqttCallbackExtended() {
                 @Override
                 public void connectComplete(boolean reconnect, String serverURI) {
@@ -176,7 +177,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     }
 
                     mqttManager.subscribeToTopic();
-                 //   mqttManager.publishMessage(JSON.toJSONString(new MqttRequest(1, BuildConfig.GYM_NAME)));
+                    //   mqttManager.publishMessage(JSON.toJSONString(new MqttRequest(1, BuildConfig.GYM_NAME)));
                     Log.e("333333333333333", "connectComplete--");
 
                 }
@@ -185,13 +186,39 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 public void connectionLost(Throwable cause) {
                     //mqtt连接失败
                     Log.i("333333333333333", "connectionLost--");
+                    while (true) {
+                        try {//如果没有发生异常说明连接成功，如果发生异常，则死循环
+                            Thread.sleep(1000);
+                            mqttManager.reConnect();
+                            break;
+                        } catch (Exception e) {
+                            continue;
+                        }
+                    }
+
                 }
 
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     //{"data":["I7D712"],"type":100}
+                  //  {"bracelet":"I7PLUSC9B5","type":160,"device":"跑步机01","status":true}
+                    //{"bracelet":"I7PLUSC9B5","type":160,"device":"","status":false}
                     //接收mqtt推送的数据
                     String s = new String(message.getPayload());
+                    JSONObject jsonObject=new JSONObject(s);
+                    if(jsonObject.has("type")){
+                        int type = jsonObject.getInt("type");
+                        if(type==100){
+                            WebAccount webAccount = gson.fromJson(s, WebAccount.class);
+                            List<String> data = webAccount.getData();
+                            FinalDataManager.getInstance().getWebAccounts().clear();
+                            FinalDataManager.getInstance().getWebAccounts().addAll(data);
+                            }
+                    }
+
+
+
+
                     Log.e("333333333333333", "---messageArrived::" + s);
 
                 }
@@ -712,7 +739,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private void writeQueue(UWBCoordData uwbCoordData) {
         UwbQueue<Point> points = FinalDataManager.getInstance().getCode_points().get(uwbCoordData.getCode());
         if (points == null) {
-            UwbQueue<Point> uwbQueue = new UwbQueue<>(25);
+            UwbQueue<Point> uwbQueue = new UwbQueue<>(50);
             Point point = new Point();
             if (uwbCoordData.getDevice() == null) {
                 point.setId(-1);
@@ -794,9 +821,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     }
 
     public void connect(View view) {
-        if(mqttManager!=null){
-            mqttManager.publishMessage(JSON.toJSONString(new MqttRequest(1, BuildConfig.GYM_NAME)));
-        }
-
+        mqttManager.disConnect();
     }
 }

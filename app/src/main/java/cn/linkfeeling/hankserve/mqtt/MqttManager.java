@@ -1,5 +1,7 @@
 package cn.linkfeeling.hankserve.mqtt;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
 import com.link.feeling.framework.KeysConstants;
 import com.link.feeling.framework.base.BaseApplication;
@@ -115,5 +117,25 @@ public final class MqttManager {
             return mqttAndroidClient.isConnected();
         }
         return false;
+    }
+
+    public void reConnect(){
+        if(mqttAndroidClient!=null && !connectStatus()){
+            try {
+                Log.i("333333333333333","点击重启");
+                mqttAndroidClient.connect(mqttConnectOptions);
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void disConnect(){
+        try {
+
+            mqttAndroidClient.disconnect();
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 }
