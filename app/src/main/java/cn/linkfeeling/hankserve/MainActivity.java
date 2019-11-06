@@ -168,8 +168,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
 
 
     private void connectMqtt() {
-
-
         if (mqttManager == null) {
             mqttManager = MqttManager.newInstance();
             mqttManager.connect(new MqttCallbackExtended() {
