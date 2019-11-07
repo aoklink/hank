@@ -310,7 +310,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             if (bleDeviceInfoNow != null) {
                 bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
                 bleDeviceInfoNow.setGravity(String.valueOf(actualGravity));
-                bleDeviceInfoNow.setTime(String.valueOf(act_time));
+                bleDeviceInfoNow.setTime(String.valueOf(CalculateUtil.byteToInt(act_time)));
                 bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
                 bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
             }
