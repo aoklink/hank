@@ -5,10 +5,14 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.NDKTools;
+import cn.linkfeeling.hankserve.bean.Point;
+import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.queue.LimitQueue;
+import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.utils.CalculateUtil;
 import cn.linkfeeling.hankserve.utils.HexUtil;
 import io.netty.buffer.ByteBuf;
@@ -30,6 +34,37 @@ public class ExampleUnitTest {
 
     @Test
     public void testTime() {
+
+        UWBCoordData uwbCoordData=new UWBCoordData();
+        uwbCoordData.setCode("111");
+
+        ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queue = new ConcurrentHashMap<>();
+        queue.put(uwbCoordData,new UwbQueue<>(10));
+
+
+
+        ConcurrentHashMap<String,UWBCoordData> map=new ConcurrentHashMap<>();
+        map.put("111",uwbCoordData);
+
+
+        System.out.println(queue.size()+"-----"+map.size());
+
+        queue.remove(uwbCoordData);
+        System.out.println(queue.size()+"-----"+map.size());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         List<String> webAccounts =new ArrayList<>();
         webAccounts.add("1111");

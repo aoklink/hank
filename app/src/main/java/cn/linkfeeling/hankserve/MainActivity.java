@@ -218,7 +218,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     }
 
                 }
-
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     //{"data":["I7D712"],"type":100}
@@ -244,7 +243,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                         FinalDataManager.getInstance().getDevice_wristbands().put(webPushBind.getDevice(),webPushBind.getBracelet());
                                     }
                                 }
-
                                 if(!webPushBind.isStatus()){
                                     ConcurrentHashMap<String, String> device_wristbands = FinalDataManager.getInstance().getDevice_wristbands();
                                     if(device_wristbands!=null && !device_wristbands.isEmpty()){
@@ -255,7 +253,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                                 iterator.remove();
                                                 BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(webPushBind.getBracelet());
                                                 if(bleDeviceInfo!=null){
-                                                    LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
+                                                    LinkDataManager.getInstance().cleanBleDeviceInfo(bleDeviceInfo);
                                                 }
                                             }
                                         }
@@ -266,12 +264,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
-
                     Log.e("333333333333333", "---messageArrived::" + s);
-
                 }
-
                 @Override
                 public void deliveryComplete(IMqttDeliveryToken token) {
                     Log.i("333333333333333", "deliveryComplete--");

@@ -150,7 +150,8 @@ public class TreadMillProcessor implements IDataAnalysis {
 
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
-        if (bleDeviceInfoNow != null) {
+        if (bleDeviceInfoNow != null ) {
+            Log.i("3333333","我是原始绑定---"+speed);
             bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
             bleDeviceInfoNow.setSpeed(String.valueOf(speed));
             bleDeviceInfoNow.setSeq_num(String.valueOf(nowPack));
@@ -158,6 +159,7 @@ public class TreadMillProcessor implements IDataAnalysis {
         bleDeviceInfo=LinkDataManager.getInstance().getWebFinalBind(deviceByBleName);
 
         if (bleDeviceInfo != null) {
+            Log.i("3333333","我是数据来源---"+speed);
             bleDeviceInfo.setDevice_name(deviceByBleName.getDeviceName());
             bleDeviceInfo.setSpeed(String.valueOf(speed));
             bleDeviceInfo.setSeq_num(String.valueOf(nowPack));
