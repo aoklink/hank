@@ -198,7 +198,42 @@ public class UWBCoordData {
         private Point right_top;
         private Point left_bottom;
         private Point right_bottom;
+        private int topMargin;
+        private int bottomMargin;
+        private int leftMargin;
+        private int rightMargin;
 
+        public int getTopMargin() {
+            return topMargin;
+        }
+
+        public void setTopMargin(int topMargin) {
+            this.topMargin = topMargin;
+        }
+
+        public int getBottomMargin() {
+            return bottomMargin;
+        }
+
+        public void setBottomMargin(int bottomMargin) {
+            this.bottomMargin = bottomMargin;
+        }
+
+        public int getLeftMargin() {
+            return leftMargin;
+        }
+
+        public void setLeftMargin(int leftMargin) {
+            this.leftMargin = leftMargin;
+        }
+
+        public int getRightMargin() {
+            return rightMargin;
+        }
+
+        public void setRightMargin(int rightMargin) {
+            this.rightMargin = rightMargin;
+        }
 
         public int getFenceId() {
             return fenceId;

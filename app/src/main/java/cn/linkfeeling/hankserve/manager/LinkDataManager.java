@@ -292,24 +292,13 @@ public class LinkDataManager {
                 UWBCoordData.FencePoint.Point B = fencePoint.getLeft_top();
                 UWBCoordData.FencePoint.Point C = fencePoint.getLeft_bottom();
                 UWBCoordData.FencePoint.Point D = fencePoint.getRight_bottom();
-                if ("跑步机".equals(devicesDatum.getType()) || "椭圆机".equals(devicesDatum.getType())) {
-                    final double a = ((B.x - ExpandRange_100) - (A.x + ExpandRange_100)) * (y - A.y) - (B.y - A.y) * (x - (A.x + ExpandRange_100));
-                    final double b = ((C.x - ExpandRange_100) - (B.x - ExpandRange_100)) * (y - B.y) - (C.y - B.y) * (x - (B.x - ExpandRange_100));
-                    final double c = ((D.x + ExpandRange_100) - (C.x - ExpandRange_100)) * (y - C.y) - (D.y - C.y) * (x - (C.x - ExpandRange_100));
-                    final double d = ((A.x + ExpandRange_100) - (D.x + ExpandRange_100)) * (y - D.y) - (A.y - D.y) * (x - (D.x + ExpandRange_100));
-                    if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
-                        uwbCoordData.setDevice(devicesDatum);
-                        writeQueue(uwbCoordData);
-                    }
-                } else {
-                    final double a = ((B.x-ExpandRange_20) - (A.x+ExpandRange_20)) * (y - (A.y-ExpandRange_20)) - ((B.y-ExpandRange_20) - (A.y-ExpandRange_20)) * (x - (A.x+ExpandRange_20));
-                    final double b = ((C.x-ExpandRange_20) - (B.x-ExpandRange_20)) * (y - (B.y-ExpandRange_20)) - ((C.y+ExpandRange_20) - (B.y-ExpandRange_20)) * (x - (B.x-ExpandRange_20));
-                    final double c = ((D.x+ExpandRange_20) - (C.x-ExpandRange_20)) * (y - (C.y+ExpandRange_20)) - ((D.y+ExpandRange_20) - (C.y+ExpandRange_20)) * (x - (C.x-ExpandRange_20));
-                    final double d = ((A.x+ExpandRange_20) - (D.x+ExpandRange_20)) * (y - (D.y+ExpandRange_20)) - ((A.y-ExpandRange_20) - (D.y+ExpandRange_20)) * (x - (D.x+ExpandRange_20));
-                    if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
-                        uwbCoordData.setDevice(devicesDatum);
-                        writeQueue(uwbCoordData);
-                    }
+                final double a = ((B.x - fencePoint.getLeftMargin()) - (A.x + fencePoint.getRightMargin())) * (y - (A.y - fencePoint.getTopMargin())) - ((B.y - fencePoint.getTopMargin()) - (A.y - fencePoint.getTopMargin())) * (x - (A.x + fencePoint.getRightMargin()));
+                final double b = ((C.x - fencePoint.getLeftMargin()) - (B.x - fencePoint.getLeftMargin())) * (y - (B.y - fencePoint.getTopMargin())) - ((C.y + fencePoint.getBottomMargin()) - (B.y - fencePoint.getTopMargin())) * (x - (B.x - fencePoint.getLeftMargin()));
+                final double c = ((D.x + fencePoint.getRightMargin()) - (C.x - fencePoint.getLeftMargin())) * (y - (C.y + fencePoint.getBottomMargin())) - ((D.y + fencePoint.getBottomMargin()) - (C.y + fencePoint.getBottomMargin())) * (x - (C.x - fencePoint.getLeftMargin()));
+                final double d = ((A.x + fencePoint.getRightMargin()) - (D.x + fencePoint.getRightMargin())) * (y - (D.y + fencePoint.getBottomMargin())) - ((A.y - fencePoint.getTopMargin()) - (D.y + fencePoint.getBottomMargin())) * (x - (D.x + fencePoint.getRightMargin()));
+                if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
+                    uwbCoordData.setDevice(devicesDatum);
+                    writeQueue(uwbCoordData);
                 }
             }
             if (uwbCoordData.getDevice() == null) {
@@ -378,24 +367,13 @@ public class LinkDataManager {
             UWBCoordData.FencePoint.Point D = fencePoint.getRight_bottom();
             double x = newU.getX();
             double y = newU.getY();
-            if ("跑步机".equals(old.getDevice().getType()) || "椭圆机".equals(old.getDevice().getType())) {
-                final double a = ((B.x - ExpandRange_100) - (A.x + ExpandRange_100)) * (y - A.y) - (B.y - A.y) * (x - (A.x + ExpandRange_100));
-                final double b = ((C.x - ExpandRange_100) - (B.x - ExpandRange_100)) * (y - B.y) - (C.y - B.y) * (x - (B.x - ExpandRange_100));
-                final double c = ((D.x + ExpandRange_100) - (C.x - ExpandRange_100)) * (y - C.y) - (D.y - C.y) * (x - (C.x - ExpandRange_100));
-                final double d = ((A.x + ExpandRange_100) - (D.x + ExpandRange_100)) * (y - D.y) - (A.y - D.y) * (x - (D.x + ExpandRange_100));
-                if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
-                    return true;
-                }
-            } else {
-                final double a = ((B.x-ExpandRange_20) - (A.x+ExpandRange_20)) * (y - (A.y-ExpandRange_20)) - ((B.y-ExpandRange_20) - (A.y-ExpandRange_20)) * (x - (A.x+ExpandRange_20));
-                final double b = ((C.x-ExpandRange_20) - (B.x-ExpandRange_20)) * (y - (B.y-ExpandRange_20)) - ((C.y+ExpandRange_20) - (B.y-ExpandRange_20)) * (x - (B.x-ExpandRange_20));
-                final double c = ((D.x+ExpandRange_20) - (C.x-ExpandRange_20)) * (y - (C.y+ExpandRange_20)) - ((D.y+ExpandRange_20) - (C.y+ExpandRange_20)) * (x - (C.x-ExpandRange_20));
-                final double d = ((A.x+ExpandRange_20) - (D.x+ExpandRange_20)) * (y - (D.y+ExpandRange_20)) - ((A.y-ExpandRange_20) - (D.y+ExpandRange_20)) * (x - (D.x+ExpandRange_20));
-                if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
-                    return true;
-                }
+            final double a = ((B.x - fencePoint.getLeftMargin()) - (A.x + fencePoint.getRightMargin())) * (y - (A.y - fencePoint.getTopMargin())) - ((B.y - fencePoint.getTopMargin()) - (A.y - fencePoint.getTopMargin())) * (x - (A.x + fencePoint.getRightMargin()));
+            final double b = ((C.x - fencePoint.getLeftMargin()) - (B.x - fencePoint.getLeftMargin())) * (y - (B.y - fencePoint.getTopMargin())) - ((C.y + fencePoint.getBottomMargin()) - (B.y - fencePoint.getTopMargin())) * (x - (B.x - fencePoint.getLeftMargin()));
+            final double c = ((D.x + fencePoint.getRightMargin()) - (C.x - fencePoint.getLeftMargin())) * (y - (C.y + fencePoint.getBottomMargin())) - ((D.y + fencePoint.getBottomMargin()) - (C.y + fencePoint.getBottomMargin())) * (x - (C.x - fencePoint.getLeftMargin()));
+            final double d = ((A.x + fencePoint.getRightMargin()) - (D.x + fencePoint.getRightMargin())) * (y - (D.y + fencePoint.getBottomMargin())) - ((A.y - fencePoint.getTopMargin()) - (D.y + fencePoint.getBottomMargin())) * (x - (D.x + fencePoint.getRightMargin()));
+            if ((a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0)) {
+                return true;
             }
-
         }
         return false;
     }
