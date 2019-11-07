@@ -257,7 +257,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                 public void deliveryComplete(IMqttDeliveryToken token) {
                     Log.i("333333333333333", "deliveryComplete--");
                 }
-            }, 1);
+            });
         }
     }
 
