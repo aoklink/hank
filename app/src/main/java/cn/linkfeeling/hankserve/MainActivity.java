@@ -26,7 +26,11 @@ import com.link.feeling.framework.utils.data.ToastUtils;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -165,6 +169,21 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         startIntervalPowerUpload();
         startIntervalDevicePowerUpload();
     }
+
+
+/*    public void connect(int number) {
+        for (int i = 0; i < number||number>999; i++) {
+            try {
+                connectMqtt();
+            } catch (Exception e) {
+                e.printStackTrace();
+                //Thread.sleep(5000);
+                Log.i("333333333333333", "连接失败--"+i);
+                continue;
+            }
+            return;
+        }
+    }*/
 
 
     private void connectMqtt() {
@@ -851,6 +870,8 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     }
 
     public void connect(View view) {
-        mqttManager.disConnect();
+        if(mqttManager!=null){
+            mqttManager.disConnect();
+        }
     }
 }

@@ -38,7 +38,7 @@ public final class MqttManager {
     }
 
 
-    public void connect(MqttCallbackExtended callback) {
+    public void connect(MqttCallbackExtended callback){
         if (mqttAndroidClient == null) {
             mqttAndroidClient = new MqttAndroidClient(BaseApplication.getAppContext(), KeysConstants.SERVER_URL, KeysConstants.GID + DeviceUtils.getMac());
             mqttAndroidClient.setCallback(callback);
@@ -62,8 +62,9 @@ public final class MqttManager {
         try {
             mqttAndroidClient.connect(mqttConnectOptions);
         } catch (MqttException e) {
-            L.e(TAG, "connect:exception", e);
+            e.printStackTrace();
         }
+
     }
 
     public void subscribeToTopic() {
@@ -117,14 +118,11 @@ public final class MqttManager {
         return false;
     }
 
-    public void reConnect(){
+    public void reConnect() throws MqttException {
         if(mqttAndroidClient!=null && !connectStatus()){
-            try {
                 Log.i("333333333333333","点击重启");
                 mqttAndroidClient.connect(mqttConnectOptions);
-            } catch (MqttException e) {
-                e.printStackTrace();
-            }
+
         }
     }
 

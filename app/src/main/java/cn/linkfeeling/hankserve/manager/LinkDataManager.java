@@ -535,8 +535,9 @@ public class LinkDataManager {
                 uwbCoordData = next.getKey();
             }
         }
-        queue.remove(uwbCoordData); //从备选人中移除
+
         FinalDataManager.getInstance().getFenceId_uwbData().put(deviceByBleName.getFencePoint().getFenceId(), uwbCoordData);
+        queue.remove(uwbCoordData); //从备选人中移除
         Log.i("binding", "UWB SCAN");
         Log.i("ppppppppsizebottom", FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
 
