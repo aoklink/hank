@@ -52,6 +52,7 @@ import cn.linkfeeling.hankserve.adapter.MatchAdapter;
 import cn.linkfeeling.hankserve.bean.AccelData;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.DevicePower;
+import cn.linkfeeling.hankserve.bean.InitialBind;
 import cn.linkfeeling.hankserve.bean.MatchResult;
 import cn.linkfeeling.hankserve.bean.NDKTools;
 import cn.linkfeeling.hankserve.bean.Point;
@@ -236,7 +237,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 FinalDataManager.getInstance().getWebAccounts().clear();
                                 FinalDataManager.getInstance().getWebAccounts().addAll(data);
                                 }
-                            if(type==160){
+                            if(type==161){
                                 WebPushBind webPushBind=gson.fromJson(s,WebPushBind.class);
                                 if(webPushBind.isStatus()){
                                     if(!"".equals(webPushBind.getDevice())){
@@ -246,6 +247,16 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                 if(!webPushBind.isStatus()){
                                     ConcurrentHashMap<String, String> device_wristbands = FinalDataManager.getInstance().getDevice_wristbands();
                                     if(device_wristbands!=null && !device_wristbands.isEmpty()){
+                                        if(webPushBind.getDevice()!=null){
+                                            BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(webPushBind.getBracelet());
+                                            if(bleDeviceInfo!=null){
+                                                LinkDataManager.getInstance().cleanBleDeviceInfo(bleDeviceInfo);
+                                            }
+                                            device_wristbands.remove(webPushBind.getDevice());
+                                        }
+/*
+
+
                                         Iterator<Map.Entry<String, String>> iterator = device_wristbands.entrySet().iterator();
                                         while (iterator.hasNext()){
                                             Map.Entry<String, String> next = iterator.next();
@@ -256,6 +267,21 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                                                     LinkDataManager.getInstance().cleanBleDeviceInfo(bleDeviceInfo);
                                                 }
                                             }
+                                        }*/
+                                    }
+                                }
+                            }
+                            if(type==160){
+                            //    {"data":[{"bracelet":"I7D712","device":"飞鸟架01"}],"type":160}
+                                InitialBind initialBind=gson.fromJson(s,InitialBind.class);
+                                if(initialBind!=null){
+                                    List<InitialBind.DataBean> data = initialBind.getData();
+                                    if(data!=null){
+                                        FinalDataManager.getInstance().getDevice_wristbands().clear();
+                                        for (InitialBind.DataBean datum : data) {
+                                            String bracelet = datum.getBracelet();
+                                            String device = datum.getDevice();
+                                            FinalDataManager.getInstance().getDevice_wristbands().put(device,bracelet);
                                         }
                                     }
                                 }
@@ -593,6 +619,9 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         if (newUwb == null) {
             return;
         }
+        if(LinkDataManager.getInstance().excludeUwb(newUwb)){
+            return;
+        }
         //写入队列
 
         Log.i("666666666", "查看长度，，，" + FinalDataManager.getInstance().getFenceId_uwbData().size() + "");
@@ -706,7 +735,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
                         //7、需要解除绑定
                         FinalDataManager.getInstance().removeSpareFireUwb(spareFireUwb);
                         spareFireUwb.setSemaphore(0);
-
                     } else {
                         //8、将信号量+1
                         spareFireUwb.setSemaphore(spareFireUwb.getSemaphore() + 1);
@@ -720,7 +748,6 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             }
             BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(newUwb.getWristband().getBracelet_id());
             if (bleDeviceInfo != null) {
-
                 Log.i("666666666", bleDeviceInfo.getBracelet_id() + "清空数据了");
                 LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
             }

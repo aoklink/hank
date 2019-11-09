@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -522,6 +523,11 @@ public class LinkDataManager {
         float min = Integer.MAX_VALUE;
         for (Map.Entry<UWBCoordData, UwbQueue<Point>> next : queue.entrySet()) {
 
+            UWBCoordData key = next.getKey();
+            if(LinkDataManager.getInstance().excludeUwb(key)){
+                return;
+            }
+
             int num = 0;
             UwbQueue<Point> value = next.getValue();
             UWBCoordData.FencePoint.Point centerPoint = deviceByBleName.getCenterPoint();
@@ -648,6 +654,7 @@ public class LinkDataManager {
         BleDeviceInfo bleDeviceInfo=null;
         String watchName = FinalDataManager.getInstance().getDevice_wristbands().get(deviceByBleName.getDeviceName());
         if(watchName!=null){
+            Log.i("333333333",watchName);
             bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(watchName);
             String uwbCode = LinkDataManager.getInstance().queryUwbCodeByWatchName(watchName);
             if(uwbCode!=null){
@@ -670,5 +677,19 @@ public class LinkDataManager {
             }
         }
         return bleDeviceInfo;
+    }
+
+
+    public boolean excludeUwb(UWBCoordData uwbCoordData){
+        Collection<String> values = FinalDataManager.getInstance().getDevice_wristbands().values();
+        if(!values.isEmpty()){
+            for (String value : values) {
+                String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(value);
+                if(uwbCoordData.getCode().equals(uwbCode)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

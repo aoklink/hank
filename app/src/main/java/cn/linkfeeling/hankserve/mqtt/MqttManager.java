@@ -71,11 +71,14 @@ public final class MqttManager {
         try {
             final String topicFilter[] = {KeysConstants.TOPIC + BuildConfig.GYM_NAME};
             final int[] qos = {1};
+
+
             mqttAndroidClient.subscribe(topicFilter, qos, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     L.e(TAG, "subscribe:success");
                     publishMessage(JSON.toJSONString(new MqttRequest(1, BuildConfig.GYM_NAME)));
+                    publishMessage(JSON.toJSONString(new MqttRequest(2, BuildConfig.GYM_NAME)));
                 }
 
                 @Override

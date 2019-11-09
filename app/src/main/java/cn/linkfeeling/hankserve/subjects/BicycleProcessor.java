@@ -113,7 +113,6 @@ public class BicycleProcessor implements IDataAnalysis {
                     uwbCoordData.setSemaphore(0);
                     uwbCoordData.setDevice(deviceByBleName);
                     queueConcurrentHashMap.put(uwbCoordData, next.getValue());
-
                 }
                 Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
                 FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
@@ -124,7 +123,7 @@ public class BicycleProcessor implements IDataAnalysis {
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
             if (System.currentTimeMillis() - startTime >= 5 * 1000) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
-                if (s != null) {
+                if (s != null && !FinalDataManager.getInstance().getDevice_wristbands().values().contains(s)) {
                     String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
                     if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
                         LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);

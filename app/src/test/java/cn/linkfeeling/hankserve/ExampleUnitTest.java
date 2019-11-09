@@ -4,7 +4,11 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.linkfeeling.hankserve.bean.NDKTools;
@@ -32,38 +36,77 @@ public class ExampleUnitTest {
     }
 
 
+    class Pe{
+        private int age;
+        private String name;
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+/*        @Override
+        public int hashCode() {
+            return new Integer(age).hashCode();
+        }
+
+        @Override
+        public boolean equals( Object obj) {
+            if (this == obj) {
+                return true;//地址相等
+            }
+
+            if (obj == null) {
+                return false;//非空性：对于任意非空引用x，x.equals(null)应该返回false。
+            }
+
+            if (obj instanceof Pe) {
+                Pe other = (Pe) obj;
+                //需要比较的字段相等，则这两个对象相等
+                if (this.getAge()==other.getAge()) {
+                    return true;
+                }
+            }
+
+            return false;
+        }*/
+    }
+
+
     @Test
     public void testTime() {
 
-        UWBCoordData uwbCoordData=new UWBCoordData();
-        uwbCoordData.setCode("111");
+        HashMap<String,Pe> map=new HashMap<>();
 
-        ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queue = new ConcurrentHashMap<>();
-        queue.put(uwbCoordData,new UwbQueue<>(10));
+        Pe p2=new Pe();
+        p2.setAge(14);
+        p2.setName("小明");
+        map.put(p2.getName(),p2);
 
-
-
-        ConcurrentHashMap<String,UWBCoordData> map=new ConcurrentHashMap<>();
-        map.put("111",uwbCoordData);
-
-
-        System.out.println(queue.size()+"-----"+map.size());
-
-        queue.remove(uwbCoordData);
-        System.out.println(queue.size()+"-----"+map.size());
+        Pe p1=new Pe();
+        p1.setAge(11);
+        p1.setName("小明");
+        map.put(p1.getName(),p1);
 
 
 
-
-
-
-
-
-
-
-
-
-
+        Iterator<Map.Entry<String, Pe>> iterator = map.entrySet().iterator();
+        while (iterator.hasNext()){
+            Map.Entry<String, Pe> next = iterator.next();
+            Pe value = next.getValue();
+            System.out.println(value.getAge()+"---"+value.getName());
+        }
 
 
         List<String> webAccounts =new ArrayList<>();
