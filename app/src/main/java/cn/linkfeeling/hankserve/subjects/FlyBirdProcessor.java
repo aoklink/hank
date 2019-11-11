@@ -228,7 +228,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
                             matchResult.setMatch_time(String.valueOf(second));
                             matchResult.setMatch_two(String.valueOf(CalculateUtil.byteToInt(bytes[2])));
                             matchResult.setMatch_three(String.valueOf(CalculateUtil.byteToInt(bytes[3])));
-                            EventBus.getDefault().post(matchResult);
+                         //   EventBus.getDefault().post(matchResult);
 
 
                         }
