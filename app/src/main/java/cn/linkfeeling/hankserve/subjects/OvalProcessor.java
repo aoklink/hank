@@ -76,8 +76,6 @@ public class OvalProcessor implements IDataAnalysis {
         byte[] seqNum = {serviceData[4], serviceData[5]};
         Log.i("87878787"+bleName, Arrays.toString(serviceData));
         Log.i("87878787"+bleName, "flag---"+flag);
-        Log.i("87878787"+bleName, "seq---"+CalculateUtil.byteArrayToInt(seqNum));
-
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
             return null;
         }
@@ -88,9 +86,9 @@ public class OvalProcessor implements IDataAnalysis {
         Log.i("87878787"+bleName, "seq---"+CalculateUtil.byteArrayToInt(seqNum));
 
         boolean b = dealPowerData(serviceData, deviceByBleName, bleName);
-        if (b) {
+       /* if (b) {
             return null;
-        }
+        }*/
 
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
@@ -120,7 +118,10 @@ public class OvalProcessor implements IDataAnalysis {
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
             if (System.currentTimeMillis() - startTime >= 5 * 1000) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
-                if (s != null && !FinalDataManager.getInstance().getDevice_wristbands().values().contains(s)) {
+
+                if (s != null
+                        && !FinalDataManager.getInstance().getDevice_wristbands().values().contains(s)
+                        && FinalDataManager.getInstance().getWebAccounts().contains(s)) {
                     String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
                     if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
                         LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
