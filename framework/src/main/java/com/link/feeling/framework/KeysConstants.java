@@ -84,8 +84,8 @@ public interface KeysConstants {
 
 
     // prod
-    String SERVER_URL = "tcp://post-cn-0pp1bk98n05.mqtt.aliyuncs.com";
-    String INSTANCE_ID = "post-cn-0pp1bk98n05";
+    String SERVER_URL = "tcp://post-cn-v0h19rdwa01.mqtt.aliyuncs.com";
+    String INSTANCE_ID = "post-cn-v0h19rdwa01";
 
     String ACCESS_KEY = "LTAI4FqhrxZucA2dtP28TQ9U";
     String SECRET_KEY = "O5HjD9LuKlqKa8kUJg15vGQBSjta6f";
