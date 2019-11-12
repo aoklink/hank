@@ -463,7 +463,7 @@ public class LinkDataManager {
             point.setId(deviceId);
             String key = next.getKey();
             if (value.contains(point)
-                    && FinalDataManager.getInstance().queryUwb(next.getKey()) == null
+                    && FinalDataManager.getInstance().queryUwb(key) == null
                     && FinalDataManager.getInstance().getWebAccounts().contains(LinkDataManager.getInstance().uwbCode_wristbandName.get(key))) {
                 newCaculate.put(key, value);
             }
