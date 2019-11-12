@@ -6,9 +6,21 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
 import com.link.feeling.framework.base.BaseApplication;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.net.NetworkInterface;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Created on 2019/1/26  13:49
@@ -101,5 +113,97 @@ public final class DeviceUtils {
             e.printStackTrace();
             return "1.0.0";
         }
+    }
+
+
+
+    public static String getMac() {
+        String mac;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            mac = getMacDefault();
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            mac = getMacAddress();
+        } else {
+            mac = getMacFromHardware();
+        }
+        return mac;
+    }
+
+    /**
+     * Android 6.0 之前（不包括6.0）获取mac地址
+     * 必须的权限 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
+     */
+    @SuppressLint({"WifiManagerPotentialLeak", "HardwareIds"})
+    private static String getMacDefault() {
+        String mac = "";
+        try {
+            WifiManager wifi = (WifiManager) sContext.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo info;
+            info = wifi.getConnectionInfo();
+            if (info == null) {
+                return null;
+            }
+            mac = info.getMacAddress();
+            if (!StringUtils.isEmpty(mac)) {
+                mac = mac.toUpperCase(Locale.ENGLISH);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mac;
+    }
+
+    /**
+     * Android 6.0-Android 7.0 获取mac地址
+     */
+    private static String getMacAddress() {
+        String macSerial = null;
+        String str = "";
+        try {
+            Process pp = Runtime.getRuntime().exec("cat/sys/class/net/wlan0/address");
+            InputStreamReader ir = new InputStreamReader(pp.getInputStream());
+            LineNumberReader input = new LineNumberReader(ir);
+            while (null != str) {
+                str = input.readLine();
+                if (str != null) {
+                    macSerial = str.trim();//去空格
+                    break;
+                }
+            }
+        } catch (IOException ex) {
+            // 赋予默认值
+            ex.printStackTrace();
+        }
+        return macSerial;
+    }
+
+    /**
+     * Android 7.0之后获取Mac地址
+     * 遍历循环所有的网络接口，找到接口是 wlan0
+     * 必须的权限 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+     *
+     * @return
+     */
+    private static String getMacFromHardware() {
+        try {
+            ArrayList<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0"))
+                    continue;
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) return "";
+                StringBuilder res1 = new StringBuilder();
+                for (Byte b : macBytes) {
+                    res1.append(String.format("%02X:", b));
+                }
+                if (!TextUtils.isEmpty(res1)) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

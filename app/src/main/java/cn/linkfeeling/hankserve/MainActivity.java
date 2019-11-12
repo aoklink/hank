@@ -17,6 +17,11 @@ import com.link.feeling.framework.base.FrameworkBaseActivity;
 import com.link.feeling.framework.executor.ThreadPoolManager;
 import com.link.feeling.framework.utils.data.L;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.json.JSONObject;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,9 +35,12 @@ import java.util.concurrent.TimeUnit;
 import cn.linkfeeling.hankserve.adapter.BLEAdapter;
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.DevicePower;
+import cn.linkfeeling.hankserve.bean.InitialBind;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
+import cn.linkfeeling.hankserve.bean.WebAccount;
+import cn.linkfeeling.hankserve.bean.WebPushBind;
 import cn.linkfeeling.hankserve.bean.Wristband;
 import cn.linkfeeling.hankserve.bean.WristbandPower;
 import cn.linkfeeling.hankserve.factory.DataProcessorFactory;
@@ -41,6 +49,7 @@ import cn.linkfeeling.hankserve.interfaces.IDataAnalysis;
 import cn.linkfeeling.hankserve.interfaces.IWristbandDataAnalysis;
 import cn.linkfeeling.hankserve.manager.FinalDataManager;
 import cn.linkfeeling.hankserve.manager.LinkDataManager;
+import cn.linkfeeling.hankserve.mqtt.MqttManager;
 import cn.linkfeeling.hankserve.queue.UwbQueue;
 import cn.linkfeeling.hankserve.ui.IUploadContract;
 import cn.linkfeeling.hankserve.ui.UploadPresenter;
@@ -75,7 +84,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
     private List<DevicePower.DataBean> devicePowerList = new ArrayList<>();
     private List<BleDeviceInfo> bleDeviceInfos = new ArrayList<>();
     private static final int Untied_Time = 150;
-
+    private MqttManager mqttManager;
 
     @Override
     protected int getLayoutRes() {
@@ -101,10 +110,111 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
             startServer();
         }
         // UDPBroadcast.udpBroadcast(this);
+        connectMqtt();
         connectWebSocket();
         startIntervalListener();
         startIntervalPowerUpload();
         startIntervalDevicePowerUpload();
+    }
+
+
+    private void connectMqtt() {
+        if (mqttManager == null) {
+            mqttManager = MqttManager.newInstance();
+            mqttManager.connect(new MqttCallbackExtended() {
+                @Override
+                public void connectComplete(boolean reconnect, String serverURI) {
+                    //mqtt连接成功
+                    if (reconnect) {
+                        Log.e("333333333333333", "wwwwwwwwww");
+                    }
+
+                    mqttManager.subscribeToTopic();
+                    //   mqttManager.publishMessage(JSON.toJSONString(new MqttRequest(1, BuildConfig.GYM_NAME)));
+                    Log.e("333333333333333", "connectComplete--");
+
+                }
+
+                @Override
+                public void connectionLost(Throwable cause) {
+                    //mqtt连接失败
+                    Log.i("333333333333333", "connectionLost--");
+                    while (true) {
+                        try {//如果没有发生异常说明连接成功，如果发生异常，则死循环
+                            Thread.sleep(1000);
+                            mqttManager.reConnect();
+                            break;
+                        } catch (Exception e) {
+                            continue;
+                        }
+                    }
+
+                }
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+                    //{"data":["I7D712"],"type":100}
+                    //  {"bracelet":"I7PLUSC9B5","type":160,"device":"跑步机01","status":true}
+                    //{"bracelet":"I7PLUSC9B5","type":160,"device":"","status":false}
+                    //接收mqtt推送的数据
+                    String s = null;
+                    try {
+                        s = new String(message.getPayload());
+                        JSONObject jsonObject=new JSONObject(s);
+                        if(jsonObject.has("type")){
+                            int type = jsonObject.getInt("type");
+                            if(type==100){
+                                WebAccount webAccount = gson.fromJson(s, WebAccount.class);
+                                List<String> data = webAccount.getData();
+                                FinalDataManager.getInstance().getWebAccounts().clear();
+                                FinalDataManager.getInstance().getWebAccounts().addAll(data);
+                            }
+                            if(type==161){
+                                WebPushBind webPushBind=gson.fromJson(s,WebPushBind.class);
+                                if(webPushBind.isStatus()){
+                                    if(!"".equals(webPushBind.getDevice())){
+                                        FinalDataManager.getInstance().getDevice_wristbands().put(webPushBind.getDevice(),webPushBind.getBracelet());
+                                    }
+                                }
+                                if(!webPushBind.isStatus()){
+                                    ConcurrentHashMap<String, String> device_wristbands = FinalDataManager.getInstance().getDevice_wristbands();
+                                    if(device_wristbands!=null && !device_wristbands.isEmpty()){
+                                        if(webPushBind.getDevice()!=null){
+                                            BleDeviceInfo bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(webPushBind.getBracelet());
+                                            if(bleDeviceInfo!=null){
+                                                LinkDataManager.getInstance().cleanBleDeviceInfo(bleDeviceInfo);
+                                            }
+                                            device_wristbands.remove(webPushBind.getDevice());
+                                        }
+                                    }
+                                }
+                            }
+                            if(type==160){
+                                //    {"data":[{"bracelet":"I7D712","device":"飞鸟架01"}],"type":160}
+                                InitialBind initialBind=gson.fromJson(s,InitialBind.class);
+                                if(initialBind!=null){
+                                    List<InitialBind.DataBean> data = initialBind.getData();
+                                    if(data!=null){
+                                        FinalDataManager.getInstance().getDevice_wristbands().clear();
+                                        for (InitialBind.DataBean datum : data) {
+                                            String bracelet = datum.getBracelet();
+                                            String device = datum.getDevice();
+                                            FinalDataManager.getInstance().getDevice_wristbands().put(device,bracelet);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Log.e("333333333333333", "---messageArrived::" + s);
+                }
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken token) {
+                    Log.i("333333333333333", "deliveryComplete--");
+                }
+            });
+        }
     }
 
 

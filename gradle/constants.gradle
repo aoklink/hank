@@ -57,6 +57,9 @@ ext {
             "objectbox-browser"   : "io.objectbox:objectbox-android-objectbrowser:$objectboxVersion",
             "objectbox"           : "io.objectbox:objectbox-android:$objectboxVersion",
             // video player
-            "videoplayer"         : "cn.jzvd:jiaozivideoplayer:6.4.1"
+            "videoplayer"         : "cn.jzvd:jiaozivideoplayer:6.4.1",
+            // mqtt
+            "mqtt"                : 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0',
+            "mqtt-service"        : 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1',
     ]
 }

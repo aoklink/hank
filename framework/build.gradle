@@ -45,6 +45,8 @@ dependencies {
     implementation rootProject.ext.dependencies["kotlin-stdlib-jdk8"]
     implementation rootProject.ext.dependencies["objectbox"]
     implementation rootProject.ext.dependencies["videoplayer"]
+    api rootProject.ext.dependencies["mqtt"]
+    api rootProject.ext.dependencies["mqtt-service"]
 }
 
 apply plugin: 'io.objectbox'
