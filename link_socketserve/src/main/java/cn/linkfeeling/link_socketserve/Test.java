@@ -16,14 +16,12 @@ import cn.linkfeeling.link_socketserve.interfaces.SocketCallBack;
 public class Test {
     public static void main(String args[]) {
 
-        Gson gson = new Gson();
-        ScanData scanData = new ScanData();
-        scanData.setName("123321");
+        byte  jj=49;
 
-        String s = gson.toJson(scanData);
-        ScanData scanData1 = gson.fromJson(s, ScanData.class);
+        char kk= (char) jj;
 
-        Log.i("cccccccccc", scanData.toString() + "===" + scanData1.toString());
+        System.out.println(kk);
+
 
 
     }
