@@ -45,9 +45,10 @@ public class TreadMillProcessor implements IDataAnalysis {
     }
 
     @Override
-    public BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
+    public synchronized BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
         Log.i("pppppppppppppp", Arrays.toString(scanRecord));
         BleDeviceInfo bleDeviceInfoNow;
+        BleDeviceInfo bleDeviceInfo = null;
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
         if (scanRecord == null || deviceByBleName == null) {
             return null;
@@ -61,37 +62,37 @@ public class TreadMillProcessor implements IDataAnalysis {
         if (start && speedInt > 0) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             startTime = System.currentTimeMillis();
+            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+            FinalDataManager.getInstance().getAlternative().remove(fenceId);
             start = false;
         }
         if (select && speedInt > 0 && System.currentTimeMillis() - startTime >= 5 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
-            if (spareTire == null || spareTire.isEmpty()) {
-                Log.i("pppppppp", "-5-5-5");
+            if (spareTire != null && !spareTire.isEmpty()) {
+                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+                for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                    String key = next.getKey();
+                    UWBCoordData uwbCoordData = new UWBCoordData();
+                    uwbCoordData.setCode(key);
+                    uwbCoordData.setSemaphore(0);
+                    uwbCoordData.setDevice(deviceByBleName);
+                    queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+
+                }
+                Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
+                FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
                 select = false;
-                return null;
             }
 
-            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
-            for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
-                String key = next.getKey();
-                UWBCoordData uwbCoordData = new UWBCoordData();
-                uwbCoordData.setCode(key);
-                uwbCoordData.setSemaphore(0);
-                uwbCoordData.setDevice(deviceByBleName);
-                queueConcurrentHashMap.put(uwbCoordData, next.getValue());
-
-            }
-            Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
-
-            FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-            select = false;
         }
 
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
             if (System.currentTimeMillis() - startTime >= 5 * 1000 && speedInt > 0) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
-                if (s != null) {
+                if (s != null
+                        && !FinalDataManager.getInstance().getDevice_wristbands().values().contains(s)
+                        && FinalDataManager.getInstance().getWebAccounts().contains(s)) {
                     String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
                     if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
                         LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
@@ -125,9 +126,20 @@ public class TreadMillProcessor implements IDataAnalysis {
             bleDeviceInfoNow.setSpeed(String.valueOf(floatSpeed));
             bleDeviceInfoNow.setGradient(String.valueOf(floatGradient));
         }
+        bleDeviceInfo=LinkDataManager.getInstance().getWebFinalBind(deviceByBleName);
+        if (bleDeviceInfo != null) {
+            bleDeviceInfo.setDevice_name(deviceByBleName.getDeviceName());
+            bleDeviceInfo.setSpeed(String.valueOf(floatSpeed));
+            bleDeviceInfo.setGradient(String.valueOf(floatGradient));
+        }
+
+
         if (speedInt == 0) {
             start = true;
             select = true;
+            if(bleDeviceInfo!=null){
+                LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
+            }
             //解除绑定
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {

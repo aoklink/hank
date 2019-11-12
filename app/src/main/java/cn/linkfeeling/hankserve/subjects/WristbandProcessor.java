@@ -46,7 +46,7 @@ public class WristbandProcessor extends IWristbandDataAnalysis {
 
 
     @Override
-    public BleDeviceInfo analysisWristbandData(BleDeviceInfo bleDeviceInfo, byte[] bytes, String bleName) {
+    public synchronized BleDeviceInfo analysisWristbandData(BleDeviceInfo bleDeviceInfo, byte[] bytes, String bleName) {
         if (bytes == null) {
             return null;
         }

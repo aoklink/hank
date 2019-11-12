@@ -77,7 +77,7 @@ public class AnchProcessor extends IAnchDataAnalysis {
     }
 
     @Override
-    public void analysisAnchData(byte[] bytes, String bleName) {
+    public synchronized void analysisAnchData(byte[] bytes, String bleName) {
         //[2, 1, 6, 19, 22, 10, 24, 3, -3, -95, -44, -41, 18, -44, -27, -66, -50, 2, 54, 0, 0, 0, 0, 7, 9, 65, 78, 67, 72, 48, 49, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         Log.i("anchBLE", Arrays.toString(bytes));
         Log.i("anchBLE", bleName);

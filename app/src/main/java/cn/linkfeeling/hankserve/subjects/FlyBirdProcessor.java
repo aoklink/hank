@@ -49,6 +49,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     @Override
     public synchronized BleDeviceInfo analysisBLEData(byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
+        BleDeviceInfo bleDeviceInfo = null;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
         if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
@@ -59,12 +60,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (serviceData == null) {
             return null;
         }
-
-
-        //   dealPowerData(serviceData, deviceByBleName, bleName);
-//        if(serviceData[0]!=0 && serviceData[0]!=-1){
-//            deviceByBleName.setAbility(serviceData[0]);
-//        }
         byte[] seqNum = {serviceData[11], serviceData[12]};
 
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
@@ -85,38 +80,38 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             startTime = System.currentTimeMillis();
+            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+            FinalDataManager.getInstance().getAlternative().remove(fenceId);
             start = false;
         }
 
         if (select && System.currentTimeMillis() - startTime >= 10 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
-            if (spareTire == null || spareTire.isEmpty()) {
-                Log.i("pppppppp", "-5-5-5");
+            if (spareTire != null && !spareTire.isEmpty()) {
+                ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
+                for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
+                    String key = next.getKey();
+                    UWBCoordData uwbCoordData = new UWBCoordData();
+                    uwbCoordData.setCode(key);
+                    uwbCoordData.setSemaphore(0);
+                    uwbCoordData.setDevice(deviceByBleName);
+                    queueConcurrentHashMap.put(uwbCoordData, next.getValue());
+
+                }
+                Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
+
+                FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
                 select = false;
-                return null;
             }
-
-            ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
-            for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
-                String key = next.getKey();
-                UWBCoordData uwbCoordData = new UWBCoordData();
-                uwbCoordData.setCode(key);
-                uwbCoordData.setSemaphore(0);
-                uwbCoordData.setDevice(deviceByBleName);
-                queueConcurrentHashMap.put(uwbCoordData, next.getValue());
-
-            }
-            Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
-
-            FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-            select = false;
         }
 
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
             if (CalculateUtil.byteToInt(serviceData[13]) > 0) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
-                if (s != null) {
+                if (s != null
+                        && !FinalDataManager.getInstance().getDevice_wristbands().values().contains(s)
+                        && FinalDataManager.getInstance().getWebAccounts().contains(s)) {
                     String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
                     if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
                         LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
@@ -129,6 +124,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
 
+        bleDeviceInfo=LinkDataManager.getInstance().getWebFinalBind(deviceByBleName);
+
 
         if (serviceData[0] != -1 && serviceData[0] != 0 && serviceData[1] != -1 && serviceData[1] != 0) {
             for (int j = 0; j < 10; j++) {
@@ -137,6 +134,12 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
                     bleDeviceInfoNow.getCurve().add(cuv1);
                     bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+                }
+
+                if (bleDeviceInfo != null) {
+                    bleDeviceInfo.setDevice_name(deviceByBleName.getDeviceName());
+                    bleDeviceInfo.getCurve().add(cuv1);
+                    bleDeviceInfo.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
                 }
 
             }
@@ -152,7 +155,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
             FinalDataManager.getInstance().getAlternative().remove(fenceId);
 
             if (serviceData[10] == 0 || serviceData[13] == 0) {
-                //       deviceByBleName.setAbility(0);
                 return null;
             }
             byte act_time = serviceData[13];
@@ -172,10 +174,18 @@ public class FlyBirdProcessor implements IDataAnalysis {
             if (bleDeviceInfoNow != null) {
                 bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
                 bleDeviceInfoNow.setGravity(String.valueOf(actualGravity));
-                bleDeviceInfoNow.setTime(String.valueOf(act_time));
+                bleDeviceInfoNow.setTime(String.valueOf(CalculateUtil.byteToInt(act_time)));
                 bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
                 bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
-                //    deviceByBleName.setAbility(0);
+            }
+
+            if (bleDeviceInfo != null) {
+                bleDeviceInfo.setDevice_name(deviceByBleName.getDeviceName());
+                bleDeviceInfo.setGravity(String.valueOf(actualGravity));
+                bleDeviceInfo.setTime(String.valueOf(CalculateUtil.byteToInt(act_time)));
+                bleDeviceInfo.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
+                bleDeviceInfo.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+                FinalDataManager.getInstance().getWristbands().put(bleDeviceInfo.getBracelet_id(),bleDeviceInfo);
             }
 
         }
