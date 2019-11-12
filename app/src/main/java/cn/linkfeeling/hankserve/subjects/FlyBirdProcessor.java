@@ -101,8 +101,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
 
                 FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-                select = false;
             }
+            select = false;
         }
 
 
@@ -185,7 +185,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 bleDeviceInfo.setTime(String.valueOf(CalculateUtil.byteToInt(act_time)));
                 bleDeviceInfo.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
                 bleDeviceInfo.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
-                FinalDataManager.getInstance().getWristbands().put(bleDeviceInfo.getBracelet_id(),bleDeviceInfo);
             }
 
         }

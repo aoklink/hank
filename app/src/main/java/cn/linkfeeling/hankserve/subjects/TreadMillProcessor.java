@@ -66,7 +66,7 @@ public class TreadMillProcessor implements IDataAnalysis {
             FinalDataManager.getInstance().getAlternative().remove(fenceId);
             start = false;
         }
-        if (select && speedInt > 0 && System.currentTimeMillis() - startTime >= 5 * 1000) {
+        if (select && speedInt > 0 && System.currentTimeMillis() - startTime >= 10 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire != null && !spareTire.isEmpty()) {
                 ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
@@ -81,14 +81,14 @@ public class TreadMillProcessor implements IDataAnalysis {
                 }
                 Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
                 FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-                select = false;
             }
+            select = false;
 
         }
 
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
-            if (System.currentTimeMillis() - startTime >= 5 * 1000 && speedInt > 0) {
+            if (System.currentTimeMillis() - startTime >= 10 * 1000 && speedInt > 0) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
                 if (s != null
                         && !FinalDataManager.getInstance().getDevice_wristbands().values().contains(s)
