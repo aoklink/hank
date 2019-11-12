@@ -129,8 +129,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 }
                 FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
                 FinalDataManager.getInstance().getMatchTemp().put(deviceByBleName.getFencePoint().getFenceId(), tempHashMap);
-                start = false;
             }
+            start = false;
         }
 
         long diffTime = System.currentTimeMillis() - startTime;
@@ -239,7 +239,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
-            //System.currentTimeMillis() - startTime >= 5 * 1000
             if (serviceData[13] > 0) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
                 if (s != null
@@ -313,7 +312,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 bleDeviceInfo.setTime(String.valueOf(act_time));
                 bleDeviceInfo.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
                 bleDeviceInfo.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
-                FinalDataManager.getInstance().getWristbands().put(bleDeviceInfo.getBracelet_id(),bleDeviceInfo);
             }
 
         }
