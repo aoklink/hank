@@ -67,7 +67,7 @@
         <!-- Mqtt Service -->
         <service android:name="org.eclipse.paho.android.service.MqttService" />
 
-        <provider android:name="cn.bmob.v3.util.BmobContentProvider" android:authorities="cn.linkfeeling.hankserve.BmobContentProvider"/>
+        <provider android:name="cn.bmob.v3.util.BmobContentProvider" android:authorities="cn.linkfeeling.hankserve_xiaobai.BmobContentProvider"/>
     </application>
 
 </manifest>
