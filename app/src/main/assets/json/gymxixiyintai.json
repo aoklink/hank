@@ -53,7 +53,7 @@
     },
     {
       "id": 1,
-      "deviceName": "跑步机001",
+      "deviceName": "跑步机01",
       "anchName": "ANCH38",
       "type": "跑步机",
       "fencePoint": {
@@ -89,7 +89,7 @@
     },
     {
       "id": 2,
-      "deviceName": "跑步机002",
+      "deviceName": "跑步机02",
       "anchName": "ANCH02",
       "type": "跑步机",
       "fencePoint": {
@@ -125,7 +125,7 @@
     },
     {
       "id": 3,
-      "deviceName": "跑步机003",
+      "deviceName": "跑步机03",
       "anchName": "ANCH39",
       "type": "跑步机",
       "fencePoint": {
@@ -161,7 +161,7 @@
     },
     {
       "id": 4,
-      "deviceName": "椭圆机001",
+      "deviceName": "椭圆机01",
       "anchName": "ANCH04",
       "type": "椭圆机",
       "fencePoint": {
