@@ -59,6 +59,8 @@ public class AnchProcessor extends IAnchDataAnalysis {
         mac_label.put("D712", I7);
         mac_label.put("E5BE", I7);
         mac_label.put("E987", I7);
+        mac_label.put("F604", I7);
+        mac_label.put("E983", I7);
     }
 
 
