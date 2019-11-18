@@ -4,7 +4,7 @@ android {
     useLibrary 'org.apache.http.legacy'
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     defaultConfig {
-        applicationId "cn.linkfeeling.hankserve"
+        applicationId "cn.linkfeeling.hankserve_ruili"
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.versionCode

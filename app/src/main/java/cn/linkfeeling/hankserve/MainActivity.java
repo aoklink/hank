@@ -1,5 +1,6 @@
 package cn.linkfeeling.hankserve;
 
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,6 +48,7 @@ import cn.linkfeeling.hankserve.bean.FlagStatus;
 import cn.linkfeeling.hankserve.bean.InitialBind;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.MatchResult;
+import cn.linkfeeling.hankserve.bean.MatchStatistic;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.UWBCoordData;
 import cn.linkfeeling.hankserve.bean.WebAccount;
@@ -131,6 +134,7 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         startIntervalPowerUpload();
         startIntervalDevicePowerUpload();
     }
+
 
 
     private void connectMqtt() {
@@ -708,6 +712,11 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         showToast(status ? "设备电量上传成功" : throwable.getMessage());
     }
 
+    @Override
+    public void uploadMatchLogStatus(boolean status) {
+        showToast(status ? "匹配日志上报成功" : "匹配日志上报失败");
+    }
+
 
     private void updateData(BleDeviceInfo bleDeviceInfo) {
         int index = bleDeviceInfos.indexOf(bleDeviceInfo);
@@ -758,6 +767,12 @@ public class MainActivity extends FrameworkBaseActivity<IUploadContract.IBleUplo
         matchAdapter.notifyDataSetChanged();
         match_recycleView.scrollToPosition(matchAdapter.getItemCount() - 1);
 
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void receiveMatchFinalData(MatchStatistic matchStatistic) {
+        getPresenter().uploadMatchLog(matchStatistic);
     }
 
 

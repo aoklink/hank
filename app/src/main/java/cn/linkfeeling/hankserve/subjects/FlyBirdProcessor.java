@@ -25,6 +25,7 @@ import cn.linkfeeling.hankserve.bean.FlagStatus;
 import cn.linkfeeling.hankserve.bean.LinkBLE;
 import cn.linkfeeling.hankserve.bean.LinkSpecificDevice;
 import cn.linkfeeling.hankserve.bean.MatchResult;
+import cn.linkfeeling.hankserve.bean.MatchStatistic;
 import cn.linkfeeling.hankserve.bean.NDKTools;
 import cn.linkfeeling.hankserve.bean.Point;
 import cn.linkfeeling.hankserve.bean.Power;
@@ -49,6 +50,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
     private LimitQueue<Integer> deviceSeq = new LimitQueue<>(200);
+    private MatchQueue<Byte> devicesData = new MatchQueue<>(1500);
     private List<Byte> devicesList = new ArrayList<>();
     private int flag = -1;
     private boolean select = true;
@@ -104,6 +106,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             FinalDataManager.getInstance().getAlternative().remove(fenceId);
             devicesList.clear();
+            devicesData.clear();
 
 /*            ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire.isEmpty()) {
@@ -278,6 +281,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     bleDeviceInfo.getCurve().add(cuv1);
                     bleDeviceInfo.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
                 }
+                devicesData.offer(serviceData[j]);
                 //   devicesList.add(serviceData[j]);
             }
             //  deviceSeq.offer(CalculateUtil.byteArrayToInt(seqNum));
@@ -312,6 +316,157 @@ public class FlyBirdProcessor implements IDataAnalysis {
             }
 
             byte u_time = serviceData[14];
+
+
+            try {
+                Log.i("finalData", "绑定了mmmmm");
+                if (bleDeviceInfoNow != null && deviceByBleName.isHand()) {
+                    Log.i("finalData", "绑定了？");
+                    String bracelet_id = bleDeviceInfoNow.getBracelet_id();
+                    if (bracelet_id != null) {
+                        Log.i("finalDatashouhuan", bracelet_id);
+                        WristbandProcessor wristbandProcessor = WristbandProcessor.map.get(bracelet_id);
+                        if (wristbandProcessor != null) {
+                            MatchQueue<AccelData> watchQueue = wristbandProcessor.getWatchQueue();
+                            if (watchQueue != null) {
+                                List<Byte> deviceList = new ArrayList<>(devicesData);
+                                byte[] deviceData = new byte[devicesData.size()];
+                                for (int i = 0; i < deviceList.size(); i++) {
+                                    deviceData[i] = deviceList.get(i);
+                                }
+                                if (System.currentTimeMillis() - startTime >= 60 * 1000) {
+                                    //只取60s的数据
+                                    AccelData[] accelData = new AccelData[watchQueue.size()];
+                                    List<AccelData> temp = new ArrayList<>(watchQueue);
+                                    for (int i = 0; i < temp.size(); i++) {
+                                        accelData[i] = temp.get(i);
+                                    }
+
+                                    Log.i("wwwwww-----", Arrays.toString(accelData));
+                                    WatchData watchData = new WatchData();
+                                    watchData.setData(accelData);
+                                    int result = NDKTools.match_data(deviceData, (short) deviceData.length, watchData, (short) watchQueue.size());
+                                    Log.i("wwwwww----", result + "");
+                                    byte[] bytes = CalculateUtil.intToByteArray(result);
+
+                                    int watchNum = bytes[2];
+                                    int deviceNum = bytes[3];
+
+                                    Log.i("finalData60", watchNum + "------" + deviceNum + "------" + CalculateUtil.byteToInt(act_time));
+                                    MatchStatistic matchStatistic = new MatchStatistic();
+                                    matchStatistic.setGymName(BuildConfig.GYM_NAME);
+                                    matchStatistic.setDeviceName(deviceByBleName.getDeviceName());
+                                    matchStatistic.setBleName(bleName);
+                                    matchStatistic.setSensorNum(String.valueOf(CalculateUtil.byteToInt(act_time)));
+                                    matchStatistic.setAlgorithmWatchNum(String.valueOf(watchNum));
+                                    matchStatistic.setAlgorithmDeviceNum(String.valueOf(deviceNum));
+                                    matchStatistic.setWatchName(bracelet_id);
+
+                                    EventBus.getDefault().post(matchStatistic);
+
+                               /*     if (deviceNum > 5) {
+                                        float matchRate = 1 - CalculateUtil.txFloat(Math.abs(watchNum - deviceNum), deviceNum);
+                                        if (deviceNum <= 9) {
+                                            if (matchRate < 0.5) {
+                                                //解绑
+                                                if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+                                                    FinalDataManager.getInstance().removeUwb(fenceId);
+                                                    return null;
+                                                }
+
+                                            }
+                                        } else if (deviceNum <= 20) {
+                                            if (matchRate < 0.6) {
+                                                //解绑
+                                                if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+                                                    FinalDataManager.getInstance().removeUwb(fenceId);
+                                                    return null;
+                                                }
+                                            }
+                                        } else {
+                                            if (matchRate < 0.7) {
+                                                //解绑
+                                                if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+                                                    FinalDataManager.getInstance().removeUwb(fenceId);
+                                                    return null;
+                                                }
+                                            }
+                                        }
+                                    }*/
+                                } else if (System.currentTimeMillis() - startTime > 10 * 1000) {
+                                    //大于10s
+                                    int diffTimeT = (int) ((System.currentTimeMillis() - startTime) / 1000);
+                                    int watchNumB = diffTimeT * 6;
+                                    Log.i("wwwwww", watchNumB + "");
+                                    if (watchQueue.size() >= watchNumB) {
+                                        AccelData[] accelData = new AccelData[watchNumB];
+                                        List<AccelData> temp = new ArrayList<>(watchQueue);
+                                        for (int i = 0; i < accelData.length; i++) {
+                                            accelData[i] = temp.get(temp.size() - watchNumB + i);
+                                        }
+                                        Log.i("wwwwww", watchNumB + "----" + accelData.length);
+
+                                        Log.i("wwwwww", gson.toJson(new ArrayList<>(Arrays.asList(accelData))));
+
+                                        WatchData watchData = new WatchData();
+                                        watchData.setData(accelData);
+                                        int result = NDKTools.match_data(deviceData, (short) deviceData.length, watchData, (short) watchNumB);
+                                        byte[] bytes = CalculateUtil.intToByteArray(result);
+                                        int watchNum = bytes[2];
+                                        int deviceNum = bytes[3];
+                                        Log.i("finalData10", watchNum + "------" + deviceNum + "------" + CalculateUtil.byteToInt(act_time));
+                                        MatchStatistic matchStatistic = new MatchStatistic();
+                                        matchStatistic.setGymName(BuildConfig.GYM_NAME);
+                                        matchStatistic.setDeviceName(deviceByBleName.getDeviceName());
+                                        matchStatistic.setBleName(bleName);
+                                        matchStatistic.setSensorNum(String.valueOf(CalculateUtil.byteToInt(act_time)));
+                                        matchStatistic.setAlgorithmWatchNum(String.valueOf(watchNum));
+                                        matchStatistic.setAlgorithmDeviceNum(String.valueOf(deviceNum));
+                                        matchStatistic.setWatchName(bracelet_id);
+
+                                        EventBus.getDefault().post(matchStatistic);
+
+
+                                  /*      if (deviceNum > 5) {
+                                            float matchRate = 1 - CalculateUtil.txFloat(Math.abs(watchNum - deviceNum), deviceNum);
+                                            if (deviceNum <= 9) {
+                                                if (matchRate < 0.5) {
+                                                    //解绑
+                                                    if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+                                                        FinalDataManager.getInstance().removeUwb(fenceId);
+                                                        return null;
+                                                    }
+
+                                                }
+                                            } else if (deviceNum <= 20) {
+                                                if (matchRate < 0.6) {
+                                                    //解绑
+                                                    if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+                                                        FinalDataManager.getInstance().removeUwb(fenceId);
+                                                        return null;
+                                                    }
+                                               }
+                                            } else {
+                                                if (matchRate < 0.7) {
+                                                    //解绑
+                                                    if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {
+                                                        FinalDataManager.getInstance().removeUwb(fenceId);
+                                                        return null;
+                                                    }
+                                                }
+                                            }
+
+                                        }*/
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
 
             if (bleDeviceInfoNow != null) {
                 bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());

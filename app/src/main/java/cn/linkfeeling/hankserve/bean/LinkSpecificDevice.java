@@ -12,6 +12,7 @@ public class LinkSpecificDevice {
     private String deviceName;
     private String anchName;
     private String type; //设备类型
+    private boolean hand;
     private float perimeter;
     private float slope;
  //   private float ability;  //设备的当前速度，判断是否在运转
@@ -41,6 +42,14 @@ public class LinkSpecificDevice {
 //
 //    }
 
+
+    public boolean isHand() {
+        return hand;
+    }
+
+    public void setHand(boolean hand) {
+        this.hand = hand;
+    }
 
     public String getAnchName() {
         return anchName;

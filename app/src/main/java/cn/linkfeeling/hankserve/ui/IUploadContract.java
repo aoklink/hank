@@ -5,6 +5,7 @@ import com.link.feeling.framework.base.BaseMvpView;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.DevicePower;
+import cn.linkfeeling.hankserve.bean.MatchStatistic;
 import cn.linkfeeling.hankserve.bean.WristbandPower;
 
 
@@ -18,11 +19,16 @@ public interface IUploadContract {
         void uploadBleStatus(BleDeviceInfo temp,BleDeviceInfo bleDeviceInfo,boolean status,Throwable e);
         void uploadWristPowerStatus(boolean status,Throwable throwable);
         void uploadDevicePowerStatus(boolean status,Throwable throwable);
+        void uploadMatchLogStatus(boolean status);
     }
 
     interface IBleUploadPresenter extends BaseMvpPresenter<IBleUploadView> {
-        void uploadBleData(BleDeviceInfo temp,BleDeviceInfo bleDeviceInfo);
+        void uploadBleData(BleDeviceInfo temp, BleDeviceInfo bleDeviceInfo);
+
         void uploadWristPower(WristbandPower wristbandPower);
+
         void uploadDevicePower(DevicePower devicePower);
+
+        void uploadMatchLog(MatchStatistic matchStatistic);
     }
 }

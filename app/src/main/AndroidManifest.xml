@@ -58,7 +58,7 @@
 
         <provider
             android:name="cn.bmob.v3.util.BmobContentProvider"
-            android:authorities="cn.linkfeeling.hankserve.BmobContentProvider">
+            android:authorities="cn.linkfeeling.hankserve_ruili.BmobContentProvider">
         </provider>
     </application>
 

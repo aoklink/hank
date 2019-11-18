@@ -79,7 +79,6 @@ public class BicycleProcessor implements IDataAnalysis {
         Log.i("87878787单车", "seqNum----"+CalculateUtil.byteArrayToInt(seqNum));
 
 
-
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
          //   uploadFlagStatus(CalculateUtil.byteArrayToInt(seqNum),flag,deviceByBleName,bleName);
             return null;
