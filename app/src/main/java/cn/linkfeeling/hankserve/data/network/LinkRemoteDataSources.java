@@ -5,6 +5,7 @@ import com.link.feeling.framework.component.net.NetResult;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.DevicePower;
+import cn.linkfeeling.hankserve.bean.MatchStatistic;
 import cn.linkfeeling.hankserve.bean.WristbandPower;
 import cn.linkfeeling.hankserve.data.LinkApi;
 import io.reactivex.Single;
@@ -38,6 +39,12 @@ public final class LinkRemoteDataSources implements LinkDataSources{
     public Single<NetResult<Object>> uploadDevicePower(DevicePower request) {
         return mApi.uploadDevicePower(request);
     }
+
+    @Override
+    public Single<NetResult<Object>> uploadMatchResult(MatchStatistic matchStatistic) {
+        return mApi.uploadMatchResult(matchStatistic);
+    }
+
 
 
 }

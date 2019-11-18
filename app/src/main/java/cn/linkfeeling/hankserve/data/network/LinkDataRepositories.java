@@ -5,6 +5,7 @@ import com.link.feeling.framework.component.net.FrameworkNet;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.DevicePower;
+import cn.linkfeeling.hankserve.bean.MatchStatistic;
 import cn.linkfeeling.hankserve.bean.WristbandPower;
 import io.reactivex.Completable;
 
@@ -50,6 +51,16 @@ public final class LinkDataRepositories {
      */
     public Completable uploadPowerPowerData(DevicePower request) {
         return mRemoteDataSources.uploadDevicePower(request).flatMapCompletable(completableFun());
+    }
+
+
+    /**
+     * 上报匹配日志
+     * @param request
+     * @return
+     */
+    public Completable uploadMatchLog(MatchStatistic request) {
+        return mRemoteDataSources.uploadMatchResult(request).flatMapCompletable(completableFun());
     }
 
 }

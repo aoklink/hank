@@ -6,6 +6,7 @@ import com.link.feeling.framework.component.net.NetResult;
 
 import cn.linkfeeling.hankserve.bean.BleDeviceInfo;
 import cn.linkfeeling.hankserve.bean.DevicePower;
+import cn.linkfeeling.hankserve.bean.MatchStatistic;
 import cn.linkfeeling.hankserve.bean.WristbandPower;
 import io.reactivex.Single;
 import retrofit2.http.Body;
@@ -22,4 +23,7 @@ public interface LinkApi {
 
     @POST("platform/coulometry/add")
     Single<NetResult<Object>> uploadDevicePower(@Body DevicePower request);  //上传设备电量
+
+    @POST("log/")
+    Single<NetResult<Object>> uploadMatchResult(@Body MatchStatistic request);  //上传匹配日志
 }
