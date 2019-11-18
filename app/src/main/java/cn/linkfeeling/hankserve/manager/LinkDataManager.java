@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -224,6 +225,7 @@ public class LinkDataManager {
     }
 
 
+
     /**
      * 初始化上传数据结构
      *
@@ -233,11 +235,10 @@ public class LinkDataManager {
         bleDeviceInfo.setSpeed("");
         bleDeviceInfo.setGradient("");
         bleDeviceInfo.setDistance("");
-//        bleDeviceInfo.setGravity("");
-//        bleDeviceInfo.setTime("");
-//        bleDeviceInfo.setGravity("");
-//        bleDeviceInfo.setTime("");
-//        bleDeviceInfo.setU_time("");
+        bleDeviceInfo.setGravity("");
+        bleDeviceInfo.setTime("");
+        bleDeviceInfo.setU_time("");
+        bleDeviceInfo.setCurve(Collections.synchronizedList(new ArrayList<>()));
     }
 
     /**
@@ -450,7 +451,9 @@ public class LinkDataManager {
             point = new Point();
             point.setId(deviceId);
             String key = next.getKey();
-            if (value.contains(point) && FinalDataManager.getInstance().queryUwb(next.getKey()) == null) {
+            if (value.contains(point)
+                    && FinalDataManager.getInstance().queryUwb(next.getKey()) == null
+                    && FinalDataManager.getInstance().getWebAccounts().contains(LinkDataManager.getInstance().uwbCode_wristbandName.get(key))) {
                 newCaculate.put(key, value);
             }
         }
@@ -506,7 +509,6 @@ public class LinkDataManager {
         //获取备选人的集合
         ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queue = FinalDataManager.getInstance().getAlternative().get(deviceByBleName.getFencePoint().getFenceId());
 
-
         if (queue == null || queue.isEmpty()) {
             //可以理解成没有符合条件的人   不进行绑定
             Log.i("pppppppp", "-3-3-3");
@@ -527,7 +529,10 @@ public class LinkDataManager {
         UWBCoordData uwbCoordData = null;
         float min = Integer.MAX_VALUE;
         for (Map.Entry<UWBCoordData, UwbQueue<Point>> next : queue.entrySet()) {
-
+            UWBCoordData key = next.getKey();
+            if(LinkDataManager.getInstance().excludeUwb(key)){
+                return;
+            }
             int num = 0;
             UwbQueue<Point> value = next.getValue();
             UWBCoordData.FencePoint.Point centerPoint = deviceByBleName.getCenterPoint();
@@ -590,5 +595,66 @@ public class LinkDataManager {
         return -1;
     }
 
+
+    public boolean excludeUwb(UWBCoordData uwbCoordData){
+        Collection<String> values = FinalDataManager.getInstance().getDevice_wristbands().values();
+        if(!values.isEmpty()){
+            for (String value : values) {
+                String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(value);
+                if(uwbCoordData.getCode().equals(uwbCode)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * 获取后台推送的优先级最高的绑定手环（对应相关器械）
+     * @param deviceByBleName
+     * @return
+     */
+    public BleDeviceInfo getWebFinalBind(LinkSpecificDevice deviceByBleName){
+        BleDeviceInfo bleDeviceInfo=null;
+        String watchName = FinalDataManager.getInstance().getDevice_wristbands().get(deviceByBleName.getDeviceName());
+        if(watchName!=null){
+            Log.i("333333333",watchName);
+            bleDeviceInfo = FinalDataManager.getInstance().getWristbands().get(watchName);
+            String uwbCode = LinkDataManager.getInstance().queryUwbCodeByWatchName(watchName);
+            if(uwbCode!=null){
+                ConcurrentHashMap<Integer, UWBCoordData> fenceId_uwbData = FinalDataManager.getInstance().getFenceId_uwbData();
+                if(fenceId_uwbData!=null && !fenceId_uwbData.isEmpty()){
+                    Iterator<Map.Entry<Integer, UWBCoordData>> iterator = fenceId_uwbData.entrySet().iterator();
+                    while (iterator.hasNext()){
+                        Map.Entry<Integer, UWBCoordData> next = iterator.next();
+                        Integer key = next.getKey();
+                        UWBCoordData value = next.getValue();
+                        if(key!=deviceByBleName.getFencePoint().getFenceId() && value.getCode().equals(uwbCode)){
+                            iterator.remove();
+                            if(bleDeviceInfo!=null){
+                                LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return bleDeviceInfo;
+    }
+
+    public String queryUwbCodeByWatchName(String watchName){
+        Iterator<Map.Entry<String, String>> iterator = uwbCode_wristbandName.entrySet().iterator();
+        while (iterator.hasNext()){
+            Map.Entry<String, String> next = iterator.next();
+            if(watchName.equals(next.getValue())){
+                return next.getKey();
+            }
+        }
+
+        return null;
+
+    }
 
 }

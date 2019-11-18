@@ -36,6 +36,8 @@ public class FinalDataManager {
     private ConcurrentHashMap<String, DevicePower.DataBean> bleName_dateBean;
     private ConcurrentHashMap<Integer, ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> alternative;
     private ConcurrentHashMap<Integer, ConcurrentHashMap<UWBCoordData, UwbQueue<Point>>> matchTemp;
+    private List<String> webAccounts;
+    private ConcurrentHashMap<String, String> device_wristbands;
 
     private FinalDataManager() {
 
@@ -50,7 +52,27 @@ public class FinalDataManager {
         alternative = new ConcurrentHashMap<>(); //备选池子
         matchTemp = new ConcurrentHashMap<>(); //临时的  可被删除
         bleName_dateBean=new ConcurrentHashMap<>();//存储设备电量
+        webAccounts=new ArrayList<>();
+        device_wristbands = new ConcurrentHashMap<>();
     }
+
+    public ConcurrentHashMap<String, String> getDevice_wristbands() {
+        return device_wristbands;
+    }
+
+    public void setDevice_wristbands(ConcurrentHashMap<String, String> device_wristbands) {
+        this.device_wristbands = device_wristbands;
+    }
+
+
+    public List<String> getWebAccounts() {
+        return webAccounts;
+    }
+
+    public void setWebAccounts(List<String> webAccounts) {
+        this.webAccounts = webAccounts;
+    }
+
 
     public ConcurrentHashMap<String, DevicePower.DataBean> getBleName_dateBean() {
         return bleName_dateBean;

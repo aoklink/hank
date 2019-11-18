@@ -48,13 +48,11 @@ import cn.linkfeeling.hankserve.utils.LinkScanRecord;
 public class FlyBirdProcessor implements IDataAnalysis {
     public static ConcurrentHashMap<String, FlyBirdProcessor> map;
     private LimitQueue<Integer> limitQueue = new LimitQueue<>(50);
-
     private LimitQueue<Integer> deviceSeq = new LimitQueue<>(200);
     private List<Byte> devicesList = new ArrayList<>();
-
     private int flag = -1;
-    private  boolean select = true;
-    private  boolean start = true;
+    private boolean select = true;
+    private boolean start = true;
     private long startTime;
     private Gson gson = new Gson();
 
@@ -65,6 +63,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
     @Override
     public synchronized BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
+        BleDeviceInfo bleDeviceInfo = null;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
         if (scanRecord == null || linkScanRecord == null || deviceByBleName == null) {
@@ -84,7 +83,7 @@ public class FlyBirdProcessor implements IDataAnalysis {
         Log.i("87878787" + bleName, "seqNum----" + CalculateUtil.byteArrayToInt(seqNum));
 
         if (CalculateUtil.byteArrayToInt(seqNum) < flag && flag - CalculateUtil.byteArrayToInt(seqNum) < 10000) {
-          //  uploadFlagStatus(CalculateUtil.byteArrayToInt(seqNum), flag, deviceByBleName, bleName);
+            //  uploadFlagStatus(CalculateUtil.byteArrayToInt(seqNum), flag, deviceByBleName, bleName);
             return null;
         }
 
@@ -229,7 +228,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
         if (select && System.currentTimeMillis() - startTime >= 10 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire != null && !spareTire.isEmpty()) {
-
                 Log.i("pppppppp", "-5-5-5");
                 ConcurrentHashMap<UWBCoordData, UwbQueue<Point>> queueConcurrentHashMap = new ConcurrentHashMap<>();
                 for (Map.Entry<String, UwbQueue<Point>> next : spareTire.entrySet()) {
@@ -242,15 +240,16 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 }
                 Log.i("pppppppp6666", queueConcurrentHashMap.size() + "");
                 FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-                select = false;
             }
+            select = false;
         }
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
-            Log.i("ppppppp", CalculateUtil.byteToInt(serviceData[13]) + "");
             if (CalculateUtil.byteToInt(serviceData[13]) > 0) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
-                if (s != null) {
+                if (s != null
+                        && !FinalDataManager.getInstance().getDevice_wristbands().values().contains(s)
+                        && FinalDataManager.getInstance().getWebAccounts().contains(s)) {
                     String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
                     if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
                         LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
@@ -263,6 +262,8 @@ public class FlyBirdProcessor implements IDataAnalysis {
 
         bleDeviceInfoNow = FinalDataManager.getInstance().containUwbAndWristband(bleName);
 
+        bleDeviceInfo = LinkDataManager.getInstance().getWebFinalBind(deviceByBleName);
+
         if (serviceData[0] != -1 && serviceData[0] != 0 && serviceData[1] != -1 && serviceData[1] != 0) {
             for (int j = 0; j < 10; j++) {
                 int cuv1 = CalculateUtil.byteToInt(serviceData[j]);
@@ -270,6 +271,12 @@ public class FlyBirdProcessor implements IDataAnalysis {
                     bleDeviceInfoNow.setDevice_name(deviceByBleName.getDeviceName());
                     bleDeviceInfoNow.getCurve().add(cuv1);
                     bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+                }
+
+                if (bleDeviceInfo != null) {
+                    bleDeviceInfo.setDevice_name(deviceByBleName.getDeviceName());
+                    bleDeviceInfo.getCurve().add(cuv1);
+                    bleDeviceInfo.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
                 }
                 //   devicesList.add(serviceData[j]);
             }
@@ -288,7 +295,6 @@ public class FlyBirdProcessor implements IDataAnalysis {
             FinalDataManager.getInstance().getAlternative().remove(fenceId);
 
             if (serviceData[10] == 0 || serviceData[13] == 0) {
-                //       deviceByBleName.setAbility(0);
                 return null;
             }
             byte act_time = serviceData[13];
@@ -313,6 +319,14 @@ public class FlyBirdProcessor implements IDataAnalysis {
                 bleDeviceInfoNow.setTime(String.valueOf(CalculateUtil.byteToInt(act_time)));
                 bleDeviceInfoNow.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
                 bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+            }
+
+            if (bleDeviceInfo != null) {
+                bleDeviceInfo.setDevice_name(deviceByBleName.getDeviceName());
+                bleDeviceInfo.setGravity(String.valueOf(actualGravity));
+                bleDeviceInfo.setTime(String.valueOf(CalculateUtil.byteToInt(act_time)));
+                bleDeviceInfo.setU_time(String.valueOf(CalculateUtil.byteToInt(u_time)));
+                bleDeviceInfo.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
             }
 
         }

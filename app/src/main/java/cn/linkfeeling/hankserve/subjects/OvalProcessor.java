@@ -58,6 +58,7 @@ public class OvalProcessor implements IDataAnalysis {
     @Override
     public synchronized BleDeviceInfo analysisBLEData(String hostName, byte[] scanRecord, String bleName) {
         BleDeviceInfo bleDeviceInfoNow;
+        BleDeviceInfo bleDeviceInfo = null;
         LinkScanRecord linkScanRecord = LinkScanRecord.parseFromBytes(scanRecord);
         LinkSpecificDevice deviceByBleName = LinkDataManager.getInstance().getDeviceByBleName(bleName);
 
@@ -95,10 +96,12 @@ public class OvalProcessor implements IDataAnalysis {
         if (start) {
             FinalDataManager.getInstance().removeRssi(deviceByBleName.getAnchName());
             startTime = System.currentTimeMillis();
+            int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
+            FinalDataManager.getInstance().getAlternative().remove(fenceId);
             start = false;
         }
 
-        if (select && System.currentTimeMillis() - startTime >= 5 * 1000) {
+        if (select && System.currentTimeMillis() - startTime >= 10 * 1000) {
             ConcurrentHashMap<String, UwbQueue<Point>> spareTire = LinkDataManager.getInstance().queryQueueByDeviceId(deviceByBleName.getId());
             if (spareTire != null && !spareTire.isEmpty()) {
                 Log.i("pppppppp", "-5-5-5");
@@ -112,14 +115,16 @@ public class OvalProcessor implements IDataAnalysis {
                     queueConcurrentHashMap.put(uwbCoordData, next.getValue());
                 }
                 FinalDataManager.getInstance().getAlternative().put(deviceByBleName.getFencePoint().getFenceId(), queueConcurrentHashMap);
-                select = false;
             }
+            select = false;
         }
 
         if (!FinalDataManager.getInstance().alreadyBind(deviceByBleName.getFencePoint().getFenceId())) {
-            if (System.currentTimeMillis() - startTime >= 5 * 1000) {
+            if (System.currentTimeMillis() - startTime >= 10 * 1000) {
                 String s = FinalDataManager.getInstance().getRssi_wristbands().get(deviceByBleName.getAnchName());
-                if (s != null) {
+                if (s != null
+                        && !FinalDataManager.getInstance().getDevice_wristbands().values().contains(s)
+                        && FinalDataManager.getInstance().getWebAccounts().contains(s)) {
                     String uwbCode = LinkDataManager.getInstance().queryUWBCodeByWristband(s);
                     if (uwbCode != null && !FinalDataManager.getInstance().alreadyBind(uwbCode)) {
                         LinkDataManager.getInstance().bleBindAndRemoveSpareTire(uwbCode, deviceByBleName);
@@ -161,9 +166,20 @@ public class OvalProcessor implements IDataAnalysis {
             bleDeviceInfoNow.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
         }
 
+        bleDeviceInfo=LinkDataManager.getInstance().getWebFinalBind(deviceByBleName);
+        if (bleDeviceInfo != null) {
+            bleDeviceInfo.setDevice_name(deviceByBleName.getDeviceName());
+            bleDeviceInfo.setSpeed(String.valueOf(speed));
+            bleDeviceInfo.setSeq_num(String.valueOf(CalculateUtil.byteArrayToInt(seqNum)));
+        }
+
+
         if (speed == 0) {
             start = true;
             select = true;
+            if(bleDeviceInfo!=null){
+                LinkDataManager.getInstance().initBleDeviceInfo(bleDeviceInfo);
+            }
             //解除绑定
             int fenceId = LinkDataManager.getInstance().getFenceIdByBleName(bleName);
             if (FinalDataManager.getInstance().getFenceId_uwbData().containsKey(fenceId)) {

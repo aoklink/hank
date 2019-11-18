@@ -88,11 +88,11 @@ public class AnchProcessor extends IAnchDataAnalysis {
 
         byte[] seqNum = {serviceData[13], serviceData[14]};
 
-        if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
+   /*     if (limitQueue.contains(CalculateUtil.byteArrayToInt(seqNum))) {
             return;
         }
         limitQueue.offer(CalculateUtil.byteArrayToInt(seqNum));
-
+*/
         boolean b = dealPowerData(serviceData, deviceByanchName, bleName);
         if (b) {
             return;
@@ -139,23 +139,6 @@ public class AnchProcessor extends IAnchDataAnalysis {
             dataBean.setSerial_no(String.valueOf(1));
             dataBean.setBattery(String.valueOf(100 / CalculateUtil.byteToInt(serviceData[15])));
             FinalDataManager.getInstance().getBleName_dateBean().put(bleName, dataBean);
-
-
-         /*   Power power1 = new Power();
-            power1.setDeviceName(deviceByBleName.getDeviceName());
-            power1.setBleNme(bleName);
-            power1.setPowerLevel(CalculateUtil.byteToInt(serviceData[15]));
-            power1.setGymName(BuildConfig.PROJECT_NAME);
-
-
-            power1.save(new SaveListener<String>() {
-                @Override
-                public void done(String s, BmobException e) {
-
-                    Log.i("99999-----", s == null ? "null" : s);
-                    Log.i("99999eeeee", e == null ? "null" : e.getMessage());
-                }
-            });*/
             return true;
         }
         return false;
