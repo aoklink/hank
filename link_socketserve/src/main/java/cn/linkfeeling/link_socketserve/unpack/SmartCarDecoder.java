@@ -14,7 +14,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
  * 自己定义的协议
  *  数据包格式
  * +——----——+——-----——+——----——+
- * |协议开始标志|  长度             |   数据       |
+ * |协议开始标志  AA55|  长度  LEN            |   数据  DATA     |
  * +——----——+——-----——+——----——+
  * 1.协议开始标志head_data，为int类型的数据，16进制表示为0X76
  * 2.传输数据的长度contentLength，int类型
